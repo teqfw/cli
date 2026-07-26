@@ -1,0 +1,62 @@
+{
+  "name": "@teqfw/cli",
+  "version": "0.1.0",
+  "description": "CLI host for modular TeqFW applications on @teqfw/di 2.x.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "author": "Alex Gusev <alex@flancer64.com>",
+  "homepage": "https://github.com/teqfw/cli#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/teqfw/cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/teqfw/cli/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "teq": "./bin/teq.mjs"
+  },
+  "types": "./types.d.ts",
+  "exports": {
+    "./Dto/Argument": "./src/Dto/Argument.mjs",
+    "./Dto/Option": "./src/Dto/Option.mjs",
+    "./Dto/Command": "./src/Dto/Command.mjs"
+  },
+  "files": [
+    "src/",
+    "bin/",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "types.d.ts"
+  ],
+  "teqfw": {
+    "namespaces": [
+      {
+        "prefix": "TeqFw_Cli_",
+        "path": "./src",
+        "ext": ".mjs"
+      }
+    ]
+  },
+  "scripts": {
+    "test": "npm run test:unit && npm run test:integration && npm run test:acceptance",
+    "test:unit": "find test/unit -name '*.test.mjs' -print0 | xargs -0 node --test",
+    "test:integration": "find test/integration -name '*.test.mjs' -print0 | xargs -0 node --test",
+    "test:acceptance": "find test/acceptance -name '*.test.mjs' -print0 | xargs -0 node --test",
+    "validate:esm": "teqfw-esm-validator src --profile base",
+    "validate:ctx": "adsm-ctx validate ."
+  },
+  "dependencies": {
+    "commander": "^14.0.3"
+  },
+  "peerDependencies": {
+    "@teqfw/di": "^2.7.0"
+  },
+  "devDependencies": {
+    "@teqfw/di": "^2.7.0"
+  }
+}
