@@ -2,10 +2,14 @@
 
 All notable changes to this project are documented here.
 
+## Unreleased
+
+- Redefined `@teqfw/cli` as the standard TeqFW Node.js application host and composition root.
+- Added lifecycle-provider discovery and deterministic `initialize`, `activate`, `deactivate`, and `dispose` control with rollback.
+- Added `@teqfw/log` lifecycle diagnostics and host-owned signal shutdown.
+- Removed the previous external parser and command-execution component; added a small internal parser.
+- Kept command `cleanup()` only for command-local resources before application deactivation.
+
 ## 0.1.0 - 2026-07-26
 
-- Added metadata-only discovery for CLI providers across installed runtime dependencies.
-- Added immutable parser-neutral command, argument, and option contracts.
-- Added Commander-based parsing with typed input, help, and version output.
-- Added host-owned signal cancellation, cleanup, diagnostics, and exit status mapping.
-- Added TeqFW DI 2.x bootstrap, tests, ADSM context, and package documentation.
+- Initial command-host release.

@@ -1,25 +1,8 @@
 # Testing
 
 - Path: `ctx/docs/code/testing.md`
-- Changed: `20260726`
+- Changed: `20260727`
 
-## Unit
+Use `node:test`. Unit tests cover parser conversion, provider/participant validation, forward/reverse lifecycle ordering, activation rollback, error precedence, and signal status. Integration tests use the real DI container and metadata traversal to prove namespaces precede provider resolution and command/lifecycle coexistence. Acceptance tests spawn the executable for help, version, typed commands, usage errors, failures, lifecycle logs, and SIGINT.
 
-Use `node:test` for DTO defaults/types/normalization/copies/freezing, metadata errors/order, duplicate providers/command IDs/paths, parser typing, status mapping, cleanup precedence, and AbortSignal behavior.
-
-## Integration
-
-Build temporary installed-package fixtures with root, transitive, scoped, and hoisted packages.
-Use the real DI 2.x Container and NamespaceRegistry.
-Prove the full provider graph resolves and prove no `container.get()` occurs before namespace configuration finishes.
-
-## Acceptance
-
-Spawn the real `bin/teq.mjs` against an isolated fixture.
-Cover help, version, success, unknown command, missing required option, operational exception, stdout/stderr, cleanup after success/error, and SIGINT when supported.
-
-## Constraints
-
-Tests require no network, database, global CLI, or external service.
-Fixtures are deterministic and package-local.
-Run test groups independently and through the aggregate script.
+Run `npm test`, then `npm run validate:esm` and `npm run validate:ctx` when their tools are available. Tests must use isolated temporary fixtures and no network or external services.

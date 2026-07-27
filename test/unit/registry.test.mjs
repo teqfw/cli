@@ -54,12 +54,12 @@ test('provider registry rejects duplicate and malformed metadata', async () => {
             },
         },
     });
-    await assert.rejects(() => duplicate.build(), /Duplicate CLI provider token/);
+    await assert.rejects(() => duplicate.build(), /Duplicate cli provider token/);
 
     const invalid = new ProviderRegistry({
         packageGraph: {async build() { return [packageRecord('a', ['not/a/provider'])]; }},
     });
-    await assert.rejects(() => invalid.build(), /Invalid CLI provider token/);
+    await assert.rejects(() => invalid.build(), /Invalid cli provider token/);
 
     const badShape = new ProviderRegistry({
         packageGraph: {

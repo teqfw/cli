@@ -225,7 +225,7 @@ export async function createCliFixture() {
 
     await linkDependency(root, '@teqfw/cli', repoRoot);
     await linkDependency(root, '@teqfw/di', path.join(repoRoot, 'node_modules', '@teqfw', 'di'));
-    await linkDependency(root, 'commander', path.join(repoRoot, 'node_modules', 'commander'));
+    await linkDependency(root, '@teqfw/log', path.join(repoRoot, 'node_modules', '@teqfw', 'log'));
 
     await createFeature(path.join(root, 'node_modules', 'feature-a'), {
         name: 'feature-a',

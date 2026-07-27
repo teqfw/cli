@@ -1,25 +1,20 @@
 # Architecture Documentation
 
 - Path: `ctx/docs/architecture/AGENTS.md`
-- Changed: `20260726`
+- Changed: `20260727`
 
 ## Purpose
 
-Translates accepted CLI-host behavior into stable boundaries and flows.
+Defines host ownership, sequencing, contracts, ordering, rollback, and integrations.
 
 ## Level Map
 
-- `AGENTS.md` — architecture boundary.
-- `command-contract.md` — provider and descriptor contract.
-- `decisions.md` — durable architecture choices.
-- `discovery.md` — installed package traversal and registries.
-- `errors.md` — error taxonomy and exit mapping.
-- `execution-lifecycle.md` — parsing, signals, execution, cleanup.
-- `integration.md` — DI, Commander, Node, and feature boundaries.
-- `overview.md` — architecture entry point.
-- `overview.skin.md` — Human semantic control for the overview.
+- `overview.md` and skin — architecture entry.
+- `execution-lifecycle.md` — phases, rollback, signals, command cleanup.
+- `discovery.md` — runtime graph and provider registries.
+- `command-contract.md` — command and lifecycle products.
+- `errors.md` — precedence and status mapping.
+- `integration.md` — DI, logging, Node, parser boundaries.
+- `decisions.md` — durable choices.
 
-## Level Boundary
-
-Defines components, authority, integration, sequencing, and invariants.
-Does not define source filenames or restate product goals.
+Do not introduce product meaning or source filenames here.

@@ -1,18 +1,11 @@
 # Repository Filesystem
 
 - Path: `ctx/docs/filesystem.md`
-- Changed: `20260726`
+- Changed: `20260727`
 
-## Root Map
-
-- `bin/` — composition root for the `teq` executable.
-- `ctx/` — ADSM cognitive context.
-- `src/` — TeqFW namespace-addressed runtime modules.
+- `bin/` — `teq` process boundary.
+- `ctx/` — authoritative ADSM cognitive context.
+- `src/` — TeqFW runtime modules including the host.
 - `test/` — unit, integration, acceptance tests, and isolated fixtures.
-- `CHANGELOG.md` — released package changes.
-- `LICENSE` — Apache-2.0 license text.
-- `README.md` — public package documentation.
-- `package.json` and lockfile — npm contract and reproducible dependency graph.
-- `types.d.ts` — namespace aliases and public structural types.
-
-Lower-level maps live in their local documentation or tests and are not duplicated here.
+- `README.md`, `CHANGELOG.md` — public product and migration information.
+- `package.json`, lockfile, `types.d.ts` — npm and public type contracts.

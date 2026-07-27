@@ -1,33 +1,8 @@
 # Environment Configuration
 
 - Path: `ctx/docs/environment/configuration.md`
-- Changed: `20260726`
+- Changed: `20260727`
 
-## Root Package
+`package.json` is the composition input. `teqfw.namespaces` describes ESM namespace roots; `teqfw.providers.cli` and `teqfw.providers.lifecycle` describe DI tokens. Only installed production dependencies are discovered.
 
-The binary derives the application root from the entry script path and current installation context.
-Acceptance tests provide their fixture application root by setting the subprocess working directory.
-
-Every participating package may declare:
-
-```json
-{
-  "teqfw": {
-    "namespaces": [
-      {"prefix": "Vendor_Package_", "path": "./src", "ext": ".mjs"}
-    ],
-    "providers": {
-      "cli": ["Vendor_Package_Back_Cli_Provider$"]
-    }
-  }
-}
-```
-
-`providers.cli` is optional.
-When present it must be an array of unique valid TeqFW CDC strings.
-
-## Package Configuration
-
-`@teqfw/cli` declares namespace prefix `TeqFw_Cli_` mapped to `./src` with `.mjs`.
-The executable name is `teq`.
-There are no host environment variables in the public 0.1.0 contract.
+Lifecycle configuration belongs to the feature component injected through DI. Do not log secrets, arbitrary command input, or configuration values. The host itself accepts command paths, help, version, and documented typed values only.

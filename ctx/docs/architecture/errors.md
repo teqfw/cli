@@ -1,26 +1,10 @@
-# Errors And Exit Status
+# Errors and Process Results
 
 - Path: `ctx/docs/architecture/errors.md`
-- Changed: `20260726`
+- Changed: `20260727`
 
-## Taxonomy
+Composition failure returns 1 and invokes no lifecycle hook. Initialization failure disposes initialized participants; activation failure deactivates activated participants and disposes initialized participants; neither runs a command.
 
-Usage errors are operator-correctable parser/validation failures before execution.
-Startup errors include package graph, namespace, provider metadata/resolution, and command registry failures.
-Operational errors include command execution and cleanup failures.
-Interrupt outcomes follow the first received supported signal.
+Command failure is the primary operational error. Command cleanup and shutdown continue; later cleanup/deactivation/disposal failures are logged and cannot replace an earlier primary error. If shutdown is the first failure it returns 1. Shutdown always attempts remaining eligible participants.
 
-## Mapping
-
-- Success, help, and version: `0`.
-- Startup or operational error: `1`.
-- Usage or validation error: `2`.
-- SIGINT: `130`.
-- SIGTERM: `143`.
-
-## Reporting
-
-Help/version and command output use stdout.
-Usage and operational diagnostics use stderr.
-Errors have stable categories, but 0.1.0 does not promise exact full diagnostic wording as a public API.
-Cleanup errors are reported even when secondary.
+Usage failure returns 2 before lifecycle activity. First SIGINT returns 130; first SIGTERM returns 143. Only the executable assigns `process.exitCode`.

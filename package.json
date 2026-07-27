@@ -1,7 +1,7 @@
 {
   "name": "@teqfw/cli",
   "version": "0.1.0",
-  "description": "CLI host for modular TeqFW applications on @teqfw/di 2.x.",
+  "description": "Standard Node.js process host and composition root for TeqFW applications.",
   "type": "module",
   "license": "Apache-2.0",
   "author": "Alex Gusev <alex@flancer64.com>",
@@ -23,7 +23,8 @@
   "exports": {
     "./Dto/Argument": "./src/Dto/Argument.mjs",
     "./Dto/Option": "./src/Dto/Option.mjs",
-    "./Dto/Command": "./src/Dto/Command.mjs"
+    "./Dto/Command": "./src/Dto/Command.mjs",
+    "./Host": "./src/Host.mjs"
   },
   "files": [
     "src/",
@@ -51,7 +52,7 @@
     "validate:ctx": "adsm-ctx validate ."
   },
   "dependencies": {
-    "commander": "^14.0.3"
+    "@teqfw/log": "^0.1.0"
   },
   "peerDependencies": {
     "@teqfw/di": "^2.7.0"

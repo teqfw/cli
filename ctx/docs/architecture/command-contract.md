@@ -1,34 +1,8 @@
-# Command Contract
+# Command and Lifecycle Contracts
 
 - Path: `ctx/docs/architecture/command-contract.md`
-- Changed: `20260726`
+- Changed: `20260727`
 
-## Provider
+A command descriptor has id, path, summary, parser-neutral argument/option definitions, async `execute({args, options, signal})`, and optional command-local `cleanup()`. The internal parser supports required/default string, number, and boolean values, help, version, command-path selection, and stable usage errors. No parser object appears in the contract.
 
-A DI-resolved provider exposes `getCommands()` without arguments.
-It returns a frozen ordered array.
-Provider dependencies and command feature dependencies enter through `__deps__`; manual container lookup is forbidden.
-An unresolved provider, wrong provider shape, thrown provider call, mutable list, or invalid command is a startup failure.
-
-## Command
-
-A descriptor has immutable `id`, non-empty `path`, `summary`, optional `description`, `arguments`, `options`, async `execute(context)`, and optional async `cleanup()`.
-IDs and complete paths are unique.
-Path segments and input names use simple parser-safe identifiers.
-
-Arguments declare `name`, kind (`string`, `number`, or `boolean`), `required`, `variadic`, description, and optional default.
-Options add optional one-character `short` and `repeatable`.
-Required inputs cannot also declare defaults; a variadic argument must be last.
-Boolean positional arguments are represented by explicit textual true/false values at the parser boundary.
-
-## Factories
-
-Factories accept plain data, validate it, create defensive copies, normalize omitted optional fields/default booleans, and deep-freeze the complete descriptor graph.
-Function identity is retained.
-Unsupported fields are ignored only when they cannot weaken validation; required contract fields are always checked.
-
-## Execution Context
-
-The host calls `execute({args, options, signal})`.
-`args` and `options` are frozen plain objects keyed by descriptor names; `signal` is an `AbortSignal`.
-The context never includes Commander or the DI container.
+A lifecycle participant is `{id, initialize?, activate?, deactivate?, dispose?}`. Each hook is async-capable and receives `{signal}`. A participant may implement any subset, but must implement at least one hook. Hooks are not command hooks and a command provider need not be a lifecycle provider.

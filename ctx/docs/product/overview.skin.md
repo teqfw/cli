@@ -1,38 +1,33 @@
-# CLI Host Product
+# TeqFW Node.js Application Host
 
 - Path: `ctx/docs/product/overview.skin.md`
-- Changed: `20260726`
+- Changed: `20260727`
 
 ## Purpose
 
-Give TeqFW applications one reliable, extensible command-line host.
+Give every standard TeqFW Node.js application one process host and composition root.
 
 ## Mental Model
 
-The root application starts a host.
-Runtime packages advertise providers explicitly; providers supply parser-neutral immutable commands; the host owns everything from discovery through cleanup.
+The operator selects an operating mode; the host assembles and controls the application around it. Servers, workers, and schedulers are runtime plugins inside that application.
 
 ## Scope
 
 Includes:
 
-- metadata and DI based composition;
-- validation, execution, signals, cleanup, and exit status;
-- a stable feature-package contract.
+- composition, lifecycle, commands, interruption, and outcome reporting.
 
 Excludes:
 
-- filesystem command discovery and legacy Core DTOs;
-- interactive, remote, daemon, authorization, and hot-reload features;
-- direct process termination by library or feature code.
+- feature business behavior, direct process termination, and parser-framework contracts.
 
 ## Invariants
 
-- DI is fully configured before provider resolution.
-- Commander never leaks into public DTOs.
-- Commands never use the container as a service locator.
-- Cleanup runs exactly once for the selected command.
-- Runtime discovery excludes development dependencies.
+- Application lifecycle is distinct from command execution.
+- Runtime plugins participate through explicit lifecycle providers.
+- Plugins use DI rather than container lookup.
+- The host controls one orderly shutdown.
+- Development dependencies are outside runtime discovery.
 
 ## Agent Document
 

@@ -22,7 +22,7 @@ test('package traversal handles scoped, hoisted, transitive, and cyclic runtime 
     ]);
     assert.equal(names.filter((name) => name === 'feature-a').length, 1);
     assert.equal(names.includes('feature-transitive'), true);
-    assert.equal(names.includes('commander'), true);
+    assert.equal(names.includes('@teqfw/log'), true);
     assert.equal(names.includes('@teqfw/di'), true);
 
     const registry = new ProviderRegistry({packageGraph: graph});

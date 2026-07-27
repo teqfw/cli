@@ -1,31 +1,10 @@
-# Provider Discovery
+# Runtime Discovery
 
 - Path: `ctx/docs/architecture/discovery.md`
-- Changed: `20260726`
+- Changed: `20260727`
 
-## Package Graph
+PackageGraph traverses the root package and installed transitive `dependencies` deterministically; it excludes `devDependencies`. NamespaceRegistry validates and registers every TeqFW namespace before any `container.get()`.
 
-One traversal component starts at the real application root, reads each real installed package once, and follows sorted `dependencies` names only.
-It resolves a dependency from the declaring package upward through `node_modules` until the application boundary, supporting scopes and hoisting.
-Real paths provide cycle protection and package identity.
-Missing installed dependencies and unreadable/invalid package metadata are startup failures.
+Each package may declare ordered `teqfw.providers.cli` and `teqfw.providers.lifecycle` token arrays. Tokens must be valid CDC provider tokens and unique within a provider kind across the graph. CLI providers expose `getCommands()`; lifecycle providers expose `getLifecycleParticipants()`.
 
-## Namespace Registry
-
-Bootstrap uses public `@teqfw/di/src/Config/NamespaceRegistry.mjs` with the application root.
-All returned prefix/path/extension entries are added to the Container before its first `get()`.
-The CLI package does not reproduce DI namespace validation.
-
-## Provider Registry
-
-For every package in deterministic graph order, read `teqfw.providers.cli`.
-Absent metadata means no providers.
-Present metadata must be an array of valid TeqFW CDC tokens.
-Tokens are ordered first by package traversal and then by declaration order.
-Duplicate tokens anywhere are startup failures.
-
-## Prohibitions
-
-Do not scan filenames, source directories, exports, or namespace names for commands.
-Do not follow peer, optional, or development dependencies in 0.1.0.
-Do not resolve providers while discovery/configuration is incomplete.
+Lifecycle participant identities are non-empty, globally unique `id` values. Their provider order is the package traversal order, then metadata order, then provider-return order. Duplicate declarations or malformed products fail composition.

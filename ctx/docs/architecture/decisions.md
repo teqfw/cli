@@ -1,40 +1,16 @@
 # Architecture Decisions
 
 - Path: `ctx/docs/architecture/decisions.md`
-- Changed: `20260726`
+- Changed: `20260727`
 
-## AD-001 Metadata-Only Provider Discovery
-
-Decision: discover providers only through `teqfw.providers.cli` across the real runtime dependency graph.
-Rejected: source-name, directory, export, or namespace scanning.
-Reason: package authors retain explicit control and startup remains deterministic.
-
-## AD-002 Configure DI Before Resolution
-
-Decision: build namespace roots through the public DI NamespaceRegistry and add all roots before the first Container `get()`.
-Rejected: resolving providers during traversal.
-Reason: DI 2.x locks builder configuration at first resolution.
-
-## AD-003 Parser-Neutral Immutable DTO
-
-Decision: public command data contains semantic arguments/options and functions, not Commander constructs.
-Rejected: Commander flags and instances in feature packages; legacy Core/DB DTO reuse.
-Reason: adapters remain replaceable and validation has one owner.
-
-## AD-004 Host-Owned Lifecycle
-
-Decision: one runner owns signals, abort, errors, cleanup, IO diagnostics, and exit mapping.
-Rejected: feature commands stopping the application or returning exit codes.
-Reason: guarantees must hold uniformly across packages.
-
-## AD-005 Commander 14 For Node 20
-
-Decision: use the current stable Commander line that supports Node 20.
-Rejected: Commander 15, whose runtime floor is Node 22.12.
-Reason: the package contract is Node.js 20 or newer.
-
-## AD-006 No Bootstrap Convenience API In 0.1.0
-
-Decision: the supported process composition boundary is `bin/teq.mjs`; internal components remain namespace-addressable for DI and tests.
-Rejected: a second public bootstrap API in the initial release.
-Reason: avoid two application-root and process ownership contracts before real consumers establish the need.
+1. `@teqfw/cli` is the standard Node.js process host; runtime packages do not create alternative hosts.
+2. Host phases and plugin hooks are separate: compose does no hooks; lifecycle hooks are initialize/activate/deactivate/dispose.
+3. Explicit `teqfw.providers.lifecycle` complements compatible `providers.cli` metadata.
+4. Package traversal, declaration order, and provider order determine forward order; completed work reverses for shutdown.
+5. Partial startup rolls back eligible completed work; shutdown is best-effort and preserves the earliest primary failure.
+6. Host alone owns SIGINT/SIGTERM cancellation and one shutdown sequence.
+7. Commands execute only after activation and settle before deactivation.
+8. `cleanup()` is retained only for command-local resources and runs once before deactivation.
+9. The external parser dependency is removed; a limited internal parser preserves parser-neutral descriptors.
+10. `@teqfw/log` is the runtime diagnostics contract.
+11. Host returns a status; the executable alone assigns the process exit code.
