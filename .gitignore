@@ -1,3 +1,7 @@
-node_modules/
-*.tgz
-.coverage/
+/.codex
+/.vscode/
+/*.tgz
+/**/output*.md
+/**/output*.zip
+/node_modules/
+/tmp/
