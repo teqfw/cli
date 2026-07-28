@@ -1,10 +1,11 @@
-# Runtime Discovery
+# Discovery and Distributed Metadata
 
 - Path: `ctx/docs/architecture/discovery.md`
 - Changed: `20260728`
 
-`TeqFw_Di_Node_Registry_Package` traverses the application root and installed transitive `dependencies` in deterministic dependency-first order; it excludes `devDependencies`, resolves scoped/hoisted packages, canonicalizes symlinks, rejects cycles, and returns immutable records with the complete frozen `packageJson`. `TeqFw_Di_Node_Registry_Namespace` derives and validates every TeqFW namespace before any `container.get()`.
 
-CLI interprets ordered `teqfw.providers.cli` and `teqfw.providers.lifecycle` token arrays from those records. Other `teqfw` instructions remain immutable static metadata for their owning extension to interpret. Tokens must be valid CDC provider tokens and unique within a provider kind across the graph. CLI providers expose `getCommands()`; lifecycle providers expose `getLifecycleParticipants()`.
+The DI package registry traverses only production dependencies in deterministic dependency-first order. Every manifest contributes immutable teqfw metadata. teqfw.fw contains framework protocols and teqfw.pkg uses exact npm names as keys.
 
-Lifecycle participant identities are non-empty, globally unique `id` values. Their provider order is dependency-first package order, then metadata order, then provider-return order. Duplicate declarations or malformed products fail composition.
+teqfw.fw.di.namespaces contains package-relative namespace roots. Duplicate prefixes fail before resolution. teqfw.fw.cli.container.configurator and teqfw.fw.cli.command.default are accepted only from the head application. teqfw.fw.cli.commands and lifecycle collect active provider identifiers in package then declaration order.
+
+Path ownership identifies schema owner and primary interpreter; all runtime participants can inspect all metadata. Protocols define authority, aggregation, override, conflict, and ordering rules.

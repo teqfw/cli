@@ -1,0 +1,2 @@
+import assert from 'node:assert/strict'; import test from 'node:test'; import {execFile} from 'node:child_process'; import {promisify} from 'node:util'; import {createCliFixture} from '../helper/fixture.mjs'; const exec = promisify(execFile);
+test('configures the real container before resolving Bootstrap', async () => { const fixture = await createCliFixture(); try { const result = await exec(process.execPath, [fixture.binary, 'fixture', 'finite'], {cwd: fixture.root}); assert.match(result.stdout, /\"cwd\"/); } finally { await fixture.cleanup(); } });

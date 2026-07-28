@@ -1,41 +1,53 @@
 // @ts-check
+
 /**
  * @namespace TeqFw_Cli_Bootstrap
- * @description Performs composition before handing the assembled application to the lifecycle host.
+ * @description Starts an already configured TeqFW application.
  */
-/**
- * @param {unknown} error failure value
- * @returns {string} safe message
- */
-function errorMessage(error) { return error instanceof Error ? error.message : String(error); }
 export default class Bootstrap {
     /**
      * @param {object} deps
-     * @param {object} deps.namespaceRegistry namespace registry
-     * @param {object} deps.providerRegistry provider registry
-     * @param {object} deps.container DI container
-     * @param {object} deps.io output adapter
+     * @param {TeqFw_Cli_Host$} deps.host
+     * @param {TeqFw_Cli_Registry_Command$} deps.commandRegistry
+     * @param {TeqFw_Cli_Registry_Lifecycle$} deps.lifecycleRegistry
      */
-    constructor({namespaceRegistry, providerRegistry, container, io}) {
+    constructor({host, commandRegistry, lifecycleRegistry}) {
         /**
-         * @param {object} deps
-         * @param {string[]} deps.argv process arguments
-         * @param {string} deps.version host version
-         * @returns {Promise<number>} process result
+         * @param {TeqFw_Cli_Launch_Context} launch immutable process launch context
+         * @returns {Promise<number>}
          */
-        this.run = async function ({argv, version}) {
-            try {
-                const namespaceEntries = await namespaceRegistry.build(); for (const entry of namespaceEntries) container.addNamespaceRoot(entry.prefix, entry.dirAbs, entry.ext);
-                const loggerProvider = await container.get('TeqFw_Log_Provider$'); const log = loggerProvider.forSource('TeqFw_Cli_Bootstrap'); log.info('Composition started.');
-                /**
-                 * @param {'cli'|'lifecycle'} kind provider category
-                 * @returns {Promise<object>} resolved provider products
-                 */
-                const resolve = async function (kind) { const providers = []; for (const token of await providerRegistry.build(kind)) { try { providers.push(await container.get(token)); } catch (cause) { throw new Error(`Cannot resolve ${kind} provider '${token}'.`, {cause}); } } return Object.freeze(providers); };
-                const [commandProviders, lifecycleProviders] = await Promise.all([resolve('cli'), resolve('lifecycle')]);
-                const commands = (await container.get('TeqFw_Cli_Registry_Command$')).build(commandProviders); const participants = (await container.get('TeqFw_Cli_Registry_Lifecycle$')).build(lifecycleProviders); const host = await container.get('TeqFw_Cli_Host$');
-                log.info('Composition completed.', {commands: commands.length, participants: participants.length}); return await host.run({argv, version, commands, participants});
-            } catch (error) { io.error(`${errorMessage(error)}\n`); return 1; }
+        this.start = async function (launch) {
+            /**
+             * @param {ReadonlyArray<string>} identifiers
+             * @param {string} kind
+             * @returns {Promise<object>}
+             */
+            const resolveAll = async function (identifiers, kind) {
+                const products = [];
+                for (const identifier of identifiers) {
+                    try { products.push(await launch.resolve(identifier)); }
+                    catch (cause) { throw new Error(`Cannot resolve ${kind} provider '${identifier}'.`, {cause}); }
+                }
+                return Object.freeze(products);
+            };
+            const commandProviders = await resolveAll(launch.metadata.cli.commandProviders, 'command');
+            const lifecycleProviders = await resolveAll(launch.metadata.cli.lifecycleProviders, 'lifecycle');
+            return await host.run({
+                argv: launch.argv,
+                version: launch.version,
+                commands: commandRegistry.build(commandProviders),
+                participants: lifecycleRegistry.build(lifecycleProviders),
+                defaultCommand: launch.metadata.cli.defaultCommand,
+                launch,
+            });
         };
     }
 }
+
+export const __deps__ = Object.freeze({
+    default: Object.freeze({
+        host: 'TeqFw_Cli_Host$',
+        commandRegistry: 'TeqFw_Cli_Registry_Command$',
+        lifecycleRegistry: 'TeqFw_Cli_Registry_Lifecycle$',
+    }),
+});

@@ -1,34 +1,35 @@
-# TeqFW Node.js Application Host
+# TeqFW Application Launcher
 
 - Path: `ctx/docs/product/overview.skin.md`
-- Changed: `20260727`
+- Changed: `20260728`
+
 
 ## Purpose
 
-Give every standard TeqFW Node.js application one process host and composition root.
+Provide one standard process entry point for executable TeqFW applications.
 
 ## Mental Model
 
-The operator selects an operating mode; the host assembles and controls the application around it. Servers, workers, and schedulers are runtime plugins inside that application.
+The installed teq binary composes an application before Bootstrap starts it. Servers, workers, migrations, and maintenance operations are commands within one application runtime.
 
 ## Scope
 
 Includes:
 
-- composition, lifecycle, commands, interruption, and outcome reporting.
+- launching, command selection, lifecycle, and controlled shutdown.
 
 Excludes:
 
-- feature business behavior, direct process termination, and parser-framework contracts.
+- feature behavior and direct plugin process termination.
 
 ## Invariants
 
-- Application lifecycle is distinct from command execution.
-- Runtime plugins participate through explicit lifecycle providers.
-- Plugins use DI rather than container lookup.
-- The host controls one orderly shutdown.
-- Development dependencies are outside runtime discovery.
+- Application root and original cwd are different launch facts.
+- Composition completes before Bootstrap resolution.
+- Configurators extend but do not create or locate the Container.
+- Metadata is broadcast-visible despite schema ownership.
+- Finite and long-running commands are structurally distinct.
 
 ## Agent Document
 
-`overview.md`
+overview.md

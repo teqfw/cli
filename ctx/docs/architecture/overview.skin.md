@@ -1,34 +1,35 @@
-# Application Host Architecture
+# Launcher Architecture
 
 - Path: `ctx/docs/architecture/overview.skin.md`
-- Changed: `20260727`
+- Changed: `20260728`
+
 
 ## Purpose
 
-Keep application composition, lifecycle, command execution, and shutdown deterministic.
+Make TeqFW application composition and runtime shutdown deterministic.
 
 ## Mental Model
 
-Composition validates a runtime graph before plugins run. The host moves eligible participants forward, then reverses completed work during shutdown.
+The process boundary fully configures a Container from production metadata before resolving Bootstrap. Bootstrap assembles active plugins and Host runs lifecycle.
 
 ## Scope
 
 Includes:
 
-- DI, discovery, lifecycle providers, parser-neutral commands, signals, logging, and result mapping.
+- discovery, metadata, DI extensions, Bootstrap, commands, lifecycle, and signals.
 
 Excludes:
 
-- feature business logic and alternative application hosts.
+- feature implementation and alternative process hosts.
 
 ## Invariants
 
-- Namespace configuration precedes every DI resolution.
-- Lifecycle hooks never run during composition.
-- Forward order is deterministic; shutdown reverses completed order.
-- Shutdown is best-effort with stable primary-error precedence.
-- One host owns signal-to-shutdown conversion.
+- No resolution precedes namespace registration and configuration.
+- Only the head application configures Container extensions.
+- Usage failures occur before lifecycle hooks.
+- Shutdown reverses completed work once.
+- Metadata ownership is not metadata secrecy.
 
 ## Agent Document
 
-`overview.md`
+overview.md

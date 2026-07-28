@@ -24,24 +24,30 @@
     "./Dto/Argument": "./src/Dto/Argument.mjs",
     "./Dto/Option": "./src/Dto/Option.mjs",
     "./Dto/Command": "./src/Dto/Command.mjs",
+    "./Bootstrap": "./src/Bootstrap.mjs",
     "./Host": "./src/Host.mjs"
   },
   "files": [
     "src/",
     "bin/",
+    "launcher/",
     "README.md",
     "CHANGELOG.md",
     "LICENSE",
     "types.d.ts"
   ],
   "teqfw": {
-    "namespaces": [
-      {
-        "prefix": "TeqFw_Cli_",
-        "path": "./src",
-        "ext": ".mjs"
+    "fw": {
+      "di": {
+        "namespaces": [
+          {
+            "prefix": "TeqFw_Cli_",
+            "path": "./src",
+            "ext": ".mjs"
+          }
+        ]
       }
-    ]
+    }
   },
   "scripts": {
     "test": "npm run test:unit && npm run test:integration && npm run test:acceptance",

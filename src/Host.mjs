@@ -2,111 +2,101 @@
 
 /**
  * @namespace TeqFw_Cli_Host
- * @description Controls the TeqFW application lifecycle and a selected command execution.
+ * @description Controls application lifecycle, command lifetime, and one shutdown sequence.
  */
 
 /**
- * @param {unknown} error failure value
- * @returns {string} safe message
+ * @param {unknown} error
+ * @returns {string}
  */
-function message(error) {
-    return error instanceof Error ? error.message : String(error);
-}
+function message(error) { return error instanceof Error ? error.message : String(error); }
 
 export default class Host {
     /**
-     * @param {object} deps construction dependencies
-     * @param {object} deps.parser parser adapter
-     * @param {object} deps.signals signal adapter
-     * @param {object} deps.io output adapter
-     * @param {object} deps.loggerProvider log provider
+     * @param {object} deps
+     * @param {TeqFw_Cli_Adapter_Parser_Internal$} deps.parser
+     * @param {TeqFw_Cli_Adapter_Signal$} deps.signals
+     * @param {TeqFw_Cli_Adapter_Io$} deps.io
      */
-    constructor({parser, signals, io, loggerProvider}) {
-        const log = loggerProvider.forSource("TeqFw_Cli_Host");
+    constructor({parser, signals, io}) {
         /**
-         * @param {object} deps assembled invocation
-         * @param {string[]} deps.argv raw process arguments
-         * @param {string} deps.version application version
-         * @param {object[]} deps.commands command products
-         * @param {object[]} deps.participants lifecycle products
-         * @returns {Promise<number>} process result
+         * @param {object} input
+         * @returns {Promise<number>}
          */
-        this.run = async function ({argv, version, commands, participants}) {
+        this.run = async function (input) {
+            const {argv, version, commands, participants, defaultCommand, launch} = input;
+            const log = launch?.log ?? Object.freeze({info() {}, warn() {}, error() {}});
             let selection;
-            try {
-                selection = parser.select({argv, version, commands, io});
-            } catch (error) {
-                io.error(`${message(error)}\n`);
-                return error?.category === 'usage' ? 2 : 1;
-            }
+            try { selection = parser.select({argv, version, commands, io, defaultCommand}); }
+            catch (error) { io.error(`${message(error)}\n`); return error?.category === 'usage' ? 2 : 1; }
             if (selection.kind === 'information') return 0;
             const controller = new AbortController();
             let signalCode = 0;
             let primary;
+            let shutdownStarted = false;
             const initialized = [];
             const activated = [];
-            const context = Object.freeze({signal: controller.signal});
+            const context = Object.freeze({signal: controller.signal, launch});
             const unsubscribe = signals.subscribe((signal) => {
                 if (signalCode !== 0) return;
-                signalCode = signal === "SIGINT" ? 130 : 143;
-                log.warn("Process signal received.", {signal});
+                signalCode = signal === 'SIGINT' ? 130 : 143;
+                log.warn('Process signal received.', {signal});
                 controller.abort(new Error(`Interrupted by ${signal}.`));
             });
             /**
-             * @param {object} participant lifecycle participant
-             * @param {string} hook lifecycle hook name
-             * @param {object[]|undefined} completed successful participants
-             * @returns {Promise<void>} invocation completion
+             * @param {object} participant
+             * @param {string} hook
+             * @param {object[]|undefined} completed
+             * @returns {Promise<void>}
              */
             const invoke = async (participant, hook, completed) => {
-                if (typeof participant[hook] !== "function") { log.debug("Plugin lifecycle hook skipped.", {participant: participant.id, hook}); return; }
-                log.info("Plugin lifecycle hook started.", {participant: participant.id, hook});
-                try { await participant[hook](context); completed?.push(participant); log.info("Plugin lifecycle hook completed.", {participant: participant.id, hook}); }
-                catch (error) { log.error("Plugin lifecycle hook failed.", {participant: participant.id, hook, err: error}); throw error; }
+                if (typeof participant[hook] !== 'function') return;
+                log.info('Plugin lifecycle transition started.', {participant: participant.id, hook});
+                try { await participant[hook](context); completed?.push(participant); log.info('Plugin lifecycle transition completed.', {participant: participant.id, hook}); }
+                catch (error) { log.error('Plugin lifecycle transition failed.', {participant: participant.id, hook, err: error}); throw error; }
             };
-            /**
-             * @returns {Promise<void>} shutdown completion
-             */
+            /** @returns {Promise<void>} */
             const shutdown = async () => {
+                if (shutdownStarted) return;
+                shutdownStarted = true;
                 for (const [hook, items] of [['deactivate', activated], ['dispose', initialized]]) {
-                    log.info(`${hook[0].toUpperCase()}${hook.slice(1)} phase started.`);
                     for (const participant of [...items].reverse()) {
                         try { await invoke(participant, hook); } catch (error) { primary ??= error; }
                     }
-                    log.info(`${hook[0].toUpperCase()}${hook.slice(1)} phase completed.`);
                 }
             };
             try {
-                log.info('Initialization phase started.');
+                log.info('Application initialization started.');
                 for (const participant of participants) await invoke(participant, 'initialize', initialized);
-                log.info('Initialization phase completed.');
-                log.info('Activation phase started.');
+                log.info('Application activation started.');
                 for (const participant of participants) await invoke(participant, 'activate', activated);
-                log.info('Activation phase completed.');
-                log.info('Run phase started.', {command: selection.command.id});
+                const commandContext = Object.freeze({args: selection.args, options: selection.options, signal: controller.signal, launch});
                 let commandError;
                 try {
-                    await selection.command.execute(Object.freeze({args: selection.args, options: selection.options, signal: controller.signal}));
-                } catch (error) {
-                    commandError = error;
-                    throw error;
-                } finally {
+                    if (selection.command.lifetime === 'finite') {
+                        await selection.command.execute(commandContext);
+                    } else {
+                        const runtime = await selection.command.start(commandContext);
+                        if (!runtime || typeof runtime.stop !== 'function' || !runtime.done || typeof runtime.done.then !== 'function') {
+                            throw new TypeError(`Long-running command '${selection.command.id}' must return {stop(), done: Promise}.`);
+                        }
+                        const stopped = new Promise((resolve) => controller.signal.addEventListener('abort', resolve, {once: true}));
+                        const done = Promise.resolve(runtime.done);
+                        if (controller.signal.aborted || await Promise.race([done.then(() => false), stopped.then(() => true)])) await runtime.stop();
+                        await done;
+                    }
+                } catch (error) { commandError = error; throw error; }
+                finally {
                     if (selection.command.cleanup) {
-                        try { await selection.command.cleanup(); } catch (error) { if (commandError) log.error('Command cleanup failed.', {err: error}); else throw error; }
+                        try { await selection.command.cleanup(); }
+                        catch (error) { if (commandError) primary ??= commandError; else throw error; }
                     }
                 }
-                log.info('Run phase completed.', {command: selection.command.id});
-            } catch (error) {
-                primary ??= error;
-                log.error('Host phase failed.', {err: error});
-            } finally {
-                await shutdown();
-                unsubscribe();
-            }
-            const status = signalCode || (primary ? 1 : 0);
-            log.info('Final process outcome.', {status, clean: status === 0});
+            } catch (error) { primary ??= error; }
+            finally { await shutdown(); unsubscribe(); }
+            log.info('Application outcome determined.', {status: signalCode || (primary ? 1 : 0)});
             if (primary && signalCode === 0) io.error(`${message(primary)}\n`);
-            return status;
+            return signalCode || (primary ? 1 : 0);
         };
     }
 }
@@ -116,6 +106,5 @@ export const __deps__ = Object.freeze({
         parser: 'TeqFw_Cli_Adapter_Parser_Internal$',
         signals: 'TeqFw_Cli_Adapter_Signal$',
         io: 'TeqFw_Cli_Adapter_Io$',
-        loggerProvider: 'TeqFw_Log_Provider$',
     }),
 });

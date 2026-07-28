@@ -1,22 +1,14 @@
 #!/usr/bin/env node
 // @ts-check
 
-import fs from 'node:fs/promises';
-import path from 'node:path';
 import process from 'node:process';
-import Container from '@teqfw/di';
-import NamespaceRegistry from '@teqfw/di/node/registry/namespace';
-import PackageRegistry from '@teqfw/di/node/registry/package';
-import ProviderRegistry from '../src/Registry/Provider.mjs';
 import Io from '../src/Adapter/Io.mjs';
-import Bootstrap from '../src/Bootstrap.mjs';
+import {launch} from '../launcher/Launch.mjs';
 
-const appRoot = path.resolve(process.cwd());
-const bootstrap = new Bootstrap({
-    namespaceRegistry: new NamespaceRegistry({fs, path, appRoot}),
-    providerRegistry: new ProviderRegistry({packageRegistry: new PackageRegistry({fs, path, appRoot})}),
-    container: new Container(),
-    io: new Io({processModule: {default: process}}),
-});
-
-process.exitCode = await bootstrap.run({argv: process.argv, version: '0.1.0'});
+const io = new Io({processModule: {default: process}});
+try {
+    process.exitCode = await launch({argv: [...process.argv], cwd: process.cwd(), version: '0.1.0', io});
+} catch (error) {
+    io.error(`${error instanceof Error ? error.message : String(error)}\n`);
+    process.exitCode = 1;
+}

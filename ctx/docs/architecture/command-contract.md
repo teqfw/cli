@@ -1,8 +1,9 @@
 # Command and Lifecycle Contracts
 
 - Path: `ctx/docs/architecture/command-contract.md`
-- Changed: `20260727`
+- Changed: `20260728`
 
-A command descriptor has id, path, summary, parser-neutral argument/option definitions, async `execute({args, options, signal})`, and optional command-local `cleanup()`. The internal parser supports required/default string, number, and boolean values, help, version, command-path selection, and stable usage errors. No parser object appears in the contract.
 
-A lifecycle participant is `{id, initialize?, activate?, deactivate?, dispose?}`. Each hook is async-capable and receives `{signal}`. A participant may implement any subset, but must implement at least one hook. Hooks are not command hooks and a command provider need not be a lifecycle provider.
+A command has id, path, summary, inputs, and explicit lifetime. A finite command has lifetime finite and async execute(context). A long-running command has lifetime long-running and async start(context), returning {done: Promise, stop(): Promise or void}. Both receive parsed input, launch context, and AbortSignal.
+
+Lifecycle participants have unique ids and optional initialize, activate, deactivate, and dispose hooks. Providers are active only through the CLI metadata protocol.

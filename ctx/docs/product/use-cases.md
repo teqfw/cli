@@ -1,12 +1,7 @@
 # Product Use Cases
 
 - Path: `ctx/docs/product/use-cases.md`
-- Changed: `20260727`
+- Changed: `20260728`
 
-An operator runs a finite migration and receives a final status after the application is initialized, activated, executed, and released.
 
-An operator runs `teq serve`; the HTTP plugin activates its listener, the command waits cooperatively, and SIGINT causes controlled shutdown.
-
-A plugin developer adds a worker or scheduler through runtime metadata without creating another process host.
-
-An application maintainer diagnoses deterministic host and plugin lifecycle records without exposing configuration secrets.
+An operator runs teq db:migrate as a finite command. An operator runs teq web:start until cooperative stop. An operator invokes teq from a nested directory and preserves that cwd while the head root is located. An application maintainer adds declarative Container extensions in bootstrap/container.mjs.

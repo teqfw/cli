@@ -1,6 +1,7 @@
 # Code Overview
 
 - Path: `ctx/docs/code/overview.md`
-- Changed: `20260727`
+- Changed: `20260728`
 
-Implementation uses modern JavaScript ESM and TeqFW namespace-addressed modules. JSDoc describes public structural contracts. `Bootstrap` composes, `Host` controls runtime lifecycle, registries validate metadata products, and adapters isolate Node IO/signals and parsing. Comments explain constraints, not identifier names.
+
+bin/teq.mjs and launcher are bootstrap-layer Composition Root code. They may use direct imports. src/Bootstrap.mjs starts the composed application, src/Host.mjs controls lifecycle, DTOs validate command structure, and adapters isolate parser, IO, and signals.

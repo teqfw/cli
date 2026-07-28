@@ -1,16 +1,9 @@
 # Changelog
 
-All notable changes to this project are documented here.
-
 ## Unreleased
 
-- Redefined `@teqfw/cli` as the standard TeqFW Node.js application host and composition root.
-- Switched runtime discovery to the Git-pinned `@teqfw/di` package and its dependency-first Node package and namespace registries; removed the local package graph.
-- Added lifecycle-provider discovery and deterministic `initialize`, `activate`, `deactivate`, and `dispose` control with rollback.
-- Added `@teqfw/log` lifecycle diagnostics and host-owned signal shutdown.
-- Removed the previous external parser and command-execution component; added a small internal parser.
-- Kept command `cleanup()` only for command-local resources before application deactivation.
-
-## 0.1.0 - 2026-07-26
-
-- Initial command-host release.
+- Rebuilt teq as the TeqFW application Composition Root.
+- Replaced the retired metadata layout with teqfw.fw and teqfw.pkg protocols.
+- Added head discovery, bootstrap configurators, immutable launch context, and pre-resolution Container configuration.
+- Added structural finite and long-running command lifetimes with controlled signal shutdown.
+- Removed the obsolete provider registry and stale tests.

@@ -1,11 +1,12 @@
 # Repository Filesystem
 
 - Path: `ctx/docs/filesystem.md`
-- Changed: `20260727`
+- Changed: `20260728`
 
-- `bin/` — `teq` process boundary.
-- `ctx/` — authoritative ADSM cognitive context.
-- `src/` — TeqFW runtime modules including the host.
-- `test/` — unit, integration, acceptance tests, and isolated fixtures.
-- `README.md`, `CHANGELOG.md` — public product and migration information.
-- `package.json`, lockfile, `types.d.ts` — npm and public type contracts.
+
+- bin: physical teq process entry point.
+- launcher: non-container Composition Root helpers.
+- src: namespace-addressed TeqFW runtime modules.
+- ctx: authoritative ADSM cognitive context.
+- test: unit, integration, acceptance fixtures and tests.
+- README.md, CHANGELOG.md, package.json, types.d.ts: public package contract.
