@@ -5,6 +5,7 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 - Redefined `@teqfw/cli` as the standard TeqFW Node.js application host and composition root.
+- Switched runtime discovery to the Git-pinned `@teqfw/di` package and its dependency-first Node package and namespace registries; removed the local package graph.
 - Added lifecycle-provider discovery and deterministic `initialize`, `activate`, `deactivate`, and `dispose` control with rollback.
 - Added `@teqfw/log` lifecycle diagnostics and host-owned signal shutdown.
 - Removed the previous external parser and command-execution component; added a small internal parser.

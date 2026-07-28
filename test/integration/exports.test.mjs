@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
-import Container from '@teqfw/di/src/Container.mjs';
-import NamespaceRegistry from '@teqfw/di/src/Config/NamespaceRegistry.mjs';
+import Container from '@teqfw/di';
+import NamespaceRegistry from '@teqfw/di/node/registry/namespace';
 import {createCliFixture} from '../helper/fixture.mjs';
 
 test('host modules and logging resolve through DI after namespace configuration', async (context) => {

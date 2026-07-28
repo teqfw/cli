@@ -1,11 +1,11 @@
 # Module Map
 
 - Path: `ctx/docs/code/module-map.md`
-- Changed: `20260727`
+- Changed: `20260728`
 
 - `Bootstrap.mjs` — composition and provider resolution.
 - `Host.mjs` — phase controller, rollback, shutdown, signal outcome, lifecycle logging.
-- `Infra/PackageGraph.mjs` — deterministic production dependency traversal.
+- `@teqfw/di/node/registry/package` — dependency-first immutable production package records used by composition; no local graph implementation exists.
 - `Registry/Provider.mjs` — CLI/lifecycle metadata token validation.
 - `Registry/Command.mjs` — command-provider products.
 - `Registry/Lifecycle.mjs` — lifecycle-provider products and participant identity validation.

@@ -11,16 +11,16 @@ function isProviderToken(token) { return (typeof token === 'string') && /^[A-Za-
 export default class ProviderRegistry {
     /**
      * @param {object} deps
-     * @param {object} deps.packageGraph runtime package graph
+     * @param {object} deps.packageRegistry dependency-first runtime package registry
      */
-    constructor({packageGraph}) {
+    constructor({packageRegistry}) {
         /**
          * @param {'cli'|'lifecycle'} kind metadata provider kind
          * @returns {Promise<object>} ordered unique tokens
          */
         this.build = async function (kind = 'cli') {
             if (!['cli', 'lifecycle'].includes(kind)) throw new TypeError(`Unsupported provider kind: '${kind}'.`);
-            const packages = await packageGraph.build(); const seen = new Set(); const result = [];
+            const packages = await packageRegistry.build(); const seen = new Set(); const result = [];
             for (const record of packages) {
                 const teqfw = record.packageJson.teqfw;
                 if (teqfw === undefined) continue;

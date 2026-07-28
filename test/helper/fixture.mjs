@@ -207,7 +207,7 @@ export async function createCliFixture() {
     const dependencies = {
         '@scope/feature-b': '1.0.0',
         '@teqfw/cli': '0.1.0',
-        '@teqfw/di': '2.7.0',
+        '@teqfw/di': 'git+https://github.com/teqfw/di.git#67a54a0889749ff2f052ae2baf67790125c6ba65',
         'feature-a': '1.0.0',
     };
     await writeJson(path.join(root, 'package.json'), {
@@ -218,6 +218,7 @@ export async function createCliFixture() {
         teqfw: {
             namespaces: [{prefix: 'Fixture_Root_', path: './src', ext: '.mjs'}],
             providers: {cli: ['Fixture_Root_Provider$']},
+            instructions: {fixture: 'root'},
         },
     });
     await writeSource(root, 'src/Provider.mjs', rootProviderSource);
@@ -245,7 +246,6 @@ export async function createCliFixture() {
         namespace: 'Fixture_Transitive',
         id: 'transitive:ping',
         commandPath: ['transitive', 'ping'],
-        dependencies: {'feature-a': '1.0.0'},
     });
 
     return {

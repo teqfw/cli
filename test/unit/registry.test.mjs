@@ -28,24 +28,24 @@ const makeCommand = (id, path) => commandFactory.create({
     execute: async () => {},
 });
 
-test('provider registry preserves graph/declaration order', async () => {
-    const packageGraph = {
+test('provider registry preserves dependency-first registry and declaration order', async () => {
+    const packageRegistry = {
         async build() {
             return [
-                packageRecord('root', ['Root_Provider$', 'Root_Second$']),
                 packageRecord('dependency', ['Dependency_Provider$']),
+                packageRecord('root', ['Root_Provider$', 'Root_Second$']),
             ];
         },
     };
-    const registry = new ProviderRegistry({packageGraph});
+    const registry = new ProviderRegistry({packageRegistry});
     const result = await registry.build();
-    assert.deepEqual(result, ['Root_Provider$', 'Root_Second$', 'Dependency_Provider$']);
+    assert.deepEqual(result, ['Dependency_Provider$', 'Root_Provider$', 'Root_Second$']);
     assert.equal(Object.isFrozen(result), true);
 });
 
 test('provider registry rejects duplicate and malformed metadata', async () => {
     const duplicate = new ProviderRegistry({
-        packageGraph: {
+        packageRegistry: {
             async build() {
                 return [
                     packageRecord('a', ['Same_Provider$']),
@@ -57,12 +57,12 @@ test('provider registry rejects duplicate and malformed metadata', async () => {
     await assert.rejects(() => duplicate.build(), /Duplicate cli provider token/);
 
     const invalid = new ProviderRegistry({
-        packageGraph: {async build() { return [packageRecord('a', ['not/a/provider'])]; }},
+        packageRegistry: {async build() { return [packageRecord('a', ['not/a/provider'])]; }},
     });
     await assert.rejects(() => invalid.build(), /Invalid cli provider token/);
 
     const badShape = new ProviderRegistry({
-        packageGraph: {
+        packageRegistry: {
             async build() {
                 return [{...packageRecord('a'), packageJson: {name: 'a', teqfw: {providers: {cli: 'bad'}}}}];
             },

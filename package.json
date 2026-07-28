@@ -52,13 +52,10 @@
     "validate:ctx": "adsm-ctx validate ."
   },
   "dependencies": {
+    "@teqfw/di": "git+https://github.com/teqfw/di.git#67a54a0889749ff2f052ae2baf67790125c6ba65",
     "@teqfw/log": "^0.1.0"
   },
-  "peerDependencies": {
-    "@teqfw/di": "^2.7.0"
-  },
   "devDependencies": {
-    "@teqfw/di": "^2.7.0",
     "@types/node": "^26.1.2",
     "typescript": "^7.0.2"
   }

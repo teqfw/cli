@@ -59,6 +59,7 @@ type TeqFw_Cli_Package_Providers = Readonly<{
 type TeqFw_Cli_Package_Metadata = Readonly<{
     namespaces?: ReadonlyArray<TeqFw_Cli_Package_Namespace>;
     providers?: TeqFw_Cli_Package_Providers;
+    instructions?: Readonly<Record<string, unknown>>;
 }>;
 type TeqFw_Cli_Package_Json = Readonly<{
     name?: string;
@@ -66,13 +67,6 @@ type TeqFw_Cli_Package_Json = Readonly<{
     teqfw?: TeqFw_Cli_Package_Metadata;
     [key: string]: unknown;
 }>;
-type TeqFw_Cli_Infra_PackageGraph_Record = Readonly<{
-    name: string;
-    rootAbs: string;
-    rootReal: string;
-    packageJson: TeqFw_Cli_Package_Json;
-}>;
-
 type TeqFw_Cli_Adapter_Io = Readonly<{write(message: string): void; error(message: string): void}>;
 type TeqFw_Cli_Adapter_Signal = Readonly<{
     subscribe(handler: (signal: 'SIGINT' | 'SIGTERM') => void): () => void;

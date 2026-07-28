@@ -5,7 +5,7 @@
 ## Install and run
 
 ```bash
-npm install @teqfw/cli @teqfw/di
+npm install @teqfw/cli
 teq --help
 teq serve
 ```
@@ -23,12 +23,13 @@ Runtime packages declare namespaces and optional provider tokens. Only `dependen
     "providers": {
       "cli": ["Vendor_App_Cli_Provider$"],
       "lifecycle": ["Vendor_App_Lifecycle_Provider$"]
-    }
+    },
+    "instructions": {"vendor": {"mode": "example"}}
   }
 }
 ```
 
-A CLI provider exposes `getCommands()`. A lifecycle provider exposes `getLifecycleParticipants()`, returning ordered objects with a globally unique `id` and any of `initialize`, `activate`, `deactivate`, and `dispose`. Components receive feature dependencies through DI; they must not use the container as a service locator.
+A CLI provider exposes `getCommands()`. A lifecycle provider exposes `getLifecycleParticipants()`, returning ordered objects with a globally unique `id` and any of `initialize`, `activate`, `deactivate`, and `dispose`. The DI registry preserves other static `teqfw` instructions for their owning extension; CLI itself interprets only its provider declarations. Components receive feature dependencies through DI; they must not use the container as a service locator.
 
 ## Lifecycle
 
@@ -38,7 +39,7 @@ For a selected command the host performs:
 compose → initialize → activate → run → deactivate → dispose
 ```
 
-Forward ordering follows deterministic runtime-package traversal, metadata token order, and provider return order. Deactivation and disposal use reverse order. Failed initialization disposes initialized participants; failed activation deactivates activated participants then disposes initialized participants. Shutdown is best-effort and preserves the earliest operational failure. Command `cleanup()` remains optional and is only for resources owned by that command; it runs once before application deactivation.
+Forward ordering follows dependency-first runtime-package traversal, metadata token order, and provider return order. Deactivation and disposal use reverse order. Failed initialization disposes initialized participants; failed activation deactivates activated participants then disposes initialized participants. Shutdown is best-effort and preserves the earliest operational failure. Command `cleanup()` remains optional and is only for resources owned by that command; it runs once before application deactivation.
 
 The first `SIGINT` or `SIGTERM` aborts the command through its `AbortSignal`; the host then performs exactly one shutdown. Statuses are `0` success, `1` startup/operational/shutdown failure, `2` usage error, `130` SIGINT, and `143` SIGTERM. Library and plugin code must not call `process.exit()`; `bin/teq.mjs` alone assigns `process.exitCode`.
 
