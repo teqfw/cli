@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Start the `teq` entry point on Node.js 20 and early Node.js 22 releases that do not expose `import.meta.main`.
+- Accept `help` and `version` as bare aliases for the built-in informational commands.
 - Allow commands without inputs to omit `arguments` and `options` in static metadata and runtime products.
 - Rebuilt teq as the TeqFW application Composition Root.
 - Replaced the retired metadata layout with teqfw.fw and teqfw.pkg protocols.

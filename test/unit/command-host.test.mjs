@@ -13,6 +13,23 @@ function createHost() {
     return {host: new Host({parser: new Parser(), signals, io}), signal: (name) => listener(name)};
 }
 
+test('parser accepts bare built-in help and version commands', () => {
+    let output = '';
+    const parser = new Parser();
+    const io = {write(chunk) { output += chunk; }};
+    assert.deepEqual(parser.select({argv: ['node', 'teq', 'help'], version: '1.2.3', commands: [descriptor], io}), {kind: 'information'});
+    assert.match(output, /TeqFW application launcher/);
+    output = '';
+    assert.deepEqual(parser.select({argv: ['node', 'teq', '--help'], version: '1.2.3', commands: [descriptor], io}), {kind: 'information'});
+    assert.match(output, /TeqFW application launcher/);
+    output = '';
+    assert.deepEqual(parser.select({argv: ['node', 'teq', 'version'], version: '1.2.3', commands: [descriptor], io}), {kind: 'information'});
+    assert.equal(output, '1.2.3\n');
+    output = '';
+    assert.deepEqual(parser.select({argv: ['node', 'teq', '--version'], version: '1.2.3', commands: [descriptor], io}), {kind: 'information'});
+    assert.equal(output, '1.2.3\n');
+});
+
 test('host run executes a finite command and reverses plugin shutdown', async () => {
     const calls = [];
     const {host} = createHost();

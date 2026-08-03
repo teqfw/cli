@@ -47,7 +47,7 @@ test('launches without a configurator or CLI plugin component', async () => {
 test('information starts and closes plugins without creating commands', async () => {
     const fixture = await createCliFixture();
     try {
-        const result = await launch({applicationRoot: fixture.root, argv: ['node', 'teq', '--help'], cwd: fixture.root});
+        const result = await launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'help'], cwd: fixture.root});
         assert.equal(result, 0);
         assert.deepEqual(globalThis.__fixtureCalls, ['plugin:start', 'plugin:stop']);
         assert.equal(globalThis.__fixtureLaunch, undefined);
@@ -65,7 +65,7 @@ test('reports the host application version', async () => {
     let output = '';
     process.stdout.write = (chunk) => { output += String(chunk); return true; };
     try {
-        const result = await launch({applicationRoot: fixture.root, argv: ['node', 'teq', '--version'], cwd: fixture.root});
+        const result = await launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'version'], cwd: fixture.root});
         assert.equal(result, 0);
         assert.equal(output, '1.2.3\n');
     } finally {

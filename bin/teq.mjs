@@ -8,6 +8,17 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 import Container from '@teqfw/di';
 import PackageRegistry from '@teqfw/di/node/registry/package';
 
+async function isMainModule() {
+    if (typeof import.meta.main === 'boolean') return import.meta.main;
+    try {
+        const entryPath = await fs.realpath(process.argv[1]);
+        const modulePath = await fs.realpath(fileURLToPath(import.meta.url));
+        return entryPath === modulePath;
+    } catch {
+        return false;
+    }
+}
+
 async function detectApplicationRoot() {
     const packageRoot = path.dirname(path.dirname(await fs.realpath(fileURLToPath(import.meta.url))));
     try {
@@ -56,7 +67,7 @@ export async function launch(params) {
     }, resolve);
 }
 
-if (import.meta.main) {
+if (await isMainModule()) {
     try {
         process.exitCode = await launch({argv: process.argv, cwd: process.cwd()});
     } catch (error) {

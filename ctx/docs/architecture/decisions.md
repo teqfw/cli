@@ -9,7 +9,7 @@
 3. Only a host application may implement `TeqFw_Cli_Api_Container_Configurator`; when present, it returns partial Container instructions and never receives or creates a Container.
 4. Metadata uses teqfw.fw and exact-name teqfw.pkg keys with broadcast visibility.
 5. Namespaces and extensions precede Bootstrap resolution.
-6. Explicit command, head default, then help is the selection precedence.
+6. Explicit command, head default, then built-in help is the selection precedence. The built-in help accepts `help`, `--help`, and `-h`; built-in version accepts `version` and `--version` as its sole argument.
 7. Finite handler and long-running service lifetimes are structurally distinct.
 8. Host owns one cooperative signal shutdown and earliest-error preservation through a private run opened by Bootstrap before plugin startup.
 9. Bootstrap receives launch facts and one private, get-only resolution capability from the Composition Root. It may use that capability only for metadata-declared `TeqFw_Cli_Api_Plugin` components and the selected command product. The capability and Container never enter a CLI plugin component, command, Host, or general runtime dependency; all of those use ordinary declared DI dependencies.

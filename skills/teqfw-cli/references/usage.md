@@ -14,8 +14,9 @@ that directory automatically:
 }
 ```
 
-Run `npm run start`. For a manual local check, use `npm exec -- teq --help` or
-`./node_modules/.bin/teq --help`. Do not require a global installation, invoke
+Run `npm run start`. For a manual local check, use `npm exec -- teq help` or
+`./node_modules/.bin/teq help`; `--help` remains supported. Do not require a
+global installation, invoke
 `bin/teq.mjs` by a package-internal path, or treat a transitive or development
 dependency as the host runtime edge.
 

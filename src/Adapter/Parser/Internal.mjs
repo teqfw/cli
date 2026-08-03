@@ -42,8 +42,8 @@ export default class Internal {
          */
         this.select = function ({argv, version, commands, io, defaultCommand}) {
             const input = argv.slice(2);
-            if (input.includes('--help') || input.includes('-h')) { help(commands, io); return {kind: 'information'}; }
-            if (input.length === 1 && input[0] === '--version') { io.write(`${version}\n`); return {kind: 'information'}; }
+            if (input.includes('--help') || input.includes('-h') || input.includes('help')) { help(commands, io); return {kind: 'information'}; }
+            if (input.length === 1 && (input[0] === '--version' || input[0] === 'version')) { io.write(`${version}\n`); return {kind: 'information'}; }
             if (input.length === 0 && !defaultCommand) { help(commands, io); return {kind: 'information'}; }
             const command = input.length === 0 ? commands.find((item) => item.id === defaultCommand) : commands.find((item) => item.id === input[0]);
             if (!command) throw usage(input.length === 0 ? `default command '${defaultCommand}' is not available.` : `unknown command: '${input.filter((item) => !item.startsWith('-')).join(' ')}'.`);

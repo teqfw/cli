@@ -2,6 +2,8 @@
 
 @teqfw/cli is the standard TeqFW Node.js application launcher. `bin/teq.mjs` is its self-contained physical process entry point and Composition Root.
 
+Node.js 20 or later is supported. The published `teq` executable works both when invoked directly and through npm's `node_modules/.bin/teq` symlink.
+
 ## Install and run
 
 Install `@teqfw/cli` as a production dependency of the host application. Its
@@ -18,8 +20,9 @@ published `bin` declaration makes `teq` available at
 ```
 
 Run `npm run start` or `npm run migrate`. For an explicit local invocation, use
-`npm exec -- teq --help` or `./node_modules/.bin/teq --help`; a global install
-is not required.
+`npm exec -- teq help` or `./node_modules/.bin/teq help`; `--help` and `-h`
+remain supported. Use `teq version` (or `teq --version`) to print the host
+application version. A global install is not required.
 
 ## Startup
 

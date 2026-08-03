@@ -25,11 +25,14 @@ function run(binary, args, cwd) {
 test('teq npm launcher supports help, arbitrary cwd, default command, usage errors, and SIGINT shutdown', async () => {
     const fixture = await createCliFixture();
     try {
-        const help = await run(fixture.launcher, ['--help'], fixture.root);
+        const help = await run(fixture.launcher, ['help'], fixture.root);
         assert.equal(help.code, 0);
         assert.match(help.stdout, /TeqFW application launcher/);
         assert.match(help.stdout, /fixture:finite/);
         assert.doesNotMatch(help.stdout, /fixture finite/);
+        const version = await run(fixture.launcher, ['version'], fixture.root);
+        assert.equal(version.code, 0);
+        assert.equal(version.stdout, '1.2.3\n');
         const nested = path.join(fixture.root, 'nested');
         await fs.mkdir(nested);
         const nestedResult = await run(fixture.launcher, ['fixture:finite'], nested);
