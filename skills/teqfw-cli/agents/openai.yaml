@@ -1,0 +1,4 @@
+interface:
+  display_name: "TeqFW CLI"
+  short_description: "TeqFW Node.js CLI integration"
+  default_prompt: "Use $teqfw-cli to integrate @teqfw/cli into this TeqFW application."

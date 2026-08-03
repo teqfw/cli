@@ -21,6 +21,7 @@
   },
   "types": "./types.d.ts",
   "files": [
+    "skills/",
     "src/",
     "bin/",
     "README.md",
