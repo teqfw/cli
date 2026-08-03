@@ -28,16 +28,20 @@ export default class Bootstrap {
             /** @type {string[]} */
             const pluginIdentifiers = [];
             let defaultCommand;
+            let version;
             for (const record of packages) {
                 const cli = (/** @type {TeqFw_Cli_Manifest_TeqFw} */ (record.packageJson.teqfw ?? {})).fw?.cli ?? {};
                 commandDescriptors.push(...(cli.commands ?? []));
                 if (cli.plugin) pluginIdentifiers.push(cli.plugin);
-                if (record.rootAbs === launch.applicationRoot) defaultCommand = cli.command?.default;
+                if (record.rootAbs === launch.applicationRoot) {
+                    defaultCommand = cli.command?.default;
+                    version = record.packageJson.version;
+                }
             }
             const commands = commandRegistry.build(commandDescriptors);
             const session = host.open({
                 argv: launch.argv,
-                version: launch.version,
+                version,
                 commands,
                 defaultCommand,
                 launch,

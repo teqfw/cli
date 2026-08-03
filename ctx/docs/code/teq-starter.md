@@ -7,7 +7,7 @@
 
 ## Invocation Boundary
 
-`launch({applicationRoot?, argv, cwd, version})` composes and starts an application. Controlled invocations, including integration tests, may supply `applicationRoot`. Otherwise the starter derives it from its installed location `node_modules/@teqfw/cli/bin/teq.mjs`. `cwd` is retained as launch context and never selects the host application.
+`launch({applicationRoot?, argv, cwd})` composes and starts an application. Controlled invocations, including integration tests, may supply `applicationRoot`. Otherwise the starter derives it from its installed location `node_modules/@teqfw/cli/bin/teq.mjs`. `cwd` is retained as launch context and never selects the host application. The starter captures the Node.js composition environment through its native filesystem, path, and process dependencies; it does not read or pass an application version.
 
 `if (import.meta.main)` is the physical-process guard. When Node.js executes this file, it calls `launch` with `process.argv` and `process.cwd`, writes an unhandled startup error to stderr, and assigns `process.exitCode`. When another module imports `launch`, no process is started or exit code assigned.
 
@@ -19,13 +19,14 @@
 4. If declared, dynamically import the host configurator, construct its default export, and apply its namespace roots, preprocessors, postprocessors, and logging instruction to Container.
 5. Resolve `TeqFw_Cli_Bootstrap$` only after all configuration is complete, then start it with launch facts and a private get-only resolution capability.
 
-The host package is the root npm package assembling the graph. Only its manifest may supply host declarations, including the optional configurator and default command. All package manifests may contribute package metadata, namespaces, command descriptors, and one optional CLI plugin component identifier. Package records are composition input only; the starter does not copy or expose a metadata registry. Bootstrap receives argv, cwd, applicationRoot, and version as launch facts; it receives the capability separately and obtains `PackageRegistry` through its declared DI dependencies.
+The host package is the root npm package assembling the graph. Only its manifest may supply host declarations, including the optional configurator and default command. All package manifests may contribute package metadata, namespaces, command descriptors, and one optional CLI plugin component identifier. Package records are composition input only; the starter does not copy or expose a metadata registry. Bootstrap receives argv, cwd, and applicationRoot as launch facts; it receives the capability separately and obtains `PackageRegistry` through its declared DI dependencies.
 
 ## Implementation Constraints
 
 - Use static imports only from Node.js and public `@teqfw/di` exports.
 - Do not import this package's `src` code or host runtime modules.
 - The optional host configurator is the sole dynamic import and is resolved from its declared path relative to applicationRoot.
+- A host configurator is pre-Container code and uses static imports only; it cannot rely on DI-resolved application modules.
 - Do not split pre-Container work into helpers or other modules; all of it remains in this file.
 - Do not create, resolve, or expose Container through the configurator; it only returns declarative instructions.
 - Do not read or interpret command, CLI-plugin, lifecycle, or default-command declarations. Bootstrap reads static metadata after Container startup through `PackageRegistry`.

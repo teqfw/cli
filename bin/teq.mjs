@@ -8,7 +8,7 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 import Container from '@teqfw/di';
 import PackageRegistry from '@teqfw/di/node/registry/package';
 
-/** @param {{applicationRoot?: string, argv: string[], cwd: string, version: string}} params */
+/** @param {{applicationRoot?: string, argv: string[], cwd: string}} params */
 export async function launch(params) {
     const applicationRoot = params.applicationRoot ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..');
     /** @type {ReadonlyArray<TeqFw_Di_Node_Registry_Package_Record>} */
@@ -42,13 +42,12 @@ export async function launch(params) {
         argv: params.argv,
         cwd: params.cwd,
         applicationRoot,
-        version: params.version,
     }, resolve);
 }
 
 if (import.meta.main) {
     try {
-        process.exitCode = await launch({argv: process.argv, cwd: process.cwd(), version: '0.1.0'});
+        process.exitCode = await launch({argv: process.argv, cwd: process.cwd()});
     } catch (error) {
         process.stderr.write(`${error instanceof Error ? error.message : String(error)}\n`);
         process.exitCode = 1;

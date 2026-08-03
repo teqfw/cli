@@ -20,15 +20,6 @@
     "teq": "./bin/teq.mjs"
   },
   "types": "./types.d.ts",
-  "exports": {
-    "./Api/Container/Configurator": "./src/Api/Container/Configurator.mjs",
-    "./Api/Plugin": "./src/Api/Plugin.mjs",
-    "./Dto/Argument": "./src/Dto/Argument.mjs",
-    "./Dto/Option": "./src/Dto/Option.mjs",
-    "./Dto/Command": "./src/Dto/Command.mjs",
-    "./Bootstrap": "./src/Bootstrap.mjs",
-    "./Host": "./src/Host.mjs"
-  },
   "files": [
     "src/",
     "bin/",
