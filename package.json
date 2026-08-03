@@ -22,6 +22,7 @@
   "types": "./types.d.ts",
   "exports": {
     "./Api/Container/Configurator": "./src/Api/Container/Configurator.mjs",
+    "./Api/Plugin": "./src/Api/Plugin.mjs",
     "./Dto/Argument": "./src/Dto/Argument.mjs",
     "./Dto/Option": "./src/Dto/Option.mjs",
     "./Dto/Command": "./src/Dto/Command.mjs",
@@ -58,7 +59,7 @@
     "validate:ctx": "adsm-ctx validate ."
   },
   "dependencies": {
-    "@teqfw/di": ">=2.8.0",
+    "@teqfw/di": "git+https://github.com/teqfw/di.git#main",
     "@teqfw/log": "^0.1.0"
   },
   "devDependencies": {

@@ -1,7 +1,7 @@
 # Launcher Architecture
 
 - Path: `ctx/docs/architecture/overview.skin.md`
-- Changed: `20260728`
+- Changed: `20260803`
 
 
 ## Purpose
@@ -10,7 +10,7 @@ Make TeqFW application composition and runtime shutdown deterministic.
 
 ## Mental Model
 
-`bin/teq.mjs` is the Composition Root. It configures a Container from production metadata and optional host instructions before resolving Bootstrap. Bootstrap assembles active plugins and Host runs lifecycle.
+`bin/teq.mjs` is the Composition Root. It configures a Container from production metadata and optional host instructions before resolving Bootstrap. Bootstrap starts CLI plugin components, creates only the selected command, and Host runs it and shuts it down.
 
 ## Scope
 
@@ -28,7 +28,8 @@ Excludes:
 - Only the root npm package is interpreted for host-related declarations.
 - Only an optional host configurator configures Container extensions.
 - `bin/teq.mjs` is the only Composition Root.
-- Usage failures occur before lifecycle hooks.
+- Every declared CLI plugin component finishes startup before command selection.
+- A command is created only after selection.
 - Shutdown reverses completed work once.
 - Metadata ownership is not metadata secrecy.
 

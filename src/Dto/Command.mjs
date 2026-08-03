@@ -15,8 +15,8 @@ export default class Command {
 export class Factory {
     /**
      * @param {object} deps
-     * @param {TeqFw_Cli_Dto_Argument__Factory$} deps.argumentFactory
-     * @param {TeqFw_Cli_Dto_Option__Factory$} deps.optionFactory
+     * @param {TeqFw_Cli_Dto_Argument__Factory} deps.argumentFactory
+     * @param {TeqFw_Cli_Dto_Option__Factory} deps.optionFactory
      * @param {TeqFw_Cli_Util_DeepFreeze} deps.freeze
      */
     constructor({argumentFactory, optionFactory, freeze}) {

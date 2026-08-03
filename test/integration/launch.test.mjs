@@ -11,22 +11,49 @@ test('launches with a configurator', async () => {
         assert.equal(globalThis.__fixtureConfigurator, fixture.root);
         assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'metadata'), false);
         assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'packages'), false);
+        assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'commandProviders'), false);
+        assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'lifecycleProviders'), false);
+        assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'defaultCommand'), false);
+        assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'resolve'), false);
+        assert.deepEqual(globalThis.__fixtureCalls, ['plugin:start', 'command:finite:create', 'command:finite:run', 'plugin:stop']);
     } finally {
         delete globalThis.__fixtureConfigurator;
         delete globalThis.__fixtureLaunch;
+        delete globalThis.__fixtureCalls;
         await fixture.cleanup();
     }
 });
 
-test('launches without a configurator', async () => {
-    const fixture = await createCliFixture({configurator: false});
+test('launches without a configurator or CLI plugin component', async () => {
+    const fixture = await createCliFixture({configurator: false, plugin: false});
     try {
         const result = await launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'fixture', 'finite'], cwd: fixture.root, version: '0.1.0'});
         assert.equal(result, 0);
         assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'metadata'), false);
         assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'packages'), false);
+        assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'commandProviders'), false);
+        assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'lifecycleProviders'), false);
+        assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'defaultCommand'), false);
+        assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'resolve'), false);
+        assert.deepEqual(globalThis.__fixtureCalls, ['command:finite:create', 'command:finite:run']);
     } finally {
         delete globalThis.__fixtureLaunch;
+        delete globalThis.__fixtureCalls;
+        await fixture.cleanup();
+    }
+});
+
+test('information starts and closes plugins without creating commands', async () => {
+    const fixture = await createCliFixture();
+    try {
+        const result = await launch({applicationRoot: fixture.root, argv: ['node', 'teq', '--help'], cwd: fixture.root, version: '0.1.0'});
+        assert.equal(result, 0);
+        assert.deepEqual(globalThis.__fixtureCalls, ['plugin:start', 'plugin:stop']);
+        assert.equal(globalThis.__fixtureLaunch, undefined);
+    } finally {
+        delete globalThis.__fixtureConfigurator;
+        delete globalThis.__fixtureLaunch;
+        delete globalThis.__fixtureCalls;
         await fixture.cleanup();
     }
 });

@@ -1,7 +1,7 @@
 # TeqFW Application Launcher
 
 - Path: `ctx/docs/product/overview.skin.md`
-- Changed: `20260728`
+- Changed: `20260803`
 
 
 ## Purpose
@@ -29,6 +29,7 @@ Excludes:
 - Composition completes before Bootstrap resolution.
 - Configurators extend but do not create or locate the Container.
 - Metadata is broadcast-visible despite schema ownership.
+- Declared CLI plugin components finish startup before command selection.
 - Finite and long-running commands are structurally distinct.
 
 ## Agent Document

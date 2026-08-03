@@ -7,7 +7,7 @@
  * @param {string} message
  * @returns {Error}
  */
-function usage(message) { const error = new Error(message); error.category = 'usage'; return error; }
+function usage(message) { return /** @type {Error & {category: 'usage'}} */ (Object.assign(new Error(message), {category: 'usage'})); }
 /**
  * @param {string} kind
  * @param {unknown} value
@@ -23,8 +23,8 @@ function convert(kind, value) {
     throw usage(`Expected a boolean, received '${String(value)}'.`);
 }
 /**
- * @param {ReadonlyArray<TeqFw_Cli_Dto_Command>} commands
- * @param {TeqFw_Cli_Adapter_Io$} io
+ * @param {ReadonlyArray<TeqFw_Cli_Dto_Command_Descriptor>} commands
+ * @param {TeqFw_Cli_Adapter_Io} io
  * @returns {void}
  */
 function help(commands, io) { io.write(`TeqFW application launcher\n\nUsage: teq <command> [arguments] [options]\n\nCommands:\n${commands.map((item) => `  ${item.path.join(' ')}  ${item.summary}`).join('\n')}\n`); }
@@ -33,10 +33,10 @@ export default class Internal {
     constructor() {
         /**
          * @param {object} deps
-         * @param {string[]} deps.argv
+         * @param {ReadonlyArray<string>} deps.argv
          * @param {string} deps.version
-         * @param {ReadonlyArray<TeqFw_Cli_Dto_Command>} deps.commands
-         * @param {TeqFw_Cli_Adapter_Io$} deps.io
+         * @param {ReadonlyArray<TeqFw_Cli_Dto_Command_Descriptor>} deps.commands
+         * @param {TeqFw_Cli_Adapter_Io} deps.io
          * @param {string|undefined} deps.defaultCommand
          * @returns {object}
          */
@@ -47,8 +47,8 @@ export default class Internal {
             if (input.length === 0 && !defaultCommand) { help(commands, io); return {kind: 'information'}; }
             const command = input.length === 0 ? commands.find((item) => item.id === defaultCommand) : commands.find((item) => item.path.every((segment, index) => input[index] === segment));
             if (!command) throw usage(input.length === 0 ? `default command '${defaultCommand}' is not available.` : `unknown command: '${input.filter((item) => !item.startsWith('-')).join(' ')}'.`);
-            const values = input.slice(command.path.length); const args = {}; const options = {};
-            for (const option of command.options) options[option.name] = option.defaultValue !== undefined ? (option.repeatable ? [...option.defaultValue] : option.defaultValue) : (option.repeatable ? [] : undefined);
+            const values = input.slice(command.path.length); const args = /** @type {Record<string, any>} */ ({}); const options = /** @type {Record<string, any>} */ ({});
+            for (const option of command.options) options[option.name] = option.defaultValue !== undefined ? (option.repeatable && Array.isArray(option.defaultValue) ? [...option.defaultValue] : option.defaultValue) : (option.repeatable ? [] : undefined);
             const positional = [];
             for (let index = 0; index < values.length; index += 1) {
                 const value = values[index]; if (!value.startsWith('-')) { positional.push(value); continue; }

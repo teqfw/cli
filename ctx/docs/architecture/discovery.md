@@ -1,11 +1,13 @@
 # Discovery and Distributed Metadata
 
 - Path: `ctx/docs/architecture/discovery.md`
-- Changed: `20260728`
+- Changed: `20260803`
 
 
 The DI package registry traverses only production dependencies in deterministic dependency-first order. The starter uses a supplied applicationRoot when present; otherwise it derives the root npm package that assembles this graph from its mounted path `node_modules/@teqfw/cli/bin/teq.mjs`. That package is the host application. Every manifest contributes teqfw metadata. teqfw.fw contains framework protocols and teqfw.pkg uses exact npm names as keys.
 
-teqfw.fw.di.namespaces contains package-relative namespace roots. The starter interprets only the host application's teqfw.fw.cli.container.configurator declaration while configuring Container. The configurator declaration is optional and is not itself the host-discovery criterion. After Container startup, Bootstrap uses `PackageRegistry` to interpret teqfw.fw.cli.commands and lifecycle declarations in package then declaration order, and the host-only teqfw.fw.cli.command.default declaration. PackageRegistry reads immutable static metadata only; it does not configure Container or load providers. The starter and Bootstrap trust declaration shape and let malformed metadata fail at its native use site.
+teqfw.fw.di.namespaces contains package-relative namespace roots. The starter interprets only the host application's teqfw.fw.cli.container.configurator declaration while configuring Container. The configurator declaration is optional and is not itself the host-discovery criterion.
+
+After Container startup, Bootstrap uses its injected `PackageRegistry` to read static metadata in package then declaration order. `teqfw.fw.cli.plugin` is an optional dependency identifier for one `TeqFw_Cli_Api_Plugin` component of its declaring package. Its absence means that package has no CLI startup or shutdown participation. `teqfw.fw.cli.commands` is an ordered array of command descriptors. A descriptor supplies the command identity and all data needed for selection, help, and argument parsing, plus the dependency identifier of the command product; it is not the command product. The host-only `teqfw.fw.cli.command.default` identifies one descriptor. Bootstrap may construct a catalogue from descriptors but must not resolve command products while discovering it. It resolves the declared CLI plugin component from each participating package before selecting a command and resolves the selected descriptor's command product only after selection. PackageRegistry reads immutable static metadata only; it neither configures Container nor loads components. The starter and Bootstrap trust declaration shape and let malformed metadata fail at its native use site.
 
 Path ownership identifies schema owner and primary interpreter; all runtime participants can inspect all metadata. Protocols define authority, aggregation, override, conflict, and ordering rules.

@@ -14,25 +14,16 @@ export async function launch(params) {
     /** @type {ReadonlyArray<TeqFw_Di_Node_Registry_Package_Record>} */
     const packages = await new PackageRegistry({fs, path, appRoot: applicationRoot}).build();
     const container = new Container();
-    /** @type {string[]} */
-    const commandProviders = [];
-    /** @type {string[]} */
-    const lifecycleProviders = [];
     let configurator;
-    let defaultCommand;
 
     for (const record of packages) {
         const framework = (/** @type {TeqFw_Cli_Manifest_TeqFw} */ (record.packageJson.teqfw ?? {})).fw ?? {};
         for (const item of framework.di?.namespaces ?? []) {
             container.addNamespaceRoot(item.prefix, path.resolve(record.rootAbs, item.path), item.ext ?? '.mjs');
         }
-        const cli = framework.cli ?? {};
         if (record.rootAbs === applicationRoot) {
-            configurator = cli.container?.configurator;
-            defaultCommand = cli.command?.default;
+            configurator = framework.cli?.container?.configurator;
         }
-        commandProviders.push(...(cli.commands ?? []));
-        lifecycleProviders.push(...(cli.lifecycle ?? []));
     }
 
     if (configurator) {
@@ -52,11 +43,7 @@ export async function launch(params) {
         cwd: params.cwd,
         applicationRoot,
         version: params.version,
-        commandProviders,
-        lifecycleProviders,
-        defaultCommand,
-        resolve,
-    });
+    }, resolve);
 }
 
 if (import.meta.main) {
