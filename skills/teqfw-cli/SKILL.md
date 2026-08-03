@@ -11,8 +11,11 @@ test conventions as authoritative.
 
 ## Apply
 
-1. Use the published `teq` executable as the Node.js process entry point. Do
-   not import `@teqfw/cli/src/**`; its runtime modules are DI-addressed.
+1. Install `@teqfw/cli` as a host production dependency and invoke its
+   published `teq` executable through a package script. npm exposes it as
+   `node_modules/.bin/teq` and adds that directory to script `PATH`; use
+   `npm exec -- teq --help` for an explicit local invocation. Do not import
+   `@teqfw/cli/src/**`; its runtime modules are DI-addressed.
 2. Keep pre-Container composition in the executable. Only the host application
    may declare an optional Container configurator; plugins never create or
    configure a Container.

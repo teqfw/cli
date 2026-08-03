@@ -2,11 +2,30 @@
 
 @teqfw/cli is the standard TeqFW Node.js application launcher. `bin/teq.mjs` is its self-contained physical process entry point and Composition Root.
 
+## Install and run
+
+Install `@teqfw/cli` as a production dependency of the host application. Its
+published `bin` declaration makes `teq` available at
+`node_modules/.bin/teq`; npm adds that directory to `PATH` for package scripts.
+
+```json
+{
+  "scripts": {
+    "start": "teq web:start",
+    "migrate": "teq db:migrate"
+  }
+}
+```
+
+Run `npm run start` or `npm run migrate`. For an explicit local invocation, use
+`npm exec -- teq --help` or `./node_modules/.bin/teq --help`; a global install
+is not required.
+
 ## Startup
 
-teq captures argv and cwd, derives the host application root from its mounted node_modules path, reads the host manifest, builds production package records, optionally loads the application configurator, configures the Container, and resolves Bootstrap. Bootstrap reads static package metadata, starts declared CLI plugin components, selects a command, and resolves only that command.
+teq captures argv and cwd, resolves the host application root from its physical package location, reads the host manifest, builds production package records, optionally loads the application configurator, configures the Container, and resolves Bootstrap. Bootstrap reads static package metadata, starts declared CLI plugin components, selects a command, and resolves only that command.
 
-The host root is derived from node_modules/@teqfw/cli/bin/teq.mjs. Only its package.json is interpreted for host-related declarations.
+In an installed package, the host root is the parent of the enclosing `node_modules` directory. In a development checkout whose package root has `node_modules`, that package root is used instead. Only the selected host package.json is interpreted for host-related declarations.
 
 The host may declare an optional configurator module, relative to its root, in teqfw.fw.cli.container.configurator. Its default-exported class implements TeqFw_Cli_Api_Container_Configurator; configure() receives applicationRoot and argv. It may return namespaceRoots, preprocessors, postprocessors, and logging instructions; it must not create the Container or locate services.
 

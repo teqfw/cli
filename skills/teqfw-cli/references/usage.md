@@ -1,5 +1,24 @@
 # Usage
 
+## Install and Launch
+
+Add `@teqfw/cli` to the host application's production `dependencies`. Its npm
+`bin` declaration creates `node_modules/.bin/teq`; npm package scripts resolve
+that directory automatically:
+
+```json
+{
+  "scripts": {
+    "start": "teq web:start"
+  }
+}
+```
+
+Run `npm run start`. For a manual local check, use `npm exec -- teq --help` or
+`./node_modules/.bin/teq --help`. Do not require a global installation, invoke
+`bin/teq.mjs` by a package-internal path, or treat a transitive or development
+dependency as the host runtime edge.
+
 ## Host Container Configurator
 
 Only the host application may declare `teqfw.fw.cli.container.configurator`.

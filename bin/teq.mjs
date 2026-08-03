@@ -8,9 +8,20 @@ import {fileURLToPath, pathToFileURL} from 'node:url';
 import Container from '@teqfw/di';
 import PackageRegistry from '@teqfw/di/node/registry/package';
 
+async function detectApplicationRoot() {
+    const packageRoot = path.dirname(path.dirname(await fs.realpath(fileURLToPath(import.meta.url))));
+    try {
+        if ((await fs.stat(path.join(packageRoot, 'node_modules'))).isDirectory()) return packageRoot;
+    } catch {}
+    for (let current = packageRoot; ; current = path.dirname(current)) {
+        if (path.basename(current) === 'node_modules') return path.dirname(current);
+        if (path.dirname(current) === current) throw new Error(`Unable to derive application root from '${packageRoot}'.`);
+    }
+}
+
 /** @param {{applicationRoot?: string, argv: string[], cwd: string}} params */
 export async function launch(params) {
-    const applicationRoot = params.applicationRoot ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..');
+    const applicationRoot = params.applicationRoot ?? await detectApplicationRoot();
     /** @type {ReadonlyArray<TeqFw_Di_Node_Registry_Package_Record>} */
     const packages = await new PackageRegistry({fs, path, appRoot: applicationRoot}).build();
     const container = new Container();

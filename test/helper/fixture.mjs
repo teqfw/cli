@@ -24,7 +24,10 @@ export async function createCliFixture(options = {}) {
  await fs.mkdir(path.join(root, 'node_modules/@teqfw/cli/bin'), {recursive: true});
  await fs.copyFile(path.join(repoRoot, 'package.json'), path.join(root, 'node_modules/@teqfw/cli/package.json'));
  await fs.copyFile(path.join(repoRoot, 'bin/teq.mjs'), path.join(root, 'node_modules/@teqfw/cli/bin/teq.mjs'));
+ await fs.chmod(path.join(root, 'node_modules/@teqfw/cli/bin/teq.mjs'), 0o755);
+ await fs.mkdir(path.join(root, 'node_modules/.bin'), {recursive: true});
+ await fs.symlink('../@teqfw/cli/bin/teq.mjs', path.join(root, 'node_modules/.bin/teq'));
  await fs.symlink(path.join(repoRoot, 'src'), path.join(root, 'node_modules/@teqfw/cli/src'), 'dir');
  await link(root, '@teqfw/di', path.join(repoRoot, 'node_modules/@teqfw/di')); await link(root, '@teqfw/log', path.join(repoRoot, 'node_modules/@teqfw/log'));
- return {root, binary: path.join(root, 'node_modules/@teqfw/cli/bin/teq.mjs'), async cleanup() { await fs.rm(root, {recursive: true, force: true}); }};
+ return {root, binary: path.join(root, 'node_modules/@teqfw/cli/bin/teq.mjs'), launcher: path.join(root, 'node_modules/.bin/teq'), async cleanup() { await fs.rm(root, {recursive: true, force: true}); }};
 }

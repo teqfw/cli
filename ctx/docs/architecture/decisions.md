@@ -5,7 +5,7 @@
 
 
 1. teq is the standard TeqFW process host.
-2. The starter accepts an applicationRoot input or, by default, derives the root npm package from its mounted node_modules path; only that manifest supplies host-related declarations, and its configurator declaration is optional.
+2. The starter accepts an applicationRoot input or derives the root npm package from its physical location: a development checkout root with node_modules, otherwise the parent of the enclosing installed node_modules directory. Only that manifest supplies host-related declarations, and its configurator declaration is optional.
 3. Only a host application may implement `TeqFw_Cli_Api_Container_Configurator`; when present, it returns partial Container instructions and never receives or creates a Container.
 4. Metadata uses teqfw.fw and exact-name teqfw.pkg keys with broadcast visibility.
 5. Namespaces and extensions precede Bootstrap resolution.

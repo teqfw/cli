@@ -1,26 +1,44 @@
 import assert from 'node:assert/strict';
-import {execFile, spawn} from 'node:child_process';
+import {spawn} from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
-import {promisify} from 'node:util';
+import {fileURLToPath} from 'node:url';
 import {createCliFixture} from '../helper/fixture.mjs';
 
-const exec = promisify(execFile);
+const projectRoot = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
 
-test('teq supports help, arbitrary cwd, default command, usage errors, and SIGINT shutdown', async () => {
+function run(binary, args, cwd) {
+    const child = spawn(binary, args, {cwd});
+    let stdout = '';
+    let stderr = '';
+    child.stdout.setEncoding('utf8');
+    child.stderr.setEncoding('utf8');
+    child.stdout.on('data', (data) => { stdout += data; });
+    child.stderr.on('data', (data) => { stderr += data; });
+    return new Promise((resolve, reject) => {
+        child.once('error', reject);
+        child.once('close', (code) => resolve({code, stdout, stderr}));
+    });
+}
+
+test('teq npm launcher supports help, arbitrary cwd, default command, usage errors, and SIGINT shutdown', async () => {
     const fixture = await createCliFixture();
     try {
-        const help = await exec(process.execPath, [fixture.binary, '--help'], {cwd: fixture.root});
+        const help = await run(fixture.launcher, ['--help'], fixture.root);
+        assert.equal(help.code, 0);
         assert.match(help.stdout, /TeqFW application launcher/);
         const nested = path.join(fixture.root, 'nested');
         await fs.mkdir(nested);
-        const nestedResult = await exec(process.execPath, [fixture.binary, 'fixture', 'finite'], {cwd: nested});
+        const nestedResult = await run(fixture.launcher, ['fixture', 'finite'], nested);
+        assert.equal(nestedResult.code, 0);
         assert.match(nestedResult.stdout, /"root"/);
-        const defaultResult = await exec(process.execPath, [fixture.binary], {cwd: fixture.root});
+        const defaultResult = await run(fixture.launcher, [], fixture.root);
+        assert.equal(defaultResult.code, 0);
         assert.match(defaultResult.stdout, /"cwd"/);
-        await assert.rejects(() => exec(process.execPath, [fixture.binary, 'missing'], {cwd: fixture.root}), (error) => error.code === 2);
-        const child = spawn(process.execPath, [fixture.binary, 'fixture', 'wait'], {cwd: fixture.root});
+        const missing = await run(fixture.launcher, ['missing'], fixture.root);
+        assert.equal(missing.code, 2);
+        const child = spawn(fixture.launcher, ['fixture', 'wait'], {cwd: fixture.root});
         let output = '';
         let sent = false;
         child.stdout.setEncoding('utf8');
@@ -39,4 +57,10 @@ test('teq supports help, arbitrary cwd, default command, usage errors, and SIGIN
     } finally {
         await fixture.cleanup();
     }
+});
+
+test('teq source checkout uses its package root', async () => {
+    const result = await run(process.execPath, [path.join(projectRoot, 'bin/teq.mjs'), '--help'], projectRoot);
+    assert.equal(result.code, 0);
+    assert.match(result.stdout, /TeqFW application launcher/);
 });

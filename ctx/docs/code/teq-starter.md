@@ -7,9 +7,9 @@
 
 ## Invocation Boundary
 
-`launch({applicationRoot?, argv, cwd})` composes and starts an application. Controlled invocations, including integration tests, may supply `applicationRoot`. Otherwise the starter derives it from its installed location `node_modules/@teqfw/cli/bin/teq.mjs`. `cwd` is retained as launch context and never selects the host application. The starter captures the Node.js composition environment through its native filesystem, path, and process dependencies; it does not read or pass an application version.
+`launch({applicationRoot?, argv, cwd})` composes and starts an application. Controlled invocations, including integration tests, may supply `applicationRoot`. Otherwise the starter resolves its physical file. If that package root contains `node_modules`, it is a development checkout and becomes applicationRoot. Otherwise the starter ascends until it reaches the enclosing directory named `node_modules`; its parent is applicationRoot. `cwd` is retained as launch context and never selects the host application. The starter captures the Node.js composition environment through its native filesystem, path, and process dependencies; it does not read or pass an application version.
 
-`if (import.meta.main)` is the physical-process guard. When Node.js executes this file, it calls `launch` with `process.argv` and `process.cwd`, writes an unhandled startup error to stderr, and assigns `process.exitCode`. When another module imports `launch`, no process is started or exit code assigned.
+`import.meta.main` is the physical-process guard. The npm-generated `node_modules/.bin/teq` launcher executes this file through its shebang after the operating system resolves the symlink. When Node.js executes this file, it calls `launch` with `process.argv` and `process.cwd`, writes an unhandled startup error to stderr, and assigns `process.exitCode`. When another module imports `launch`, no process is started or exit code assigned.
 
 ## Composition Procedure
 
@@ -39,4 +39,4 @@ Composition is fail-fast. The starter trusts startup parameters, manifests, and 
 
 ## Verification
 
-Integration tests import `launch` with an explicit applicationRoot and cover runs with and without a configurator. Acceptance tests execute the mounted binary, including a non-root cwd, command behavior, and cooperative SIGINT shutdown. The starter has no precondition-validation test matrix.
+Integration tests import `launch` with an explicit applicationRoot and cover runs with and without a configurator. Acceptance tests execute the npm-style `node_modules/.bin/teq` launcher, run the source checkout directly, and cover a non-root cwd, command behavior, and cooperative SIGINT shutdown. The starter has no precondition-validation test matrix.
