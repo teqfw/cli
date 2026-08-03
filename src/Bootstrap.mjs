@@ -39,7 +39,7 @@ export default class Bootstrap {
                 }
             }
             const commands = commandRegistry.build(commandDescriptors);
-            const session = host.open({
+            const run = host.open({
                 argv: launch.argv,
                 version,
                 commands,
@@ -48,19 +48,19 @@ export default class Bootstrap {
             });
             try {
                 for (const identifier of pluginIdentifiers) {
-                    await session.start(/** @type {TeqFw_Cli_Api_Plugin} */ (await resolve(identifier)));
-                    if (session.isInterrupted()) return await session.close();
+                    await run.start(/** @type {TeqFw_Cli_Api_Plugin} */ (await resolve(identifier)));
+                    if (run.isInterrupted()) return await run.close();
                 }
-                const selection = session.select();
-                if (selection.kind === 'information') return await session.close(0);
-                if (selection.kind === 'failure') return await session.close(selection.status);
-                if (selection.kind === 'interrupted') return await session.close();
+                const selection = run.select();
+                if (selection.kind === 'information') return await run.close(0);
+                if (selection.kind === 'failure') return await run.close(selection.status);
+                if (selection.kind === 'interrupted') return await run.close();
                 const command = commandFactory.create(/** @type {Record<string, any>} */ (await resolve(selection.command.component)));
-                await session.execute(selection, command);
-                return await session.close(0);
+                await run.execute(selection, command);
+                return await run.close(0);
             } catch (error) {
-                session.fail(error);
-                return await session.close();
+                run.fail(error);
+                return await run.close();
             }
         };
     }

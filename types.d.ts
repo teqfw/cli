@@ -27,7 +27,7 @@ type TeqFw_Cli_Bootstrap_Resolver = (identifier: string) => Promise<unknown>;
 type TeqFw_Cli_Launch_Context = Readonly<{argv: ReadonlyArray<string>; cwd: string; applicationRoot: string}>;
 type TeqFw_Cli_Host_Command_Selection = Readonly<{kind: 'command'; command: TeqFw_Cli_Dto_Command_Descriptor; args: Readonly<Record<string, unknown>>; options: Readonly<Record<string, unknown>>}>;
 type TeqFw_Cli_Host_Selection = Readonly<{kind: 'information'}> | Readonly<{kind: 'interrupted'}> | Readonly<{kind: 'failure'; status: TeqFw_Cli_Process_Status}> | TeqFw_Cli_Host_Command_Selection;
-type TeqFw_Cli_Host_Session = Readonly<{close(status?: TeqFw_Cli_Process_Status): Promise<TeqFw_Cli_Process_Status>; execute(selection: TeqFw_Cli_Host_Command_Selection, command: TeqFw_Cli_Dto_Command): Promise<void>; fail(error: unknown): void; isInterrupted(): boolean; select(): TeqFw_Cli_Host_Selection; start(plugin: TeqFw_Cli_Api_Plugin): Promise<void>}>;
+type TeqFw_Cli_Host_Run = Readonly<{close(status?: TeqFw_Cli_Process_Status): Promise<TeqFw_Cli_Process_Status>; execute(selection: TeqFw_Cli_Host_Command_Selection, command: TeqFw_Cli_Dto_Command): Promise<void>; fail(error: unknown): void; isInterrupted(): boolean; select(): TeqFw_Cli_Host_Selection; start(plugin: TeqFw_Cli_Api_Plugin): Promise<void>}>;
 type TeqFw_Cli_Node_Fs = typeof import('node:fs/promises');
 type TeqFw_Cli_Node_Path = typeof import('node:path');
 type TeqFw_Cli_Node_Package_Registry = new (deps: {fs: TeqFw_Cli_Node_Fs; path: TeqFw_Cli_Node_Path; appRoot: string}) => {build(): Promise<ReadonlyArray<TeqFw_Di_Node_Registry_Package_Record>>};

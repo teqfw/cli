@@ -20,7 +20,7 @@ Metadata path owner means schema owner and primary interpreter. Metadata remains
 
 Declared CLI plugin components run onStartup before selection. Selection is explicit command, head default command, then help. Help and version create no command, close started plugins, and return 0. Finite commands have lifetime finite and async execute(context). Long-running commands have lifetime long-running and async start(context), returning {done, stop()}. Both receive AbortSignal.
 
-Host runs one private session: it starts components through onStartup, executes an optional selected command, then invokes onShutdown for successfully started components in reverse order. SIGINT and SIGTERM trigger exactly one cooperative shutdown. Only the executable assigns process.exitCode. Statuses are 0 success or information, 1 failure, 2 usage, 130 SIGINT, and 143 SIGTERM.
+Host runs one private run: it starts components through onStartup, executes an optional selected command, then invokes onShutdown for successfully started components in reverse order. SIGINT and SIGTERM trigger exactly one cooperative shutdown. Only the executable assigns process.exitCode. Statuses are 0 success or information, 1 failure, 2 usage, 130 SIGINT, and 143 SIGTERM.
 
 ## Development
 

@@ -31,6 +31,8 @@ Excludes:
 - Metadata is broadcast-visible despite schema ownership.
 - Declared CLI plugin components finish startup before command selection.
 - Finite and long-running commands are structurally distinct.
+- Plugins never terminate the process directly.
+- A parser is only an operator interface, not the product identity.
 
 ## Agent Document
 

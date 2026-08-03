@@ -2,7 +2,7 @@
 
 /**
  * @namespace TeqFw_Cli_Host
- * @description Opens private runtime sessions for selection, command execution, and one shutdown sequence.
+ * @description Opens private runtime runs for selection, command execution, and one shutdown sequence.
  */
 
 /**
@@ -26,7 +26,7 @@ export default class Host {
          * @param {ReadonlyArray<TeqFw_Cli_Dto_Command_Descriptor>} input.commands
          * @param {string|undefined} input.defaultCommand
          * @param {TeqFw_Cli_Launch_Context} input.launch
-         * @returns {TeqFw_Cli_Host_Session}
+         * @returns {TeqFw_Cli_Host_Run}
          */
         this.open = function (input) {
             const {argv, version, commands, defaultCommand, launch} = input;
