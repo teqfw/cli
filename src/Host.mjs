@@ -20,12 +20,7 @@ export default class Host {
      */
     constructor({parser, signals, io}) {
         /**
-         * @param {object} input
-         * @param {ReadonlyArray<string>} input.argv
-         * @param {string} input.version
-         * @param {ReadonlyArray<TeqFw_Cli_Dto_Command_Descriptor>} input.commands
-         * @param {string|undefined} input.defaultCommand
-         * @param {TeqFw_Cli_Launch_Context} input.launch
+         * @param {object} input Launch arguments, application version, command descriptors, default command, and launch context.
          * @returns {TeqFw_Cli_Host_Run}
          */
         this.open = function (input) {
