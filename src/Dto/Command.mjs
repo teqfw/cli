@@ -30,9 +30,11 @@ export class Factory {
             if (data.lifetime !== 'finite' && data.lifetime !== 'long-running') throw new TypeError("Command lifetime must be 'finite' or 'long-running'.");
             if (data.lifetime === 'finite' && (typeof data.execute !== 'function' || data.execute.constructor.name !== 'AsyncFunction')) throw new TypeError('Finite command execute must be an async function.');
             if (data.lifetime === 'long-running' && (typeof data.start !== 'function' || data.start.constructor.name !== 'AsyncFunction')) throw new TypeError('Long-running command start must be an async function.');
-            if (!Array.isArray(data.arguments) || !Array.isArray(data.options)) throw new TypeError('Command arguments and options must be arrays.');
+            const rawArguments = data.arguments === undefined ? [] : data.arguments;
+            const rawOptions = data.options === undefined ? [] : data.options;
+            if (!Array.isArray(rawArguments) || !Array.isArray(rawOptions)) throw new TypeError('Command arguments and options must be arrays when present.');
             if (data.cleanup !== undefined && typeof data.cleanup !== 'function') throw new TypeError('Command cleanup must be a function when present.');
-            const args = data.arguments.map((item) => argumentFactory.create(item)); const options = data.options.map((item) => optionFactory.create(item)); const names = new Set(); const shorts = new Set();
+            const args = rawArguments.map((item) => argumentFactory.create(item)); const options = rawOptions.map((item) => optionFactory.create(item)); const names = new Set(); const shorts = new Set();
             for (let index = 0; index < args.length; index += 1) { const item = args[index]; if (names.has(item.name)) throw new TypeError(`Duplicate input name: '${item.name}'.`); names.add(item.name); if (item.variadic && index !== args.length - 1) throw new TypeError('A variadic argument must be the last argument.'); }
             for (const item of options) { if (names.has(item.name)) throw new TypeError(`Duplicate input name: '${item.name}'.`); names.add(item.name); if (item.short && shorts.has(item.short)) throw new TypeError(`Duplicate option short alias: '${item.short}'.`); if (item.short) shorts.add(item.short); }
             const result = new Command(); result.id = data.id; result.summary = data.summary.trim(); result.lifetime = data.lifetime; result.description = data.description?.trim(); result.arguments = freeze(args); result.options = freeze(options); result.execute = data.execute; result.start = data.start; result.cleanup = data.cleanup;

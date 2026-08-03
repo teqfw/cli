@@ -4,7 +4,7 @@
 - Changed: `20260803`
 
 
-A command descriptor is static package metadata. `teqfw.fw.cli.commands` is an array of objects with these required fields:
+A command descriptor is static package metadata. `teqfw.fw.cli.commands` is an array of objects with required `id`, `summary`, and `component` fields. `arguments` and `options` are optional arrays; when omitted, each becomes an immutable empty array. If supplied, either field must be an array:
 
 ```json
 {
@@ -24,7 +24,7 @@ Command descriptors are read from package metadata; see [discovery.md](discovery
 
 ## Command Product Creation
 
-After Bootstrap selects a descriptor, it resolves the descriptor's `component` Dependency Specifier through its private resolution capability. The DI Container instantiates the component's class. The constructor must return a plain object carrying the command shape: `id`, `summary`, `lifetime`, `arguments`, `options`, and either `execute` (finite) or `start` (long-running). An optional `cleanup` function runs after execution regardless of outcome.
+After Bootstrap selects a descriptor, it resolves the descriptor's `component` Dependency Specifier through its private resolution capability. The DI Container instantiates the component's class. The constructor must return a plain object carrying the command shape: `id`, `summary`, `lifetime`, optional `arguments` and `options` arrays, and either `execute` (finite) or `start` (long-running). Missing input arrays become immutable empty arrays; supplied input fields must be arrays. An optional `cleanup` function runs after execution regardless of outcome.
 
 Bootstrap passes this constructor-returned object through `commandFactory.create()`, which validates the shape and produces an immutable, deep-frozen `TeqFw_Cli_Dto_Command`. The component constructor is the single place where command identity, metadata, and behaviour coexist: the static descriptor in `package.json#teqfw.fw.cli.commands` provides catalogue metadata for help, parsing, and selection; the component provides runtime metadata and implementation.
 
