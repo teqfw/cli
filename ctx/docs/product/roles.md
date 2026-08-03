@@ -4,4 +4,4 @@
 - Changed: `20260728`
 
 
-The OS invokes teq and the executable owns the exit code. The head application owns its manifest and configurator. The launcher owns generic composition and lifecycle. Plugin developers publish metadata and DI products. Operators choose commands without managing plugin order.
+The OS invokes teq and the executable owns the exit code. The host application is the root npm package that assembles the runtime application; it owns the only manifest interpreted for host-related declarations and may provide a configurator. The CLI package owns generic composition and lifecycle. Plugin developers publish metadata and DI products. Operators choose commands without managing plugin order.

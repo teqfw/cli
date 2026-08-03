@@ -10,7 +10,7 @@ Provide one standard process entry point for executable TeqFW applications.
 
 ## Mental Model
 
-The installed teq binary composes an application before Bootstrap starts it. Servers, workers, migrations, and maintenance operations are commands within one application runtime.
+The installed `bin/teq.mjs` is the Composition Root. It composes an application before Bootstrap starts it. Servers, workers, migrations, and maintenance operations are commands within one application runtime.
 
 ## Scope
 
@@ -25,6 +25,7 @@ Excludes:
 ## Invariants
 
 - Application root and original cwd are different launch facts.
+- The host configurator is optional.
 - Composition completes before Bootstrap resolution.
 - Configurators extend but do not create or locate the Container.
 - Metadata is broadcast-visible despite schema ownership.

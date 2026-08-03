@@ -10,6 +10,7 @@ Defines host ownership, sequencing, contracts, ordering, rollback, and integrati
 ## Level Map
 
 - `overview.md` and skin — architecture entry.
+- `container-configurator.md` — optional host Container configuration contract.
 - `execution-lifecycle.md` — phases, rollback, signals, command cleanup.
 - `discovery.md` — runtime graph and provider registries.
 - `command-contract.md` — command and lifecycle products.

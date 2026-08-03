@@ -3,4 +3,4 @@
 - Path: `ctx/docs/code/AGENTS.md`
 - Changed: `20260727`
 
-Maps accepted architecture to modules and verification. It must not create product or architecture semantics.
+Maps accepted architecture to modules and verification. `teq-starter.md` is the implementation contract for the package's only Composition Root. It must not create product or architecture semantics.

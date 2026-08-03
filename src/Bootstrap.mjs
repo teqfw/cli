@@ -13,7 +13,7 @@ export default class Bootstrap {
      */
     constructor({host, commandRegistry, lifecycleRegistry}) {
         /**
-         * @param {TeqFw_Cli_Launch_Context} launch immutable process launch context
+         * @param {TeqFw_Cli_Launch_Context} launch process launch context
          * @returns {Promise<number>}
          */
         this.start = async function (launch) {
@@ -30,14 +30,14 @@ export default class Bootstrap {
                 }
                 return Object.freeze(products);
             };
-            const commandProviders = await resolveAll(launch.metadata.cli.commandProviders, 'command');
-            const lifecycleProviders = await resolveAll(launch.metadata.cli.lifecycleProviders, 'lifecycle');
+            const commandProviders = await resolveAll(launch.commandProviders, 'command');
+            const lifecycleProviders = await resolveAll(launch.lifecycleProviders, 'lifecycle');
             return await host.run({
                 argv: launch.argv,
                 version: launch.version,
                 commands: commandRegistry.build(commandProviders),
                 participants: lifecycleRegistry.build(lifecycleProviders),
-                defaultCommand: launch.metadata.cli.defaultCommand,
+                defaultCommand: launch.defaultCommand,
                 launch,
             });
         };

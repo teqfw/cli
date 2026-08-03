@@ -4,4 +4,4 @@
 - Changed: `20260728`
 
 
-The head package.json declares teqfw.fw.cli.container.configurator relative to its root. The configurator receives immutable startup information and may return ordered preprocessors and postprocessors only. Namespace paths resolve against their publishing package. Do not log secrets, arbitrary configuration values, or raw command input.
+Only the root host package.json may declare host-related settings such as teqfw.fw.cli.container.configurator, relative to its root. When present, the configurator receives applicationRoot and argv and may return additional namespace roots, ordered preprocessors, ordered postprocessors, and a logging flag. Its absence leaves the Container configured from package metadata. Namespace paths resolve against their publishing package. Do not log secrets, arbitrary configuration values, or raw command input.

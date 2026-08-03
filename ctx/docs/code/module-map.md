@@ -4,10 +4,7 @@
 - Changed: `20260728`
 
 
-- bin/teq.mjs: process boundary and final exit code.
-- launcher/HeadApplication.mjs: deterministic head discovery.
-- launcher/Metadata.mjs: metadata validation, namespace and contribution collection.
-- launcher/Configurator.mjs: configurator loading and extension validation.
-- launcher/Launch.mjs: package registry, Container configuration, Bootstrap resolution.
-- src/Bootstrap.mjs: active provider assembly after composition.
+- bin/teq.mjs: self-contained universal starter and process boundary; requirements are in [teq-starter.md](teq-starter.md).
+- src/Api/Container/Configurator.mjs: public optional host configurator contract.
+- src/Bootstrap.mjs: Node.js-only post-composition discovery of CLI declarations and active provider assembly.
 - src/Host.mjs: lifecycle, command lifetime, signals, and cleanup.

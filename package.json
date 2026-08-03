@@ -21,6 +21,7 @@
   },
   "types": "./types.d.ts",
   "exports": {
+    "./Api/Container/Configurator": "./src/Api/Container/Configurator.mjs",
     "./Dto/Argument": "./src/Dto/Argument.mjs",
     "./Dto/Option": "./src/Dto/Option.mjs",
     "./Dto/Command": "./src/Dto/Command.mjs",
@@ -30,7 +31,6 @@
   "files": [
     "src/",
     "bin/",
-    "launcher/",
     "README.md",
     "CHANGELOG.md",
     "LICENSE",
@@ -58,7 +58,7 @@
     "validate:ctx": "adsm-ctx validate ."
   },
   "dependencies": {
-    "@teqfw/di": "git+https://github.com/teqfw/di.git#67a54a0889749ff2f052ae2baf67790125c6ba65",
+    "@teqfw/di": ">=2.8.0",
     "@teqfw/log": "^0.1.0"
   },
   "devDependencies": {

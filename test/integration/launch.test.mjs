@@ -1,2 +1,32 @@
-import assert from 'node:assert/strict'; import test from 'node:test'; import {execFile} from 'node:child_process'; import {promisify} from 'node:util'; import {createCliFixture} from '../helper/fixture.mjs'; const exec = promisify(execFile);
-test('configures the real container before resolving Bootstrap', async () => { const fixture = await createCliFixture(); try { const result = await exec(process.execPath, [fixture.binary, 'fixture', 'finite'], {cwd: fixture.root}); assert.match(result.stdout, /\"cwd\"/); } finally { await fixture.cleanup(); } });
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import {launch} from '../../bin/teq.mjs';
+import {createCliFixture} from '../helper/fixture.mjs';
+
+test('launches with a configurator', async () => {
+    const fixture = await createCliFixture();
+    try {
+        const result = await launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'fixture', 'finite'], cwd: fixture.root, version: '0.1.0'});
+        assert.equal(result, 0);
+        assert.equal(globalThis.__fixtureConfigurator, fixture.root);
+        assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'metadata'), false);
+        assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'packages'), false);
+    } finally {
+        delete globalThis.__fixtureConfigurator;
+        delete globalThis.__fixtureLaunch;
+        await fixture.cleanup();
+    }
+});
+
+test('launches without a configurator', async () => {
+    const fixture = await createCliFixture({configurator: false});
+    try {
+        const result = await launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'fixture', 'finite'], cwd: fixture.root, version: '0.1.0'});
+        assert.equal(result, 0);
+        assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'metadata'), false);
+        assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'packages'), false);
+    } finally {
+        delete globalThis.__fixtureLaunch;
+        await fixture.cleanup();
+    }
+});
