@@ -7,7 +7,7 @@ import {createCliFixture} from '../helper/fixture.mjs';
 test('launches with a configurator', async () => {
     const fixture = await createCliFixture();
     try {
-        const result = await launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'fixture', 'finite'], cwd: fixture.root});
+        const result = await launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'fixture:finite'], cwd: fixture.root});
         assert.equal(result, 0);
         assert.equal(globalThis.__fixtureConfigurator, fixture.root);
         assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'metadata'), false);
@@ -28,7 +28,7 @@ test('launches with a configurator', async () => {
 test('launches without a configurator or CLI plugin component', async () => {
     const fixture = await createCliFixture({configurator: false, plugin: false});
     try {
-        const result = await launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'fixture', 'finite'], cwd: fixture.root});
+        const result = await launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'fixture:finite'], cwd: fixture.root});
         assert.equal(result, 0);
         assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'metadata'), false);
         assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'packages'), false);

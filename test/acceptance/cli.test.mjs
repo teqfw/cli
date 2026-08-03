@@ -28,9 +28,11 @@ test('teq npm launcher supports help, arbitrary cwd, default command, usage erro
         const help = await run(fixture.launcher, ['--help'], fixture.root);
         assert.equal(help.code, 0);
         assert.match(help.stdout, /TeqFW application launcher/);
+        assert.match(help.stdout, /fixture:finite/);
+        assert.doesNotMatch(help.stdout, /fixture finite/);
         const nested = path.join(fixture.root, 'nested');
         await fs.mkdir(nested);
-        const nestedResult = await run(fixture.launcher, ['fixture', 'finite'], nested);
+        const nestedResult = await run(fixture.launcher, ['fixture:finite'], nested);
         assert.equal(nestedResult.code, 0);
         assert.match(nestedResult.stdout, /"root"/);
         const defaultResult = await run(fixture.launcher, [], fixture.root);
@@ -38,7 +40,9 @@ test('teq npm launcher supports help, arbitrary cwd, default command, usage erro
         assert.match(defaultResult.stdout, /"cwd"/);
         const missing = await run(fixture.launcher, ['missing'], fixture.root);
         assert.equal(missing.code, 2);
-        const child = spawn(fixture.launcher, ['fixture', 'wait'], {cwd: fixture.root});
+        const legacy = await run(fixture.launcher, ['fixture', 'finite'], fixture.root);
+        assert.equal(legacy.code, 2);
+        const child = spawn(fixture.launcher, ['fixture:wait'], {cwd: fixture.root});
         let output = '';
         let sent = false;
         child.stdout.setEncoding('utf8');

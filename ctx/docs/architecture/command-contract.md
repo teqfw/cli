@@ -9,7 +9,6 @@ A command descriptor is static package metadata. `teqfw.fw.cli.commands` is an a
 ```json
 {
   "id": "web:start",
-  "path": ["web", "start"],
   "summary": "Start the web service.",
   "arguments": [],
   "options": [],
@@ -17,7 +16,7 @@ A command descriptor is static package metadata. `teqfw.fw.cli.commands` is an a
 }
 ```
 
-`id`, `path`, `summary`, `arguments`, and `options` use the existing command parser's DTO schema. `component` is the command product's Dependency Specifier. Bootstrap builds the command catalogue from descriptors and uses it for help, parsing, and selection without creating command products. The host default selects one descriptor by `id`.
+`id`, `summary`, `arguments`, and `options` use the existing command parser's DTO schema. `id` is the sole public command identity: an operator selects `web:start` with `teq web:start`, and help displays that same identifier. `component` is the command product's Dependency Specifier. Bootstrap builds the command catalogue from descriptors and uses it for help, parsing, and selection without creating command products. The host default selects one descriptor by `id`.
 
 A command product has explicit lifetime. A finite command has lifetime finite and async execute(context). A long-running command has lifetime long-running and async start(context), returning {done: Promise, stop(): Promise or void}. Both receive parsed input, launch context, and AbortSignal. Only Bootstrap creates a command product, and only after the descriptor is selected.
 
@@ -25,7 +24,7 @@ Command descriptors are read from package metadata; see [discovery.md](discovery
 
 ## Command Product Creation
 
-After Bootstrap selects a descriptor, it resolves the descriptor's `component` Dependency Specifier through its private resolution capability. The DI Container instantiates the component's class. The constructor must return a plain object carrying the command shape: `id`, `path`, `summary`, `lifetime`, `arguments`, `options`, and either `execute` (finite) or `start` (long-running). An optional `cleanup` function runs after execution regardless of outcome.
+After Bootstrap selects a descriptor, it resolves the descriptor's `component` Dependency Specifier through its private resolution capability. The DI Container instantiates the component's class. The constructor must return a plain object carrying the command shape: `id`, `summary`, `lifetime`, `arguments`, `options`, and either `execute` (finite) or `start` (long-running). An optional `cleanup` function runs after execution regardless of outcome.
 
 Bootstrap passes this constructor-returned object through `commandFactory.create()`, which validates the shape and produces an immutable, deep-frozen `TeqFw_Cli_Dto_Command`. The component constructor is the single place where command identity, metadata, and behaviour coexist: the static descriptor in `package.json#teqfw.fw.cli.commands` provides catalogue metadata for help, parsing, and selection; the component provides runtime metadata and implementation.
 

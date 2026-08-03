@@ -5,15 +5,12 @@
  * @description Immutable static command descriptor from package metadata.
  */
 const ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9:_-]*$/;
-const SEGMENT_PATTERN = /^[a-z][a-z0-9-]*$/;
 
 export default class Descriptor {
     /** Initializes a static command descriptor. */
     constructor() {
         /** @type {string} */
         this.id = '';
-        /** @type {ReadonlyArray<string>} */
-        this.path = Object.freeze([]);
         /** @type {string} */
         this.summary = '';
         /** @type {ReadonlyArray<TeqFw_Cli_Dto_Argument>} */
@@ -40,7 +37,6 @@ export class Factory {
         this.create = function (data) {
             if (!data || typeof data !== 'object' || Array.isArray(data)) throw new TypeError('Command descriptor must be an object.');
             if (typeof data.id !== 'string' || !ID_PATTERN.test(data.id)) throw new TypeError(`Command id is invalid: '${String(data.id)}'.`);
-            if (!Array.isArray(data.path) || data.path.length === 0 || data.path.some((item) => typeof item !== 'string' || !SEGMENT_PATTERN.test(item))) throw new TypeError('Command path must contain valid non-empty segments.');
             if (typeof data.summary !== 'string' || data.summary.trim().length === 0) throw new TypeError('Command summary must be a non-empty string.');
             if (!Array.isArray(data.arguments) || !Array.isArray(data.options)) throw new TypeError('Command arguments and options must be arrays.');
             if (typeof data.component !== 'string' || data.component.length === 0) throw new TypeError('Command component must be a non-empty Dependency Specifier.');
@@ -62,7 +58,6 @@ export class Factory {
             }
             const result = new Descriptor();
             result.id = data.id;
-            result.path = freeze([...data.path]);
             result.summary = data.summary.trim();
             result.arguments = freeze(args);
             result.options = freeze(options);

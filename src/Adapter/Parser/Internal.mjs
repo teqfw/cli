@@ -27,7 +27,7 @@ function convert(kind, value) {
  * @param {TeqFw_Cli_Adapter_Io} io
  * @returns {void}
  */
-function help(commands, io) { io.write(`TeqFW application launcher\n\nUsage: teq <command> [arguments] [options]\n\nCommands:\n${commands.map((item) => `  ${item.path.join(' ')}  ${item.summary}`).join('\n')}\n`); }
+function help(commands, io) { io.write(`TeqFW application launcher\n\nUsage: teq <command> [arguments] [options]\n\nCommands:\n${commands.map((item) => `  ${item.id}  ${item.summary}`).join('\n')}\n`); }
 export default class Internal {
     /** Creates the parser adapter. */
     constructor() {
@@ -45,9 +45,9 @@ export default class Internal {
             if (input.includes('--help') || input.includes('-h')) { help(commands, io); return {kind: 'information'}; }
             if (input.length === 1 && input[0] === '--version') { io.write(`${version}\n`); return {kind: 'information'}; }
             if (input.length === 0 && !defaultCommand) { help(commands, io); return {kind: 'information'}; }
-            const command = input.length === 0 ? commands.find((item) => item.id === defaultCommand) : commands.find((item) => item.path.every((segment, index) => input[index] === segment));
+            const command = input.length === 0 ? commands.find((item) => item.id === defaultCommand) : commands.find((item) => item.id === input[0]);
             if (!command) throw usage(input.length === 0 ? `default command '${defaultCommand}' is not available.` : `unknown command: '${input.filter((item) => !item.startsWith('-')).join(' ')}'.`);
-            const values = input.slice(command.path.length); const args = /** @type {Record<string, any>} */ ({}); const options = /** @type {Record<string, any>} */ ({});
+            const values = input.slice(1); const args = /** @type {Record<string, any>} */ ({}); const options = /** @type {Record<string, any>} */ ({});
             for (const option of command.options) options[option.name] = option.defaultValue !== undefined ? (option.repeatable && Array.isArray(option.defaultValue) ? [...option.defaultValue] : option.defaultValue) : (option.repeatable ? [] : undefined);
             const positional = [];
             for (let index = 0; index < values.length; index += 1) {

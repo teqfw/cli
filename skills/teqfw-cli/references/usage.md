@@ -49,7 +49,6 @@ Each package may contribute static descriptors under `teqfw.fw.cli.commands`:
 ```json
 {
   "id": "web:start",
-  "path": ["web", "start"],
   "summary": "Start the web service.",
   "arguments": [],
   "options": [],
@@ -57,6 +56,7 @@ Each package may contribute static descriptors under `teqfw.fw.cli.commands`:
 }
 ```
 
+`id` is the command's sole public name: invoke this command as `teq web:start`.
 `component` is a DI dependency identifier. The descriptor supplies help,
 parsing, and selection data; it is not the command product. Only the host may
 set `teqfw.fw.cli.command.default`, which selects a descriptor by `id` when no

@@ -33,7 +33,7 @@ The host may declare an optional configurator module, relative to its root, in t
 
 Runtime metadata uses teqfw.fw and teqfw.pkg. Framework protocols include teqfw.fw.di, teqfw.fw.cli, teqfw.fw.cfg, and teqfw.fw.log. Package protocols use the exact npm name as one key, including teqfw.pkg["@scope/package"].routes. Canonical paths use JavaScript property notation, for example teqfw.fw.cli.command.default.
 
-Metadata path owner means schema owner and primary interpreter. Metadata remains broadcast-visible to all runtime packages. Namespace declarations are teqfw.fw.di.namespaces. The host application alone may publish teqfw.fw.cli.container.configurator and teqfw.fw.cli.command.default. A package may declare one optional TeqFw_Cli_Api_Plugin component in teqfw.fw.cli.plugin. teqfw.fw.cli.commands is an array of static descriptors with id, path, summary, arguments, options, and component; component is resolved only after its descriptor is selected.
+Metadata path owner means schema owner and primary interpreter. Metadata remains broadcast-visible to all runtime packages. Namespace declarations are teqfw.fw.di.namespaces. The host application alone may publish teqfw.fw.cli.container.configurator and teqfw.fw.cli.command.default. A package may declare one optional TeqFw_Cli_Api_Plugin component in teqfw.fw.cli.plugin. teqfw.fw.cli.commands is an array of static descriptors with id, summary, arguments, options, and component. The id is the command's sole public name: `teq web:start` selects `web:start`; component is resolved only after its descriptor is selected.
 
 ## Commands and shutdown
 
