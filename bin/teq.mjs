@@ -9,6 +9,15 @@ import Container from '@teqfw/di';
 import PackageRegistry from '@teqfw/di/node/registry/package';
 
 async function isMainModule() {
+    if (process.env.pm_exec_path) {
+        try {
+            const entryPath = await fs.realpath(process.env.pm_exec_path);
+            const modulePath = await fs.realpath(fileURLToPath(import.meta.url));
+            return entryPath === modulePath;
+        } catch {
+            return false;
+        }
+    }
     if (typeof import.meta.main === 'boolean') return import.meta.main;
     try {
         const entryPath = await fs.realpath(process.argv[1]);

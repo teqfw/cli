@@ -24,6 +24,22 @@ Run `npm run start` or `npm run migrate`. For an explicit local invocation, use
 remain supported. Use `teq version` (or `teq --version`) to print the host
 application version. A global install is not required.
 
+### PM2
+
+PM2 loads the configured script through its own process container. Configure
+the physical `teq` script as the PM2 `script`; the launcher recognizes PM2's
+`pm_exec_path` and starts the application.
+
+```js
+module.exports = {
+  apps: [{
+    name: 'host-app',
+    script: './node_modules/@teqfw/cli/bin/teq.mjs',
+    args: 'web:start',
+  }],
+};
+```
+
 ## Startup
 
 teq captures argv and cwd, resolves the host application root from its physical package location, reads the host manifest, builds production package records, optionally loads the application configurator, configures the Container, and resolves Bootstrap. Bootstrap reads static package metadata, starts declared CLI plugin components, selects a command, and resolves only that command.

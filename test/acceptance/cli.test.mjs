@@ -3,13 +3,13 @@ import {spawn} from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
-import {fileURLToPath} from 'node:url';
+import {fileURLToPath, pathToFileURL} from 'node:url';
 import {createCliFixture} from '../helper/fixture.mjs';
 
 const projectRoot = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
 
-function run(binary, args, cwd) {
-    const child = spawn(binary, args, {cwd});
+function run(binary, args, cwd, options = {}) {
+    const child = spawn(binary, args, {cwd, ...options});
     let stdout = '';
     let stderr = '';
     child.stdout.setEncoding('utf8');
@@ -70,4 +70,18 @@ test('teq source checkout uses its package root', async () => {
     const result = await run(process.execPath, [path.join(projectRoot, 'bin/teq.mjs'), '--help'], projectRoot);
     assert.equal(result.code, 0);
     assert.match(result.stdout, /TeqFW application launcher/);
+});
+
+test('teq PM2 container starts its configured script', async () => {
+    const fixture = await createCliFixture();
+    try {
+        const bootstrap = `import(${JSON.stringify(pathToFileURL(fixture.binary).href)})`;
+        const result = await run(process.execPath, ['--input-type=module', '--eval', bootstrap], fixture.root, {
+            env: {...process.env, pm_exec_path: fixture.binary},
+        });
+        assert.equal(result.code, 0);
+        assert.match(result.stdout, /"root"/);
+    } finally {
+        await fixture.cleanup();
+    }
 });
