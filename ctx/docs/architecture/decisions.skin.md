@@ -3,7 +3,6 @@
 - Path: `ctx/docs/architecture/decisions.skin.md`
 - Changed: `20260803`
 
-
 ## Purpose
 
 Record durable architecture choices that govern composition, discovery, and runtime behaviour of @teqfw/cli.

@@ -3,7 +3,6 @@
 - Path: `ctx/docs/architecture/overview.skin.md`
 - Changed: `20260803`
 
-
 ## Purpose
 
 Make TeqFW application composition and runtime shutdown deterministic.

@@ -3,7 +3,6 @@
 - Path: `ctx/docs/architecture/execution-lifecycle.skin.md`
 - Changed: `20260803`
 
-
 ## Purpose
 
 Define the deterministic runtime phases from Bootstrap hand-off through command execution, shutdown, and exit.

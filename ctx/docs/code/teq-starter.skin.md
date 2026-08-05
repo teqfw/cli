@@ -3,7 +3,6 @@
 - Path: `ctx/docs/code/teq-starter.skin.md`
 - Changed: `20260803`
 
-
 ## Purpose
 
 Provide the single stable process boundary that composes every TeqFW host application.

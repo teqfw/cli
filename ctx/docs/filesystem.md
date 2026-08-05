@@ -3,7 +3,6 @@
 - Path: `ctx/docs/filesystem.md`
 - Changed: `20260803`
 
-
 - bin: self-contained universal teq starter, physical process entry point, and package Composition Root.
 - src: namespace-addressed runtime modules. Their logical TeqFW names are resolved by the configured Container from `teqfw.fw.di.namespaces`; they are not a direct JavaScript import API.
 - ctx: authoritative ADSM cognitive context.

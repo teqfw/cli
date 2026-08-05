@@ -9,6 +9,6 @@
     "target": "ESNext",
     "types": ["node"]
   },
-  "include": ["bin", "src", "test", "types.d.ts", "node_modules/@teqfw/**/*"],
+  "include": ["bin", "src", "test", "types.d.ts", "node_modules/@teqfw/*/src", "node_modules/@teqfw/*/types.d.ts"],
   "exclude": ["dist"]
 }

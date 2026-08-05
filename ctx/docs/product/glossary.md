@@ -3,7 +3,6 @@
 - Path: `ctx/docs/product/glossary.md`
 - Changed: `20260803`
 
-
 - Host application: root npm package that assembles the runtime application.
 - Application root: root directory of the host application, independent of the original cwd.
 - Original cwd: process working directory retained in launch context.

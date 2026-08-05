@@ -3,7 +3,6 @@
 - Path: `ctx/docs/architecture/command-contract.md`
 - Changed: `20260803`
 
-
 A command descriptor is static package metadata. `teqfw.fw.cli.commands` is an array of objects with required `id`, `summary`, and `component` fields. `arguments` and `options` are optional arrays; when omitted, each becomes an immutable empty array. If supplied, either field must be an array:
 
 ```json

@@ -3,7 +3,6 @@
 - Path: `ctx/docs/architecture/discovery.md`
 - Changed: `20260803`
 
-
 The DI package registry traverses only production dependencies in deterministic dependency-first order. The starter uses a supplied applicationRoot when present; otherwise it derives the root npm package from its physical starter path: the package root is selected in a development checkout with `node_modules`, or the parent of the enclosing installed `node_modules` directory is selected. That package is the host application. Every manifest contributes teqfw metadata. teqfw.fw contains framework protocols and teqfw.pkg uses exact npm names as keys.
 
 teqfw.fw.di.namespaces contains package-relative namespace roots. The starter interprets only the host application's teqfw.fw.cli.container.configurator declaration while configuring Container. The configurator declaration is optional and is not itself the host-discovery criterion.

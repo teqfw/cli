@@ -35,7 +35,7 @@ export default class Bootstrap {
                 if (cli.plugin) pluginIdentifiers.push(cli.plugin);
                 if (record.rootAbs === launch.applicationRoot) {
                     defaultCommand = cli.command?.default;
-                    version = record.packageJson.version;
+                    if (typeof record.packageJson.version === "string") version = record.packageJson.version;
                 }
             }
             const commands = commandRegistry.build(commandDescriptors);

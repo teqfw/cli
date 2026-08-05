@@ -7,9 +7,7 @@
  */
 export default class Configurator {
     /**
-     * @param {object} params
-     * @param {string} params.applicationRoot Host application directory supplied to the starter or derived from its mounted path.
-     * @param {string[]} params.argv Full process argument vector, including the Node executable and teq script paths.
+     * @param {TeqFw_Cli_Api_Container_Configurator_Params} params
      * @returns {TeqFw_Cli_Api_Container_Configurator_Configuration|Promise<TeqFw_Cli_Api_Container_Configurator_Configuration>}
      */
     configure(params) {

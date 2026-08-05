@@ -48,14 +48,18 @@
     "test:integration": "find test/integration -name '*.test.mjs' -print0 | xargs -0 node --test",
     "test:acceptance": "find test/acceptance -name '*.test.mjs' -print0 | xargs -0 node --test",
     "validate:esm": "teqfw-esm-validator src --profile base",
-    "validate:ctx": "adsm-ctx validate ."
+    "validate:ctx": "adsm-ctx validate .",
+    "typecheck": "tsc -p jsconfig.json",
+    "lint:md": "markdownlint-cli2 \"skills/**/*.md\" \"*.md\""
   },
   "dependencies": {
-    "@teqfw/di": "git+https://github.com/teqfw/di.git#main",
-    "@teqfw/log": "^0.1.0"
+    "@teqfw/di": "github:teqfw/di#main",
+    "@teqfw/log": "github:teqfw/log#main"
   },
   "devDependencies": {
     "@types/node": "^26.1.2",
-    "typescript": "^7.0.2"
+    "markdownlint-cli2": "^0.23.2",
+    "typescript": "^5.9.3",
+    "typescript-language-server": "^5.3.0"
   }
 }

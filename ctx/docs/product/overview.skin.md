@@ -3,7 +3,6 @@
 - Path: `ctx/docs/product/overview.skin.md`
 - Changed: `20260803`
 
-
 ## Purpose
 
 Provide one standard process entry point for executable TeqFW applications.

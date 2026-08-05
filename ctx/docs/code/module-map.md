@@ -3,7 +3,6 @@
 - Path: `ctx/docs/code/module-map.md`
 - Changed: `20260803`
 
-
 - bin/teq.mjs: self-contained universal starter and process boundary; requirements are in [teq-starter.md](teq-starter.md).
 - src/Api/Container/Configurator.mjs: namespace-addressed optional host configurator contract; consumers use its ambient JSDoc type, not a direct module import.
 - src/Api/Plugin.mjs: namespace-addressed JSDoc `@interface` `TeqFw_Cli_Api_Plugin` with `onStartup` and `onShutdown`; implementations declare `@implements`.
