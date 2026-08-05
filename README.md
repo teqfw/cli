@@ -1,14 +1,34 @@
 # @teqfw/cli
 
-@teqfw/cli is the standard TeqFW Node.js application launcher. `bin/teq.mjs` is its self-contained physical process entry point and Composition Root.
+![npms.io](https://img.shields.io/npm/dm/@teqfw/cli)
 
-Node.js 20 or later is supported. The published `teq` executable works both when invoked directly and through npm's `node_modules/.bin/teq` symlink.
+> **Human-governed. Agent-built. Agent-ready.**
 
-## Install and run
+`@teqfw/cli` is the standard Node.js process host for TeqFW applications: a single `teq` executable builds the application runtime, starts declared components, selects a command, and coordinates its execution and shutdown. It is part of the Tequila Framework (TeqFW): created and evolved by coding agents under the architectural direction and final responsibility of Alex Gusev, and shipped with a version-matched Agent Skill so other agents can understand, integrate, and use it correctly.
 
-Install `@teqfw/cli` as a production dependency of the host application. Its
-published `bin` declaration makes `teq` available at
-`node_modules/.bin/teq`; npm adds that directory to `PATH` for package scripts.
+## Why use it
+
+> **A TeqFW application needs one place where its runtime graph is composed, its commands are selected, and its process lifecycle is governed.**
+
+`bin/teq.mjs` is the self-contained Composition Root of every TeqFW application. It establishes the host application root independently of the original working directory, builds the production package graph, registers published DI namespace roots, optionally applies the host Container configurator, and resolves Bootstrap. Bootstrap reads static package metadata, starts declared CLI plugin components in deterministic order, selects a command, and resolves only that command.
+
+That enables:
+
+- one process host for HTTP services, workers, schedulers, migrations, and maintenance commands;
+- commands declared as static metadata in package manifests instead of hard-coded entry points;
+- finite commands (`execute`) and long-running services (`start`) with cooperative signal shutdown;
+- deterministic plugin startup and reverse shutdown rollback;
+- the same launcher on direct execution, the npm `teq` symlink, and PM2.
+
+## Quick Start
+
+Install `@teqfw/cli` as a production dependency of the host application:
+
+```sh
+npm i @teqfw/cli
+```
+
+The package publishes the `teq` binary; npm exposes it at `node_modules/.bin/teq` and adds that directory to script `PATH`:
 
 ```json
 {
@@ -19,16 +39,9 @@ published `bin` declaration makes `teq` available at
 }
 ```
 
-Run `npm run start` or `npm run migrate`. For an explicit local invocation, use
-`npm exec -- teq help` or `./node_modules/.bin/teq help`; `--help` and `-h`
-remain supported. Use `teq version` (or `teq --version`) to print the host
-application version. A global install is not required.
+Run `npm run start` or `npm run migrate`. For an explicit local invocation use `npm exec -- teq help`; `--help` and `-h` remain supported. Use `teq version` (or `teq --version`) to print the host application version. A global install is not required.
 
-### PM2
-
-PM2 loads the configured script through its own process container. Configure
-the physical `teq` script as the PM2 `script`; the launcher recognizes PM2's
-`pm_exec_path` and starts the application.
+Under PM2, point the process at the physical launcher script; the launcher recognizes PM2's process container and starts the application:
 
 ```js
 module.exports = {
@@ -40,26 +53,33 @@ module.exports = {
 };
 ```
 
-## Startup
+## Best fit
 
-teq captures argv and cwd, resolves the host application root from its physical package location, reads the host manifest, builds production package records, optionally loads the application configurator, configures the Container, and resolves Bootstrap. Bootstrap reads static package metadata, starts declared CLI plugin components, selects a command, and resolves only that command.
+Use `@teqfw/cli` when you build a TeqFW application and want a standard, metadata-driven launcher instead of a hand-written entry script. It fits applications assembled from DI packages whose operations are exposed as declared CLI commands: web services, workers, schedulers, migrations, and maintenance commands in one process.
 
-In an installed package, the host root is the parent of the enclosing `node_modules` directory. In a development checkout whose package root has `node_modules`, that package root is used instead. Only the selected host package.json is interpreted for host-related declarations.
+## Boundaries
 
-The host may declare an optional configurator module, relative to its root, in teqfw.fw.cli.container.configurator. Its default-exported class implements TeqFw_Cli_Api_Container_Configurator; configure() receives applicationRoot and argv. It may return namespaceRoots, preprocessors, postprocessors, and logging instructions; it must not create the Container or locate services.
+- The `teq` executable owns the process exit code; plugins and commands never call `process.exit`.
+- Only the host application may declare the Container configurator or the default command; plugins never create or configure a Container.
+- Runtime modules in `src/` are DI-addressed, not a direct JavaScript import API.
+- Detailed contracts and integration rules live in the package's Agent Skill, not in this README.
 
-## Metadata
+## Agent-Driven Development
 
-Runtime metadata uses teqfw.fw and teqfw.pkg. Framework protocols include teqfw.fw.di, teqfw.fw.cli, teqfw.fw.cfg, and teqfw.fw.log. Package protocols use the exact npm name as one key, including teqfw.pkg["@scope/package"].routes. Canonical paths use JavaScript property notation, for example teqfw.fw.cli.command.default.
+TeqFW is built through the same development model that it is designed to enable: one human defines the intent, architecture, constraints, and acceptance criteria; coding agents implement and maintain the products; other agents use those products in different combinations to create applications.
 
-Metadata path owner means schema owner and primary interpreter. Metadata remains broadcast-visible to all runtime packages. Namespace declarations are teqfw.fw.di.namespaces. The host application alone may publish teqfw.fw.cli.container.configurator and teqfw.fw.cli.command.default. A package may declare one optional TeqFw_Cli_Api_Plugin component in teqfw.fw.cli.plugin. teqfw.fw.cli.commands is an array of static descriptors with id, summary, optional arguments and options arrays, and component. Omit either array when the command accepts no corresponding input; an explicitly supplied value must be an array. The id is the command's sole public name: `teq web:start` selects `web:start`; component is resolved only after its descriptor is selected.
+`@teqfw/cli` is part of the Tequila Framework (TeqFW). The package includes a version-matched Agent Skill in `skills/teqfw-cli`. The README provides a human-facing product overview; the skill provides agents with the package concepts, contracts, integration rules, examples, and boundaries.
 
-## Commands and shutdown
+Mount the skill into a host project:
 
-Declared CLI plugin components run onStartup before selection. Selection is explicit command, head default command, then help. Help and version create no command, close started plugins, and return 0. Finite commands have lifetime finite and async execute(context). Long-running commands have lifetime long-running and async start(context), returning {done, stop()}. Both receive AbortSignal.
+```sh
+mkdir -p .agents/skills
+ln -s ../../node_modules/@teqfw/cli/skills/teqfw-cli \
+  .agents/skills/teqfw-cli
+```
 
-Host runs one private run: it starts components through onStartup, executes an optional selected command, then invokes onShutdown for successfully started components in reverse order. SIGINT and SIGTERM trigger exactly one cooperative shutdown. Only the executable assigns process.exitCode. Statuses are 0 success or information, 1 failure, 2 usage, 130 SIGINT, and 143 SIGTERM.
+Each TeqFW package is both a practical software component and a working demonstration of human-governed, agent-driven development. This work follows the Agent-Driven Software Management (ADSM) approach: human intent, architectural authority, acceptance, and responsibility remain authoritative; agents act as implementation and reasoning partners.
 
-## Development
-
-Run npm test, npm run validate:esm, and npm run validate:ctx.
+- [Tequila Framework](https://teqfw.com/?from=github-teqfw-cli)
+- [Agent-Driven Software Management: A Practical Guide](http://fly.wiredgeese.com/flancer/leanpub/adsm-en/?from=github-teqfw-cli)
+- [Alex Gusev](https://github.com/flancer64)

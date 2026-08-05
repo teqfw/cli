@@ -1,6 +1,6 @@
 {
   "name": "@teqfw/cli",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "description": "Standard Node.js process host and composition root for TeqFW applications.",
   "type": "module",
   "license": "Apache-2.0",
@@ -24,6 +24,7 @@
     "skills/",
     "src/",
     "bin/",
+    "jsconfig.json",
     "README.md",
     "CHANGELOG.md",
     "LICENSE",
@@ -53,8 +54,8 @@
     "lint:md": "markdownlint-cli2 \"skills/**/*.md\" \"*.md\""
   },
   "dependencies": {
-    "@teqfw/di": "github:teqfw/di#main",
-    "@teqfw/log": "github:teqfw/log#main"
+    "@teqfw/di": ">=2.9.0",
+    "@teqfw/log": ">=2.0.0"
   },
   "devDependencies": {
     "@types/node": "^26.1.2",

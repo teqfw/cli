@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## [2.0.0] - 2026-08-05
+
+Initial release as the standard Node.js process host for TeqFW applications.
 
 - Start the `teq` entry point on Node.js 20 and early Node.js 22 releases that do not expose `import.meta.main`.
 - Accept `help` and `version` as bare aliases for the built-in informational commands.
