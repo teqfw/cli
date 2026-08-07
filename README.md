@@ -4,7 +4,7 @@
 
 > **Human-governed. Agent-built. Agent-ready.**
 
-`@teqfw/cli` is the standard Node.js process host for TeqFW applications: a single `teq` executable builds the application runtime, starts declared components, selects a command, and coordinates its execution and shutdown. It is part of the Tequila Framework (TeqFW): created and evolved by coding agents under the architectural direction and final responsibility of Alex Gusev, and shipped with a version-matched Agent Skill so other agents can understand, integrate, and use it correctly.
+`@teqfw/cli` is the standard Node.js process host for TeqFW applications: a single `teq` executable builds the application runtime, starts declared components, selects a command, and coordinates its execution and shutdown. It is part of the Tequila Framework (TeqFW): created and evolved by coding agents under the architectural direction and final responsibility of [Alex Gusev](https://github.com/flancer64), and shipped with a version-matched Agent Skill so other agents can understand, integrate, and use it correctly.
 
 ## Why use it
 
