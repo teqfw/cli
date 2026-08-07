@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.0] - 2026-08-07
+
+- Load the standard CLI configuration before Bootstrap and plugin or command resolution.
+- Expose the immutable runtime configuration snapshot through DI as `TeqFw_Cli_Config$`.
+- Support host-provided pre-DI Container configuration through the documented `bootstrap/di-config.mjs` convention.
+- Normalize dotenv selection and launch context while preserving the original `argv` for the host launch boundary.
+- Raise the minimum supported production dependency versions to the current npm releases of `@teqfw/di`, `@teqfw/log`, and `@teqfw/cfg`.
+
 ## [2.0.0] - 2026-08-05
 
 Initial release as the standard Node.js process host for TeqFW applications.
