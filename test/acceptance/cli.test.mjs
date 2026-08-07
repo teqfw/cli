@@ -33,6 +33,11 @@ test('teq npm launcher supports help, arbitrary cwd, default command, usage erro
         const version = await run(fixture.launcher, ['version'], fixture.root);
         assert.equal(version.code, 0);
         assert.equal(version.stdout, '1.2.3\n');
+        const selected = path.join(fixture.root, 'selected.env');
+        await fs.writeFile(selected, 'TEQFW_FIXTURE__VALUE=selected\n');
+        const dotenvResult = await run(fixture.launcher, ['fixture:finite', '--dotenv-file=' + selected], fixture.root);
+        assert.equal(dotenvResult.code, 0);
+        assert.match(dotenvResult.stdout, /"root"/);
         const nested = path.join(fixture.root, 'nested');
         await fs.mkdir(nested);
         const nestedResult = await run(fixture.launcher, ['fixture:finite'], nested);

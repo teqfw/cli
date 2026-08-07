@@ -10,7 +10,7 @@
 
 > **A TeqFW application needs one place where its runtime graph is composed, its commands are selected, and its process lifecycle is governed.**
 
-`bin/teq.mjs` is the self-contained Composition Root of every TeqFW application. It establishes the host application root independently of the original working directory, builds the production package graph, registers published DI namespace roots, dynamically loads the pre-DI host configurator, loads cfg Sources exactly once, and only then resolves Bootstrap. Bootstrap reads static package metadata, starts declared CLI plugin components in deterministic order, selects a command, and resolves only that command.
+`bin/teq.mjs` is the self-contained Composition Root of every TeqFW application. It establishes the host application root independently of the original working directory, builds the production package graph, registers published DI namespace roots, dynamically loads the pre-DI host configurator, loads host defaults plus the application `.env` and process.env exactly once, and only then resolves Bootstrap. Bootstrap reads static package metadata, starts declared CLI plugin components in deterministic order, selects a command, and resolves only that command.
 
 That enables:
 
@@ -39,7 +39,7 @@ The package publishes the `teq` binary; npm exposes it at `node_modules/.bin/teq
 }
 ```
 
-Run `npm run start` or `npm run migrate`. For an explicit local invocation use `npm exec -- teq help`; `--help` and `-h` remain supported. Use `teq version` (or `teq --version`) to print the host application version. A global install is not required.
+Run `npm run start` or `npm run migrate`. For an explicit local invocation use `npm exec -- teq help`; `--help` and `-h` remain supported. Use `--dotenv-file path/to/file.env` (or `--dotenv-file=path/to/file.env`) to select an explicit dotenv file; the path is relative to the host application root. Use `teq version` (or `teq --version`) to print the host application version. A global install is not required.
 
 Under PM2, point the process at the physical launcher script; the launcher recognizes PM2's process container and starts the application:
 

@@ -45,9 +45,14 @@ export default class Configurator {
 ```
 
 All returned properties are optional. The configurator may add namespace roots,
-preprocessors, postprocessors, diagnostic logging, and ordered cfg Source descriptors
-under configuration.sources. It neither receives nor constructs the Container. CLI
-loads those Sources exactly once before resolving Bootstrap or plugins.
+preprocessors, postprocessors, diagnostic logging, and additional cfg Source descriptors
+under configuration.sources. Host Sources are application defaults. CLI then appends the
+application-root `.env` when present and `process.env`, so process.env has the highest
+precedence. Use `--dotenv-file path/to/file.env` or `--dotenv-file=path/to/file.env` to
+select an explicit dotenv file relative to the host root; the option is consumed by the
+launcher before command parsing. The configurator neither receives nor constructs the
+Container. CLI loads the final Source list exactly once before resolving Bootstrap or
+plugins.
 
 ## Commands
 

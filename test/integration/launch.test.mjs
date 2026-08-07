@@ -23,6 +23,7 @@ test('launches with a configurator', async () => {
         assert.deepEqual(globalThis.__fixtureCalls, ['plugin:start', 'command:finite:create', 'command:finite:run', 'plugin:stop']);
     } finally {
         delete globalThis.__fixtureConfigurator;
+        delete globalThis.__fixtureConfiguratorArgv;
         delete globalThis.__fixturePluginConfig;
         delete globalThis.__fixtureCommandConfig;
         delete globalThis.__fixtureLaunch;
@@ -95,6 +96,86 @@ test('loads configuration before resolving plugins and commands', async () => {
         delete globalThis.__fixturePluginConfig;
         delete globalThis.__fixtureCommandConfig;
         delete globalThis.__fixtureLaunch;
+        delete globalThis.__fixtureCalls;
+        await fixture.cleanup();
+    }
+});
+
+test('loads the application .env and gives process.env highest precedence', async () => {
+    const fixture = await createCliFixture();
+    const key = 'TEQFW_FIXTURE__VALUE';
+    const before = process.env[key];
+    await fs.writeFile(path.join(fixture.root, '.env'), `${key}=dotenv\n`);
+    process.env[key] = 'environment';
+    try {
+        const result = await launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'fixture:finite'], cwd: fixture.root});
+        assert.equal(result, 0);
+        assert.deepEqual(globalThis.__fixturePluginConfig, {VALUE: 'environment'});
+        assert.deepEqual(globalThis.__fixtureCommandConfig, {VALUE: 'environment'});
+    } finally {
+        if (before === undefined) delete process.env[key];
+        else process.env[key] = before;
+        delete globalThis.__fixturePluginConfig;
+        delete globalThis.__fixtureCommandConfig;
+        delete globalThis.__fixtureCalls;
+        delete globalThis.__fixtureLaunch;
+        await fixture.cleanup();
+    }
+});
+
+test('loads an explicit dotenv file and removes the global option before command parsing', async () => {
+    const fixture = await createCliFixture();
+    await fs.writeFile(path.join(fixture.root, 'selected.env'), 'TEQFW_FIXTURE__VALUE=explicit\n');
+    try {
+        const result = await launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'fixture:finite', '--dotenv-file=selected.env'], cwd: fixture.root});
+        assert.equal(result, 0);
+        assert.deepEqual(globalThis.__fixturePluginConfig, {VALUE: 'explicit'});
+        assert.deepEqual(globalThis.__fixtureCommandConfig, {VALUE: 'explicit'});
+        assert.deepEqual(globalThis.__fixtureConfiguratorArgv, ['node', 'teq', 'fixture:finite', '--dotenv-file=selected.env']);
+        assert.deepEqual(globalThis.__fixtureLaunch.argv, ['node', 'teq', 'fixture:finite']);
+    } finally {
+        delete globalThis.__fixtureConfiguratorArgv;
+        delete globalThis.__fixturePluginConfig;
+        delete globalThis.__fixtureCommandConfig;
+        delete globalThis.__fixtureLaunch;
+        delete globalThis.__fixtureCalls;
+        await fixture.cleanup();
+    }
+});
+
+test('dotenv overrides host defaults when process.env does not define the key', async () => {
+    const fixture = await createCliFixture();
+    const key = 'TEQFW_FIXTURE__VALUE';
+    const before = process.env[key];
+    delete process.env[key];
+    await fs.writeFile(path.join(fixture.root, '.env'), key + '=dotenv\n');
+    try {
+        const result = await launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'fixture:finite'], cwd: fixture.root});
+        assert.equal(result, 0);
+        assert.deepEqual(globalThis.__fixturePluginConfig, {VALUE: 'dotenv'});
+        assert.deepEqual(globalThis.__fixtureCommandConfig, {VALUE: 'dotenv'});
+    } finally {
+        if (before === undefined) delete process.env[key];
+        else process.env[key] = before;
+        delete globalThis.__fixturePluginConfig;
+        delete globalThis.__fixtureCommandConfig;
+        delete globalThis.__fixtureCalls;
+        delete globalThis.__fixtureLaunch;
+        await fixture.cleanup();
+    }
+});
+
+test('missing explicit dotenv file fails before plugin resolution', async () => {
+    const fixture = await createCliFixture();
+    try {
+        await assert.rejects(
+            launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'fixture:finite', '--dotenv-file', 'missing.env'], cwd: fixture.root}),
+            (error) => error instanceof Error && error.name === 'CfgError',
+        );
+        assert.equal(globalThis.__fixturePluginConfig, undefined);
+        assert.equal(globalThis.__fixtureCalls, undefined);
+    } finally {
+        delete globalThis.__fixturePluginConfig;
         delete globalThis.__fixtureCalls;
         await fixture.cleanup();
     }

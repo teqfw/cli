@@ -2,7 +2,7 @@
 
 `@teqfw/cli` provides the `teq` executable, the Node.js Composition Root for a
 TeqFW application. It builds the production package graph, registers published
-DI namespace roots, applies optional host configuration, then resolves
+DI namespace roots, applies optional host configuration, then loads host defaults, the application `.env` when present, and process.env before resolving
 Bootstrap.
 
 The host application is the root package assembled by the executable. It owns

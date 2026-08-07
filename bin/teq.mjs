@@ -39,9 +39,51 @@ async function detectApplicationRoot() {
     }
 }
 
+/**
+ * @param {ReadonlyArray<string>} argv
+ * @returns {{argv: string[], dotenvPath: string|undefined, dotenvExplicit: boolean}}
+ */
+function extractGlobalOptions(argv) {
+    const result = [];
+    let dotenvPath;
+    let dotenvExplicit = false;
+    for (let index = 0; index < argv.length; index++) {
+        const value = argv[index];
+        if (value === '--dotenv-file') {
+            const next = argv[++index];
+            if (next === undefined) throw new Error("Option '--dotenv-file' requires a value.");
+            dotenvPath = next;
+            dotenvExplicit = true;
+        } else if (value.startsWith('--dotenv-file=')) {
+            dotenvPath = value.slice('--dotenv-file='.length);
+            if (!dotenvPath) throw new Error("Option '--dotenv-file' requires a value.");
+            dotenvExplicit = true;
+        } else result.push(value);
+    }
+    return {argv: result, dotenvPath, dotenvExplicit};
+}
+
+/**
+ * @param {typeof fs} fsApi
+ * @param {string} file
+ * @param {boolean} explicit
+ * @returns {Promise<boolean>}
+ */
+async function hasDotenvFile(fsApi, file, explicit) {
+    if (explicit) return true;
+    try {
+        await fsApi.stat(file);
+        return true;
+    } catch (error) {
+        if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') return false;
+        throw error;
+    }
+}
+
 /** @param {{applicationRoot?: string, argv: string[], cwd: string}} params */
 export async function launch(params) {
     const applicationRoot = params.applicationRoot ?? await detectApplicationRoot();
+    const globalOptions = extractGlobalOptions(params.argv);
     const launch = Object.freeze({
         argv: Object.freeze([...params.argv]),
         cwd: params.cwd,
@@ -73,13 +115,21 @@ export async function launch(params) {
         configurationSources = extensions?.configuration?.sources ?? [];
     }
 
+    const dotenvPath = path.resolve(applicationRoot, globalOptions.dotenvPath ?? '.env');
     const loader = await container.get('TeqFw_Cfg_Loader$');
-    await loader.load(configurationSources ?? []);
+    const dotenv = await container.get('TeqFw_Cfg_Source_DotenvFile$');
+    const processEnv = await container.get('TeqFw_Cfg_Source_ProcessEnv$');
+    /** @type {TeqFw_Cfg_Source[]} */
+    const sources = [...(configurationSources ?? [])];
+    if (await hasDotenvFile(fs, dotenvPath, globalOptions.dotenvExplicit)) sources.push(dotenv.create({path: dotenvPath}));
+    sources.push(processEnv.create(process.env));
+    await loader.load(sources);
 
     const bootstrap = await container.get('TeqFw_Cli_Bootstrap$');
     /** @param {string} identifier */
     const resolve = (identifier) => container.get(identifier);
-    return bootstrap.start(launch, resolve);
+    const commandLaunch = Object.freeze({...launch, argv: Object.freeze([...globalOptions.argv])});
+    return bootstrap.start(commandLaunch, resolve);
 }
 
 if (await isMainModule()) {
