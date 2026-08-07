@@ -10,7 +10,7 @@
 
 > **A TeqFW application needs one place where its runtime graph is composed, its commands are selected, and its process lifecycle is governed.**
 
-`bin/teq.mjs` is the self-contained Composition Root of every TeqFW application. It establishes the host application root independently of the original working directory, builds the production package graph, registers published DI namespace roots, optionally applies the host Container configurator, and resolves Bootstrap. Bootstrap reads static package metadata, starts declared CLI plugin components in deterministic order, selects a command, and resolves only that command.
+`bin/teq.mjs` is the self-contained Composition Root of every TeqFW application. It establishes the host application root independently of the original working directory, builds the production package graph, registers published DI namespace roots, dynamically loads the pre-DI host configurator, loads cfg Sources exactly once, and only then resolves Bootstrap. Bootstrap reads static package metadata, starts declared CLI plugin components in deterministic order, selects a command, and resolves only that command.
 
 That enables:
 
@@ -61,6 +61,7 @@ Use `@teqfw/cli` when you build a TeqFW application and want a standard, metadat
 
 - The `teq` executable owns the process exit code; plugins and commands never call `process.exit`.
 - Only the host application may declare the Container configurator or the default command; plugins never create or configure a Container.
+- CLI loads cfg before resolving lifecycle plugins and commands; plugins consume typed configuration through DI and do not receive launch parameters.
 - Runtime modules in `src/` are DI-addressed, not a direct JavaScript import API.
 - Detailed contracts and integration rules live in the package's Agent Skill, not in this README.
 

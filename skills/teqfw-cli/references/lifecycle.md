@@ -6,7 +6,8 @@ Declare one optional lifecycle component identifier under
 
 ```js
 export default class Plugin {
-    async onStartup() {}
+    async onStartup() {
+    }
     async onShutdown() {}
 }
 ```

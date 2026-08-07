@@ -36,9 +36,10 @@ type TeqFw_Cli_Node_Package_Registry = new (deps: {fs: TeqFw_Cli_Node_Fs; path: 
 type TeqFw_Cli_Api_Container_NamespaceRoot = Readonly<{prefix: string; target: string; defaultExt: string}>;
 type TeqFw_Cli_Api_Container_Preprocessor = (dependency: TeqFw_Di_Dto_DepId) => TeqFw_Di_Dto_DepId;
 type TeqFw_Cli_Api_Container_Postprocessor = (value: unknown, context: unknown) => unknown;
-type TeqFw_Cli_Api_Container_Configurator_Configuration = Readonly<{namespaceRoots?: ReadonlyArray<TeqFw_Cli_Api_Container_NamespaceRoot>; preprocessors?: ReadonlyArray<TeqFw_Cli_Api_Container_Preprocessor>; postprocessors?: ReadonlyArray<TeqFw_Cli_Api_Container_Postprocessor>; logging?: boolean}>;
+type TeqFw_Cli_Api_Container_Configuration = Readonly<{sources?: ReadonlyArray<TeqFw_Cfg_Source>}>;
+type TeqFw_Cli_Api_Container_Configurator_Configuration = Readonly<{namespaceRoots?: ReadonlyArray<TeqFw_Cli_Api_Container_NamespaceRoot>; preprocessors?: ReadonlyArray<TeqFw_Cli_Api_Container_Preprocessor>; postprocessors?: ReadonlyArray<TeqFw_Cli_Api_Container_Postprocessor>; logging?: boolean; configuration?: TeqFw_Cli_Api_Container_Configuration}>;
 interface TeqFw_Cli_Api_Container_Configurator {
-    configure(params: {applicationRoot: string; argv: string[]}): TeqFw_Cli_Api_Container_Configurator_Configuration | Promise<TeqFw_Cli_Api_Container_Configurator_Configuration>;
+    configure(params: {applicationRoot: string; argv: ReadonlyArray<string>}): TeqFw_Cli_Api_Container_Configurator_Configuration | Promise<TeqFw_Cli_Api_Container_Configurator_Configuration>;
 }
 interface TeqFw_Cli_Api_Plugin {
     onStartup(): void | Promise<void>;

@@ -17,13 +17,11 @@ test conventions as authoritative.
    `npm exec -- teq help` for an explicit local invocation (`--help` remains
    supported). Do not import
    `@teqfw/cli/src/**`; its runtime modules are DI-addressed.
-2. Keep pre-Container composition in the executable. Only the host application
-   may declare an optional Container configurator; plugins never create or
-   configure a Container.
+2. Keep pre-Container composition in the executable. Only the host application may declare the pre-DI Container configurator and cfg Sources; plugins never create or configure a Container.
 3. Declare commands and optional lifecycle components in the owning package's
    `teqfw.fw.cli` metadata. Discovery reads metadata only; it does not create a
    command product.
-4. Implement a lifecycle component with `onStartup()` and `onShutdown()` only.
+4. Treat cfg as mandatory CLI startup infrastructure: the CLI loads ordered host Sources exactly once before resolving lifecycle components. Implement a lifecycle component with onStartup() and onShutdown() only.
    Use ordinary declared DI dependencies; never receive the Container, the
    Bootstrap resolver, or the Host run.
 5. Model a command as either finite `async execute(context)` or long-running

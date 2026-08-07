@@ -42,10 +42,16 @@ async function detectApplicationRoot() {
 /** @param {{applicationRoot?: string, argv: string[], cwd: string}} params */
 export async function launch(params) {
     const applicationRoot = params.applicationRoot ?? await detectApplicationRoot();
+    const launch = Object.freeze({
+        argv: Object.freeze([...params.argv]),
+        cwd: params.cwd,
+        applicationRoot,
+    });
     /** @type {ReadonlyArray<TeqFw_Di_Node_Registry_Package_Record>} */
     const packages = await new PackageRegistry({fs, path, appRoot: applicationRoot}).build();
     const container = new Container();
     let configurator;
+    let configurationSources = [];
 
     for (const record of packages) {
         const framework = (/** @type {TeqFw_Cli_Manifest_TeqFw} */ (record.packageJson.teqfw ?? {})).fw ?? {};
@@ -59,21 +65,21 @@ export async function launch(params) {
 
     if (configurator) {
         const Configurator = (await import(pathToFileURL(path.resolve(applicationRoot, configurator)).href)).default;
-        const extensions = await new Configurator().configure({applicationRoot, argv: params.argv});
+        const extensions = await new Configurator().configure({applicationRoot, argv: launch.argv});
         for (const item of extensions?.namespaceRoots ?? []) container.addNamespaceRoot(item.prefix, item.target, item.defaultExt);
         for (const processor of extensions?.preprocessors ?? []) container.addPreprocess(processor);
         for (const processor of extensions?.postprocessors ?? []) container.addPostprocess(processor);
         if (extensions?.logging) container.enableLogging();
+        configurationSources = extensions?.configuration?.sources ?? [];
     }
+
+    const loader = await container.get('TeqFw_Cfg_Loader$');
+    await loader.load(configurationSources ?? []);
 
     const bootstrap = await container.get('TeqFw_Cli_Bootstrap$');
     /** @param {string} identifier */
     const resolve = (identifier) => container.get(identifier);
-    return bootstrap.start({
-        argv: params.argv,
-        cwd: params.cwd,
-        applicationRoot,
-    }, resolve);
+    return bootstrap.start(launch, resolve);
 }
 
 if (await isMainModule()) {

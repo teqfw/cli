@@ -31,7 +31,7 @@ Excludes:
 - A command is created only after selection.
 - Shutdown reverses completed work once.
 - Metadata ownership is not metadata secrecy.
-- Composition is fail-fast: the starter trusts declarations and lets the first native operation fail; it does not validate, normalize, freeze, recover, or enrich startup-condition errors.
+- Composition is fail-fast: the starter trusts declarations and lets the first native operation fail; it does not validate, normalize, recover, or enrich startup-condition errors.
 - Composition is not a plugin hook.
 
 ## Agent Document

@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import process from 'node:process';
 import test from 'node:test';
 import {launch} from '../../bin/teq.mjs';
@@ -10,6 +12,8 @@ test('launches with a configurator', async () => {
         const result = await launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'fixture:finite'], cwd: fixture.root});
         assert.equal(result, 0);
         assert.equal(globalThis.__fixtureConfigurator, fixture.root);
+        assert.deepEqual(globalThis.__fixturePluginConfig, {VALUE: 'ready'});
+        assert.deepEqual(globalThis.__fixtureCommandConfig, {VALUE: 'ready'});
         assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'metadata'), false);
         assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'packages'), false);
         assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'commandProviders'), false);
@@ -19,6 +23,8 @@ test('launches with a configurator', async () => {
         assert.deepEqual(globalThis.__fixtureCalls, ['plugin:start', 'command:finite:create', 'command:finite:run', 'plugin:stop']);
     } finally {
         delete globalThis.__fixtureConfigurator;
+        delete globalThis.__fixturePluginConfig;
+        delete globalThis.__fixtureCommandConfig;
         delete globalThis.__fixtureLaunch;
         delete globalThis.__fixtureCalls;
         await fixture.cleanup();
@@ -72,6 +78,43 @@ test('reports the host application version', async () => {
         process.stdout.write = write;
         delete globalThis.__fixtureConfigurator;
         delete globalThis.__fixtureLaunch;
+        delete globalThis.__fixtureCalls;
+        await fixture.cleanup();
+    }
+});
+
+test('loads configuration before resolving plugins and commands', async () => {
+    const fixture = await createCliFixture();
+    try {
+        const result = await launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'fixture:finite'], cwd: fixture.root});
+        assert.equal(result, 0);
+        assert.deepEqual(globalThis.__fixturePluginConfig, {VALUE: 'ready'});
+        assert.deepEqual(globalThis.__fixtureCommandConfig, {VALUE: 'ready'});
+    } finally {
+        delete globalThis.__fixtureConfigurator;
+        delete globalThis.__fixturePluginConfig;
+        delete globalThis.__fixtureCommandConfig;
+        delete globalThis.__fixtureLaunch;
+        delete globalThis.__fixtureCalls;
+        await fixture.cleanup();
+    }
+});
+
+test('configuration failure prevents plugin resolution', async () => {
+    const fixture = await createCliFixture();
+    await fs.writeFile(path.join(fixture.root, 'src/Bootstrap/Container.mjs'), `/** @implements {TeqFw_Cli_Api_Container_Configurator} */
+export default class Container {
+    configure() {
+        return {configuration: {sources: [{id: 'failing', load: async () => { throw new Error('fixture configuration failure'); }}]}};
+    }
+}
+`);
+    try {
+        await assert.rejects(launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'fixture:finite'], cwd: fixture.root}), (error) => error instanceof Error && error.name === 'CfgError');
+        assert.equal(globalThis.__fixturePluginConfig, undefined);
+        assert.equal(globalThis.__fixtureCalls, undefined);
+    } finally {
+        delete globalThis.__fixturePluginConfig;
         delete globalThis.__fixtureCalls;
         await fixture.cleanup();
     }

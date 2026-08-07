@@ -55,7 +55,8 @@
   },
   "dependencies": {
     "@teqfw/di": ">=2.9.0",
-    "@teqfw/log": ">=2.0.0"
+    "@teqfw/log": ">=2.0.0",
+    "@teqfw/cfg": ">=0.1.0"
   },
   "devDependencies": {
     "@types/node": "^26.1.2",

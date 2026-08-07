@@ -1,7 +1,7 @@
 # teq Starter
 
 - Path: `ctx/docs/code/teq-starter.md`
-- Changed: `20260804`
+- Changed: `20260807`
 
 `bin/teq.mjs` is the package's self-contained physical process entry point and only Composition Root. It is a stable, universal starter for every TeqFW host application; change it only to correct a starter defect, not to add application behavior.
 
@@ -16,10 +16,10 @@ The physical-process guard first checks PM2's `pm_exec_path`: when its canonical
 1. Read the host package manifest and build the production package registry from applicationRoot.
 2. Create Container and register each package's `teqfw.fw.di.namespaces` roots.
 3. Read only the host declaration for the optional Container configurator.
-4. If declared, dynamically import the host configurator, construct its default export, and apply its namespace roots, preprocessors, postprocessors, and logging instruction to Container.
-5. Resolve `TeqFw_Cli_Bootstrap$` only after all configuration is complete, then start it with launch facts and a private get-only resolution capability.
+4. If declared, dynamically import the host configurator, construct its default export, and apply its namespace roots, preprocessors, postprocessors, logging instruction, and cfg Source declarations.
+5. Resolve TeqFw_Cfg_Loader$, await load(sources) exactly once, then resolve Bootstrap and start it with launch facts and a private get-only resolution capability.
 
-The host package is the root npm package assembling the graph. Only its manifest may supply host declarations, including the optional configurator and default command. All package manifests may contribute package metadata, namespaces, command descriptors, and one optional CLI plugin component identifier. Package records are composition input only; the starter does not copy or expose a metadata registry. Bootstrap receives argv, cwd, and applicationRoot as launch facts; it receives the capability separately and obtains `PackageRegistry` through its declared DI dependencies.
+The host package is the root npm package assembling the graph. Only its manifest may supply host declarations, including the optional configurator and default command. All package manifests may contribute package metadata, namespaces, command descriptors, and one optional CLI plugin component identifier. Package records are composition input only; the starter does not copy or expose a metadata registry. Bootstrap receives one immutable launch context containing argv, cwd, and applicationRoot and obtains PackageRegistry through its declared DI dependencies. Lifecycle hooks receive no launch parameters; configuration is available through DI before their products are resolved.
 
 ## Implementation Constraints
 

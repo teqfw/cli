@@ -23,7 +23,9 @@ dependency as the host runtime edge.
 ## Host Container Configurator
 
 Only the host application may declare `teqfw.fw.cli.container.configurator`.
-Its value is a module path relative to the host root. Its default-exported class
+The recommended module path is `bootstrap/di-config.mjs`, relative to the host
+root; include this file in the package `files`/publish configuration. Its
+default-exported class
 implements `TeqFw_Cli_Api_Container_Configurator` and provides:
 
 ```js
@@ -34,14 +36,18 @@ export default class Configurator {
             preprocessors: [],
             postprocessors: [],
             logging: false,
+            configuration: {
+                sources: [{id: 'app-config', load: async () => [{key: 'APP__MODE', value: 'production'}]}],
+            },
         };
     }
 }
 ```
 
 All returned properties are optional. The configurator may add namespace roots,
-preprocessors, postprocessors, and diagnostic logging. It neither receives nor
-constructs the Container; configuration is locked by the first resolution.
+preprocessors, postprocessors, diagnostic logging, and ordered cfg Source descriptors
+under configuration.sources. It neither receives nor constructs the Container. CLI
+loads those Sources exactly once before resolving Bootstrap or plugins.
 
 ## Commands
 
