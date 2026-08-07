@@ -4,7 +4,7 @@ import path from 'node:path';
 import process from 'node:process';
 import test from 'node:test';
 import {launch} from '../../bin/teq.mjs';
-import {createCliFixture} from '../helper/fixture.mjs';
+import {clearCliFixtureGlobals, createCliFixture} from '../helper/fixture.mjs';
 
 test('launches with a configurator', async () => {
     const fixture = await createCliFixture();
@@ -22,12 +22,7 @@ test('launches with a configurator', async () => {
         assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'resolve'), false);
         assert.deepEqual(globalThis.__fixtureCalls, ['plugin:start', 'command:finite:create', 'command:finite:run', 'plugin:stop']);
     } finally {
-        delete globalThis.__fixtureConfigurator;
-        delete globalThis.__fixtureConfiguratorArgv;
-        delete globalThis.__fixturePluginConfig;
-        delete globalThis.__fixtureCommandConfig;
-        delete globalThis.__fixtureLaunch;
-        delete globalThis.__fixtureCalls;
+        clearCliFixtureGlobals();
         await fixture.cleanup();
     }
 });
@@ -45,8 +40,7 @@ test('launches without a configurator or CLI plugin component', async () => {
         assert.equal(Object.hasOwn(globalThis.__fixtureLaunch, 'resolve'), false);
         assert.deepEqual(globalThis.__fixtureCalls, ['command:finite:create', 'command:finite:run']);
     } finally {
-        delete globalThis.__fixtureLaunch;
-        delete globalThis.__fixtureCalls;
+        clearCliFixtureGlobals();
         await fixture.cleanup();
     }
 });
@@ -59,9 +53,7 @@ test('information starts and closes plugins without creating commands', async ()
         assert.deepEqual(globalThis.__fixtureCalls, ['plugin:start', 'plugin:stop']);
         assert.equal(globalThis.__fixtureLaunch, undefined);
     } finally {
-        delete globalThis.__fixtureConfigurator;
-        delete globalThis.__fixtureLaunch;
-        delete globalThis.__fixtureCalls;
+        clearCliFixtureGlobals();
         await fixture.cleanup();
     }
 });
@@ -77,9 +69,7 @@ test('reports the host application version', async () => {
         assert.equal(output, '1.2.3\n');
     } finally {
         process.stdout.write = write;
-        delete globalThis.__fixtureConfigurator;
-        delete globalThis.__fixtureLaunch;
-        delete globalThis.__fixtureCalls;
+        clearCliFixtureGlobals();
         await fixture.cleanup();
     }
 });
@@ -92,11 +82,7 @@ test('loads configuration before resolving plugins and commands', async () => {
         assert.deepEqual(globalThis.__fixturePluginConfig, {VALUE: 'ready'});
         assert.deepEqual(globalThis.__fixtureCommandConfig, {VALUE: 'ready'});
     } finally {
-        delete globalThis.__fixtureConfigurator;
-        delete globalThis.__fixturePluginConfig;
-        delete globalThis.__fixtureCommandConfig;
-        delete globalThis.__fixtureLaunch;
-        delete globalThis.__fixtureCalls;
+        clearCliFixtureGlobals();
         await fixture.cleanup();
     }
 });
@@ -115,10 +101,7 @@ test('loads the application .env and gives process.env highest precedence', asyn
     } finally {
         if (before === undefined) delete process.env[key];
         else process.env[key] = before;
-        delete globalThis.__fixturePluginConfig;
-        delete globalThis.__fixtureCommandConfig;
-        delete globalThis.__fixtureCalls;
-        delete globalThis.__fixtureLaunch;
+        clearCliFixtureGlobals();
         await fixture.cleanup();
     }
 });
@@ -134,11 +117,7 @@ test('loads an explicit dotenv file and removes the global option before command
         assert.deepEqual(globalThis.__fixtureConfiguratorArgv, ['node', 'teq', 'fixture:finite', '--dotenv-file=selected.env']);
         assert.deepEqual(globalThis.__fixtureLaunch.argv, ['node', 'teq', 'fixture:finite']);
     } finally {
-        delete globalThis.__fixtureConfiguratorArgv;
-        delete globalThis.__fixturePluginConfig;
-        delete globalThis.__fixtureCommandConfig;
-        delete globalThis.__fixtureLaunch;
-        delete globalThis.__fixtureCalls;
+        clearCliFixtureGlobals();
         await fixture.cleanup();
     }
 });
@@ -157,10 +136,7 @@ test('dotenv overrides host defaults when process.env does not define the key', 
     } finally {
         if (before === undefined) delete process.env[key];
         else process.env[key] = before;
-        delete globalThis.__fixturePluginConfig;
-        delete globalThis.__fixtureCommandConfig;
-        delete globalThis.__fixtureCalls;
-        delete globalThis.__fixtureLaunch;
+        clearCliFixtureGlobals();
         await fixture.cleanup();
     }
 });
@@ -175,8 +151,7 @@ test('missing explicit dotenv file fails before plugin resolution', async () => 
         assert.equal(globalThis.__fixturePluginConfig, undefined);
         assert.equal(globalThis.__fixtureCalls, undefined);
     } finally {
-        delete globalThis.__fixturePluginConfig;
-        delete globalThis.__fixtureCalls;
+        clearCliFixtureGlobals();
         await fixture.cleanup();
     }
 });
@@ -195,8 +170,7 @@ export default class Container {
         assert.equal(globalThis.__fixturePluginConfig, undefined);
         assert.equal(globalThis.__fixtureCalls, undefined);
     } finally {
-        delete globalThis.__fixturePluginConfig;
-        delete globalThis.__fixtureCalls;
+        clearCliFixtureGlobals();
         await fixture.cleanup();
     }
 });

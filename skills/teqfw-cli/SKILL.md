@@ -21,9 +21,7 @@ test conventions as authoritative.
 3. Declare commands and optional lifecycle components in the owning package's
    `teqfw.fw.cli` metadata. Discovery reads metadata only; it does not create a
    command product.
-4. Treat cfg as mandatory CLI startup infrastructure: the CLI loads the ordered Sources exactly once before resolving lifecycle components; see [Usage](references/usage.md) for standard Sources and precedence. Implement a lifecycle component with onStartup() and onShutdown() only.
-   Use ordinary declared DI dependencies; never receive the Container, the
-   Bootstrap resolver, or the Host run.
+4. Treat cfg as mandatory CLI startup infrastructure: the CLI loads the ordered Sources exactly once before resolving lifecycle components. The launcher also initializes the immutable `TeqFw_Cli_Config$` runtime component before that resolution; consume its computed `applicationRoot`, `cwd`, normalized `argv`, and dotenv facts through DI. These facts are separate from user configuration and cannot be overridden by cfg. Implement a lifecycle component with onStartup() and onShutdown() only. Use ordinary declared DI dependencies; never receive the Container, the Bootstrap resolver, or the Host run. See [Usage](references/usage.md) for standard Sources and precedence.
 5. Model a command as either finite `async execute(context)` or long-running
    `async start(context)` returning `{done, stop}`. Let only the executable set
    the process exit code.

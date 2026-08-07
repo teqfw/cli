@@ -41,6 +41,8 @@ The package publishes the `teq` binary; npm exposes it at `node_modules/.bin/teq
 
 Run `npm run start` or `npm run migrate`. For an explicit local invocation use `npm exec -- teq help`; `--help` and `-h` remain supported. Use `--dotenv-file path/to/file.env` (or `--dotenv-file=path/to/file.env`) to select an explicit dotenv file; the path is relative to the host application root. Use `teq version` (or `teq --version`) to print the host application version. A global install is not required.
 
+Runtime facts computed by the launcher are available to every resolved component through the immutable `TeqFw_Cli_Config$` DI component. It exposes the absolute `applicationRoot`, original `cwd`, parser `argv` without global dotenv options, the selected `dotenvPath` when a file is used, and `dotenvExplicit`. These are platform facts, not cfg keys; host packages such as template engines should depend on this component instead of defining an application-root setting.
+
 Under PM2, point the process at the physical launcher script; the launcher recognizes PM2's process container and starts the application:
 
 ```js
@@ -61,7 +63,7 @@ Use `@teqfw/cli` when you build a TeqFW application and want a standard, metadat
 
 - The `teq` executable owns the process exit code; plugins and commands never call `process.exit`.
 - Only the host application may declare the Container configurator or the default command; plugins never create or configure a Container.
-- CLI loads cfg before resolving lifecycle plugins and commands; plugins consume typed configuration through DI and do not receive launch parameters.
+- CLI loads cfg before resolving lifecycle plugins and commands; plugins consume typed configuration and computed runtime facts through DI and do not receive launch parameters.
 - Runtime modules in `src/` are DI-addressed, not a direct JavaScript import API.
 - Detailed contracts and integration rules live in the package's Agent Skill, not in this README.
 

@@ -9,23 +9,23 @@ Record durable architecture choices that govern composition, discovery, and runt
 
 ## Mental Model
 
-Thirteen decisions define the launcher's structural rules: one Composition Root, one host package, an optional configurator, broadcast-visible metadata, configuration-before-resolution ordering, deterministic command selection, structurally distinct command lifetimes, a private Host run for signals and shutdown, a private resolver capability kept out of runtime, and deferred command resolution after plugin startup.
+Thirteen decisions define one Composition Root, host ownership, metadata, DI/cfg ordering, command selection/lifetime, private Host/resolver, and plugin startup/shutdown.
 
 ## Scope
 
 Includes:
 
-- host-role boundaries, metadata protocols, DI configuration ordering, command selection precedence, command lifetime classification, signal and shutdown ownership, and the private resolution capability.
+- host ownership, metadata, DI/cfg order, command selection/lifetime, signals, shutdown, and private resolution.
 
 Excludes:
 
-- feature implementation, parser internals, and tool-specific workflow semantics.
+- feature code, parser internals, and tool workflow.
 
 ## Invariants
 
 - Only the host package manifest supplies host-related declarations.
 - The host configurator is optional and never receives or creates a Container.
-- Namespace registration, cfg loading, and DI extensions precede any resolution.
+- Bootstrap, plugin, and command resolution follow namespace registration, DI extensions, runtime config, and cfg loading. Runtime config is the sole pre-cfg resolution.
 - Command resolution is deferred until after all CLI plugin `onStartup` calls succeed.
 - Bootstrap's private resolver capability is never exposed to plugins, commands, or Host.
 - Shutdown reverses completed startup work exactly once.

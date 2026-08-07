@@ -5,17 +5,17 @@
 
 ## Purpose
 
-Make TeqFW application composition and runtime shutdown deterministic.
+Make TeqFW composition deterministic.
 
 ## Mental Model
 
-`bin/teq.mjs` is the Composition Root. It configures a Container from production metadata and optional host instructions before resolving Bootstrap. Bootstrap starts CLI plugin components, creates only the selected command, and Host runs it and shuts it down.
+`bin/teq.mjs` composes the application before Bootstrap. Bootstrap starts plugins, creates the selected command, and Host runs and shuts it down.
 
 ## Scope
 
 Includes:
 
-- discovery, metadata, DI extensions, Bootstrap, commands, lifecycle, and signals.
+- discovery, DI, Bootstrap, commands, lifecycle, and signals.
 
 Excludes:
 
@@ -23,7 +23,7 @@ Excludes:
 
 ## Invariants
 
-- No resolution precedes namespace registration and configuration.
+- Bootstrap, plugin, and command resolution follow namespace registration, DI extensions, runtime config, and cfg loading. Runtime config is the sole pre-cfg resolution.
 - Only the root npm package is interpreted for host-related declarations.
 - Only an optional host configurator configures Container extensions.
 - `bin/teq.mjs` is the only Composition Root.

@@ -82,7 +82,7 @@ async function hasDotenvFile(fsApi, file, explicit) {
 
 /** @param {{applicationRoot?: string, argv: string[], cwd: string}} params */
 export async function launch(params) {
-    const applicationRoot = params.applicationRoot ?? await detectApplicationRoot();
+    const applicationRoot = path.resolve(params.applicationRoot ?? await detectApplicationRoot());
     const globalOptions = extractGlobalOptions(params.argv);
     const launch = Object.freeze({
         argv: Object.freeze([...params.argv]),
@@ -116,12 +116,21 @@ export async function launch(params) {
     }
 
     const dotenvPath = path.resolve(applicationRoot, globalOptions.dotenvPath ?? '.env');
+    const dotenvAvailable = await hasDotenvFile(fs, dotenvPath, globalOptions.dotenvExplicit);
+    const runtimeConfig = await container.get('TeqFw_Cli_Config$');
+    runtimeConfig.init({
+        applicationRoot,
+        cwd: launch.cwd,
+        argv: globalOptions.argv,
+        dotenvPath: dotenvAvailable ? dotenvPath : undefined,
+        dotenvExplicit: globalOptions.dotenvExplicit,
+    });
     const loader = await container.get('TeqFw_Cfg_Loader$');
     const dotenv = await container.get('TeqFw_Cfg_Source_DotenvFile$');
     const processEnv = await container.get('TeqFw_Cfg_Source_ProcessEnv$');
     /** @type {TeqFw_Cfg_Source[]} */
     const sources = [...(configurationSources ?? [])];
-    if (await hasDotenvFile(fs, dotenvPath, globalOptions.dotenvExplicit)) sources.push(dotenv.create({path: dotenvPath}));
+    if (dotenvAvailable) sources.push(dotenv.create({path: dotenvPath}));
     sources.push(processEnv.create(process.env));
     await loader.load(sources);
 

@@ -5,6 +5,7 @@
 
 - bin/teq.mjs: self-contained universal starter and process boundary; requirements are in [teq-starter.md](teq-starter.md).
 - src/Api/Container/Configurator.mjs: namespace-addressed optional host configurator contract; consumers use its ambient JSDoc type, not a direct module import.
+- src/Config.mjs: immutable DI-resolved computed runtime facts initialized by the Composition Root before cfg and runtime resolution.
 - src/Api/Plugin.mjs: namespace-addressed JSDoc `@interface` `TeqFw_Cli_Api_Plugin` with `onStartup` and `onShutdown`; implementations declare `@implements`.
 - src/Dto/Command/Descriptor.mjs: validates static command descriptors from package metadata.
 - src/Bootstrap.mjs: reads static CLI metadata and the host application version, opens a Host run, resolves and starts CLI plugin components through its private capability, and lazily resolves the selected command.

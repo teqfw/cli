@@ -49,10 +49,7 @@ preprocessors, postprocessors, diagnostic logging, and additional cfg Source des
 under configuration.sources. Host Sources are application defaults. CLI then appends the
 application-root `.env` when present and `process.env`, so process.env has the highest
 precedence. Use `--dotenv-file path/to/file.env` or `--dotenv-file=path/to/file.env` to
-select an explicit dotenv file relative to the host root; the option is consumed by the
-launcher before command parsing. The configurator neither receives nor constructs the
-Container. CLI loads the final Source list exactly once before resolving Bootstrap or
-plugins.
+select an explicit dotenv file relative to the host root; the option is consumed by the launcher before command parsing. The configurator neither receives nor constructs the Container. CLI loads the final Source list exactly once, initializes the immutable `TeqFw_Cli_Config$` runtime component, and only then resolves Bootstrap or plugins. Runtime facts are separate from cfg and cannot be overridden by user configuration.
 
 ## Commands
 
