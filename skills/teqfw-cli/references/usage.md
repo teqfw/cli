@@ -20,6 +20,30 @@ global installation, invoke
 `bin/teq.mjs` by a package-internal path, or treat a transitive or development
 dependency as the host runtime edge.
 
+## Explicit Host Selection
+
+A TeqFW package that declares `teqfw.fw.di.namespaces` and
+`teqfw.fw.cli.commands` and depends on `@teqfw/cli` can be launched as an
+explicit host by name:
+
+```sh
+teq --host @flancer32/skill-adsm-ctx adsm-ctx:validate .
+```
+
+`--host <package>` selects the host package. The optional `--host-root <path>`
+pins its root; a relative path resolves against the original working directory,
+and the manifest package name must equal `--host`. Host options are
+launcher-global and must precede the command identifier; tokens after it are
+command-owned and never reinterpreted by the launcher. Without `--host-root`,
+the launcher resolves the host through the local application tree and the
+global npm module locations. The selected host must declare canonical
+`teqfw.fw.di.namespaces` and a dependency on `@teqfw/cli`; otherwise launch
+fails with an actionable error. The host root becomes
+`TeqFw_Cli_Config$.applicationRoot` and its configurator and `.env` apply,
+while `cwd` remains the invocation directory, so command arguments stay
+relative to the operator's working directory. Local-first discovery is
+unchanged when `--host` is absent.
+
 ## Host Container Configurator
 
 Only the host application may declare `teqfw.fw.cli.container.configurator`.

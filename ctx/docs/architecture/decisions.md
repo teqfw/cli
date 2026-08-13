@@ -1,7 +1,7 @@
 # Architecture Decisions
 
 - Path: `ctx/docs/architecture/decisions.md`
-- Changed: `20260807`
+- Changed: `20260813`
 
 1. teq is the standard TeqFW process host.
 2. The starter accepts an applicationRoot input or derives the root npm package from its physical location: a development checkout root with node_modules, otherwise the parent of the enclosing installed node_modules directory. Only that manifest supplies host-related declarations, and its configurator declaration is optional.
@@ -17,3 +17,4 @@
 12. The CLI runtime depends on cfg and calls TeqFw_Cfg_Loader.load() exactly once after initializing TeqFw_Cli_Config$ and before resolving Bootstrap, plugins, or commands; its Source order and precedence follow [container-configurator.md](container-configurator.md).
 13. Lifecycle plugins use parameterless onStartup() and onShutdown() hooks; typed configuration is consumed through ordinary DI dependencies.
 14. The Composition Root initializes one immutable TeqFw_Cli_Config$ before cfg load and before Bootstrap, plugin, or command resolution. It contains computed applicationRoot, cwd, normalized argv, and dotenv selection facts; user cfg cannot override them.
+15. Explicit host selection is an alternative to physical-path host derivation. `--host <package>` and optional `--host-root <path>` are launcher-global options consumed only before the command identifier; they select the host package root. The selected host must declare a dependency on `@teqfw/cli` and canonical `teqfw.fw.di.namespaces`, and its dependency closure is built exactly like a physical host. The original cwd is launch context only and never selects or shapes the host graph.

@@ -1,6 +1,6 @@
 # Execution Lifecycle
 
-- Path: `ctx/docs/architecture/execution-lifecycle.skin.md`
+- Path: `ctx/docs/architecture/execution-lifecycle.skin.en.md`
 - Changed: `20260803`
 
 ## Purpose

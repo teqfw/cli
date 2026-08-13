@@ -43,6 +43,24 @@ Run `npm run start` or `npm run migrate`. For an explicit local invocation use `
 
 Runtime facts computed by the launcher are available to every resolved component through the immutable `TeqFw_Cli_Config$` DI component. It exposes the absolute `applicationRoot`, original `cwd`, parser `argv` without global dotenv options, the selected `dotenvPath` when a file is used, and `dotenvExplicit`. These are platform facts, not cfg keys; host packages such as template engines should depend on this component instead of defining an application-root setting.
 
+## Explicit host selection
+
+A TeqFW package that declares `teqfw.fw.di.namespaces` and `teqfw.fw.cli.commands` and depends on `@teqfw/cli` can be launched as an explicit host by name, without a package-owned launcher:
+
+```sh
+teq --host @flancer32/skill-adsm-ctx adsm-ctx:validate .
+```
+
+`--host <package>` selects the host. The optional `--host-root <path>` pinpoints its root; the path is resolved relative to the working directory when relative, and its manifest package name must match `--host`:
+
+```sh
+teq --host @flancer32/skill-adsm-ctx \
+  --host-root /path/to/skill-adsm-ctx \
+  adsm-ctx:validate .
+```
+
+Host options are launcher-global: they must appear before the command identifier, and every token after it is passed to the selected command unchanged. Without `--host-root`, the launcher resolves the package through the local application tree and the global npm module locations. The selected host must declare `@teqfw/cli` as a dependency and canonical `teqfw.fw.di.namespaces`; the launcher fails with an actionable error otherwise. The host application root becomes `TeqFw_Cli_Config$.applicationRoot` and its `.env` and configurator are used, while `cwd` stays the invocation directory, so `.` in command arguments remains relative to where you ran `teq`. Local-first discovery is unchanged when `--host` is absent.
+
 Under PM2, point the process at the physical launcher script; the launcher recognizes PM2's process container and starts the application:
 
 ```js

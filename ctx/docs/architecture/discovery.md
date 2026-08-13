@@ -1,9 +1,11 @@
 # Discovery and Distributed Metadata
 
 - Path: `ctx/docs/architecture/discovery.md`
-- Changed: `20260807`
+- Changed: `20260813`
 
 The DI package registry traverses only production dependencies in deterministic dependency-first order. The starter uses a supplied applicationRoot when present; otherwise it derives the root npm package from its physical starter path: the package root is selected in a development checkout with `node_modules`, or the parent of the enclosing installed `node_modules` directory is selected. That package is the host application. Every manifest contributes teqfw metadata. teqfw.fw contains framework protocols and teqfw.pkg uses exact npm names as keys.
+
+In explicit host selection, `--host <package>` selects the host application by name. The selected package root becomes the application root: its manifest must declare a dependency on `@teqfw/cli` so its TeqFW CLI runtime is part of the host dependency graph, and it must declare canonical `teqfw.fw.di.namespaces`. Legacy metadata is not interpreted. The host's dependency closure is built by the DI package registry from that application root exactly as for a physical host; the original cwd is retained as launch context and is never used to select or shape the host graph.
 
 teqfw.fw.di.namespaces contains package-relative namespace roots. The starter interprets only the host configurator declaration while configuring Container and selecting cfg Sources. Runtime-config and cfg ordering, fields, and precedence are defined in [container-configurator.md](container-configurator.md).
 

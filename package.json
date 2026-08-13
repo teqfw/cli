@@ -49,7 +49,7 @@
     "test:integration": "find test/integration -name '*.test.mjs' -print0 | xargs -0 node --test",
     "test:acceptance": "find test/acceptance -name '*.test.mjs' -print0 | xargs -0 node --test",
     "validate:esm": "teqfw-esm-validator src --profile base",
-    "validate:ctx": "adsm-ctx validate .",
+    "validate:ctx": "node bin/teq.mjs --host @flancer32/skill-adsm-ctx adsm-ctx:validate .",
     "typecheck": "tsc -p jsconfig.json",
     "lint:md": "markdownlint-cli2 \"skills/**/*.md\" \"*.md\""
   },
