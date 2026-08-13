@@ -1,6 +1,6 @@
 {
   "name": "@teqfw/cli",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Standard Node.js process host and composition root for TeqFW applications.",
   "type": "module",
   "license": "Apache-2.0",

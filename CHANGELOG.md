@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0] - 2026-08-13
+
+- Launch a metadata-declared TeqFW host package explicitly with `--host <package>` and an optional `--host-root <path>`.
+- Resolve the selected host through the local application tree, the global npm location that hosts `teq`, and well-known global npm locations, without spawning child processes.
+- Validate the explicit host manifest (package name, canonical `teqfw.fw.di.namespaces`, `@teqfw/cli` dependency) and require a command identifier in explicit-host mode.
+- Keep command-owned tokens after the command identifier untouched and preserve local-first host discovery when `--host` is absent.
+
 ## [2.1.0] - 2026-08-07
 
 - Load the standard CLI configuration before Bootstrap and plugin or command resolution.
