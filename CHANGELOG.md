@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Recommend function-form DI factories as the canonical implementation for new CLI lifecycle plugins; class-form components remain supported.
 - Fail fast with migration guidance when any package declares the retired `teqfw.fw.cli.lifecycle` metadata; use the current CLI plugin contract instead.
 
 ## [2.2.0] - 2026-08-13

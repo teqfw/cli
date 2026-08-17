@@ -5,12 +5,30 @@ Declare one optional lifecycle component identifier under
 `TeqFw_Cli_Api_Plugin` contract:
 
 ```js
-export default class Plugin {
-    async onStartup() {
-    }
-    async onShutdown() {}
+// @ts-check
+
+/**
+ * @returns {TeqFw_Cli_Api_Plugin}
+ */
+export default function Plugin() {
+    return {
+        onStartup: async function () {
+        },
+        onShutdown: async function () {
+        },
+    };
 }
 ```
+
+Use this function-form DI factory for new lifecycle components. Its return value
+expresses the structural plugin contract directly; declare injected values in
+the module's `__deps__` export as usual. Class-form components remain supported
+for compatibility, but are non-canonical for new code. A factory uses
+`@returns {TeqFw_Cli_Api_Plugin}`; reserve `@implements` for a class.
+
+Do not freeze the returned object. The DI Container applies postprocessors and
+wrappers, then hardens the resolved value. Factory-level freezing is redundant
+for normal DI resolution and can prevent later postprocessing.
 
 There are no `initialize`, `activate`, `deactivate`, or `dispose` phases.
 Bootstrap resolves each declared component and calls `onStartup()` in

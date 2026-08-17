@@ -1,7 +1,7 @@
 # Command and CLI Plugin Contracts
 
 - Path: `ctx/docs/architecture/command-contract.md`
-- Changed: `20260807`
+- Changed: `20260817`
 
 A command descriptor is static package metadata. `teqfw.fw.cli.commands` is an array of objects with required `id`, `summary`, and `component` fields. `arguments` and `options` are optional arrays; when omitted, each becomes an immutable empty array. If supplied, either field must be an array:
 
@@ -32,4 +32,4 @@ Bootstrap passes this constructor-returned object through `commandFactory.create
 - onStartup(): void | Promise<void> connects the plugin package to the running application after cfg has loaded;
 - onShutdown(): void | Promise<void> releases that connection during shutdown.
 
-The public source uses the JSDoc `@interface` annotation. Every implementation uses `@implements {TeqFw_Cli_Api_Plugin}`. `onStartup` and `onShutdown` are the whole CLI plugin lifecycle; there are no separate initialize, activate, deactivate, or dispose phases. Each implementation obtains all integration dependencies through `__deps__`, including any extension registry owned by another plugin. It may configure such a registry but never configures or resolves through Container. See [execution-lifecycle.md](execution-lifecycle.md) for startup sequencing and [plugin-activation.md](plugin-activation.md) for the Bootstrap coordination contract.
+The public source uses the JSDoc `@interface` annotation. The canonical implementation for new code is a function-form DI factory that returns the structural plugin value and declares `@returns {TeqFw_Cli_Api_Plugin}`. It obtains integration dependencies through `__deps__`, including any extension registry owned by another plugin. Class-form DI components remain supported for compatibility but are non-canonical for new code; a class implementation uses `@implements {TeqFw_Cli_Api_Plugin}`. The factory does not freeze its result: the DI Container applies postprocessing and wrappers and then hardens the resolved value. `onStartup` and `onShutdown` are the whole CLI plugin lifecycle; there are no separate initialize, activate, deactivate, or dispose phases. A plugin may configure an extension registry it receives but never configures or resolves through Container. See [execution-lifecycle.md](execution-lifecycle.md) for startup sequencing and [plugin-activation.md](plugin-activation.md) for the Bootstrap coordination contract.

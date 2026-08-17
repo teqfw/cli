@@ -27,6 +27,32 @@ test('launches with a configurator', async () => {
     }
 });
 
+test('launches a function-factory lifecycle plugin', async () => {
+    const fixture = await createCliFixture();
+    await fs.writeFile(path.join(fixture.root, 'src/Cli/Plugin.mjs'), [
+        '/** @returns {TeqFw_Cli_Api_Plugin} */',
+        'export default function Plugin() {',
+        '    return {',
+        '        onStartup: function () {',
+        "            (globalThis.__fixtureCalls ??= []).push('plugin:start');",
+        '        },',
+        '        onShutdown: function () {',
+        "            globalThis.__fixtureCalls.push('plugin:stop');",
+        '        },',
+        '    };',
+        '}',
+        '',
+    ].join('\n'));
+    try {
+        const result = await launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'fixture:finite'], cwd: fixture.root});
+        assert.equal(result, 0);
+        assert.deepEqual(globalThis.__fixtureCalls, ['plugin:start', 'command:finite:create', 'command:finite:run', 'plugin:stop']);
+    } finally {
+        clearCliFixtureGlobals();
+        await fixture.cleanup();
+    }
+});
+
 test('launches without a configurator or CLI plugin component', async () => {
     const fixture = await createCliFixture({configurator: false, plugin: false});
     try {

@@ -1,9 +1,9 @@
 # CLI Plugin Lifecycle
 
 - Path: `ctx/docs/architecture/plugin-activation.md`
-- Changed: `20260807`
+- Changed: `20260817`
 
-TeqFw_Cli_Api_Plugin has exactly two methods: onStartup() and onShutdown(). Both may complete synchronously or return a promise. Configuration is already loaded before the component is resolved.
+TeqFw_Cli_Api_Plugin has exactly two methods: onStartup() and onShutdown(). Both may complete synchronously or return a promise. New CLI plugins use a function-form DI factory that returns this structural value; class-form components remain supported but non-canonical. Configuration is already loaded before the component is resolved.
 
 Bootstrap coordinates this phase but does not own signal plumbing or the shutdown stack. It opens one private Host run before resolving the first plugin component. The run subscribes to signals, retains each component whose `onStartup` has completed, invokes `onShutdown` for that retained stack, and exposes parser selection and command execution. Bootstrap uses the run to start each component in dependency-first package order, then to select the command. Thus a startup failure before command selection still closes every successfully started component.
 
