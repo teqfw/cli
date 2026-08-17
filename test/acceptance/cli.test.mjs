@@ -77,6 +77,24 @@ test('teq source checkout uses its package root', async () => {
     assert.match(result.stdout, /TeqFW application launcher/);
 });
 
+test('teq launcher fails with migration guidance for retired lifecycle metadata', async () => {
+    const fixture = await createCliFixture();
+    const manifestPath = path.join(fixture.root, 'package.json');
+    const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
+    manifest.teqfw.fw.cli.lifecycle = ['Fixture_App_Cli_Plugin$'];
+    await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2));
+    try {
+        const result = await run(fixture.launcher, ['fixture:finite'], fixture.root);
+        assert.equal(result.code, 1);
+        assert.ok(result.stderr.includes("retired 'teqfw.fw.cli.lifecycle'"));
+        assert.ok(result.stderr.includes('plugin: "Example_Lifecycle$"'));
+        assert.ok(result.stderr.includes("'onStartup()' and 'onShutdown()'"));
+        assert.ok(result.stderr.includes("'initialize', 'activate', 'deactivate', and 'dispose'"));
+    } finally {
+        await fixture.cleanup();
+    }
+});
+
 test('teq PM2 container starts its configured script', async () => {
     const fixture = await createCliFixture();
     try {

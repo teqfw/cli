@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fail fast with migration guidance when any package declares the retired `teqfw.fw.cli.lifecycle` metadata; use the current CLI plugin contract instead.
+
 ## [2.2.0] - 2026-08-13
 
 - Launch a metadata-declared TeqFW host package explicitly with `--host <package>` and an optional `--host-root <path>`.

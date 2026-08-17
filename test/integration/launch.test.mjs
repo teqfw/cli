@@ -45,6 +45,29 @@ test('launches without a configurator or CLI plugin component', async () => {
     }
 });
 
+test('rejects retired lifecycle metadata before plugin or command resolution', async () => {
+    const fixture = await createCliFixture();
+    const manifestPath = path.join(fixture.root, 'package.json');
+    const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
+    manifest.teqfw.fw.cli.lifecycle = ['Fixture_App_Cli_Plugin$'];
+    await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2));
+    try {
+        await assert.rejects(
+            launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'fixture:finite'], cwd: fixture.root}),
+            (error) => error instanceof Error
+                && error.message.includes("Package 'fixture-app' declares retired 'teqfw.fw.cli.lifecycle'")
+                && error.message.includes('plugin: "Example_Lifecycle$"')
+                && error.message.includes("'onStartup()' and 'onShutdown()'")
+                && error.message.includes("'initialize', 'activate', 'deactivate', and 'dispose'"),
+        );
+        assert.equal(globalThis.__fixturePluginConfig, undefined);
+        assert.equal(globalThis.__fixtureCalls, undefined);
+    } finally {
+        clearCliFixtureGlobals();
+        await fixture.cleanup();
+    }
+});
+
 test('information starts and closes plugins without creating commands', async () => {
     const fixture = await createCliFixture();
     try {
