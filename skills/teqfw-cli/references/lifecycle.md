@@ -4,6 +4,35 @@ Declare one optional lifecycle component identifier under
 `teqfw.fw.cli.plugin`. Its DI product implements the public
 `TeqFw_Cli_Api_Plugin` contract:
 
+## Naming Convention
+
+For a new lifecycle component, use these names, replacing `{NS}` with the
+package's DI namespace prefix without its trailing underscore:
+
+- Dependency Specifier: `{NS}_Plugin_Lifecycle$`
+- source path: `Plugin/Lifecycle.mjs`
+- namespace: `{NS}_Plugin_Lifecycle`
+
+For example, register the component in its owning package manifest as follows:
+
+```json
+{
+  "teqfw": {
+    "fw": {
+      "cli": {
+        "plugin": "Example_App_Plugin_Lifecycle$"
+      }
+    }
+  }
+}
+```
+
+`Plugin` describes this component's CLI integration role. It does not mean the
+component manages other plugins. The convention is recommended for new code;
+the CLI accepts any valid declared Dependency Specifier.
+
+## Implementation
+
 ```js
 // @ts-check
 

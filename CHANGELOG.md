@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Recommend the `{NS}_Plugin_Lifecycle$` name and `Plugin/Lifecycle.mjs` path
+  for new CLI lifecycle components.
 - Recommend function-form DI factories as the canonical implementation for new CLI lifecycle plugins; class-form components remain supported.
 - Fail fast with migration guidance when any package declares the retired `teqfw.fw.cli.lifecycle` metadata; use the current CLI plugin contract instead.
 

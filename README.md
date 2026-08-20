@@ -85,6 +85,15 @@ Use `@teqfw/cli` when you build a TeqFW application and want a standard, metadat
 - Runtime modules in `src/` are DI-addressed, not a direct JavaScript import API.
 - Detailed contracts and integration rules live in the package's Agent Skill, not in this README.
 
+## Lifecycle component convention
+
+For a new CLI lifecycle component, declare the recommended DI token
+`{NS}_Plugin_Lifecycle$` in `teqfw.fw.cli.plugin` and place its source at
+`Plugin/Lifecycle.mjs`, where `{NS}` is the package namespace prefix without the
+trailing underscore. `Plugin` means CLI integration participant; it does not
+mean that the component manages other plugins. The version-matched Agent Skill
+contains the manifest example and implementation contract.
+
 ## Agent-Driven Development
 
 TeqFW is built through the same development model that it is designed to enable: one human defines the intent, architecture, constraints, and acceptance criteria; coding agents implement and maintain the products; other agents use those products in different combinations to create applications.

@@ -33,7 +33,7 @@ export default class Bootstrap {
                 const cli = (/** @type {TeqFw_Cli_Manifest_TeqFw} */ (record.packageJson.teqfw ?? {})).fw?.cli ?? {};
                 if (Object.hasOwn(cli, 'lifecycle')) {
                     const packageName = typeof record.packageJson.name === 'string' ? record.packageJson.name : record.rootAbs;
-                    throw new Error(`Package '${packageName}' declares retired 'teqfw.fw.cli.lifecycle'. Replace 'lifecycle: ["Example_Lifecycle$"]' with 'plugin: "Example_Lifecycle$"'; implement only 'onStartup()' and 'onShutdown()', and remove 'initialize', 'activate', 'deactivate', and 'dispose'.`);
+                    throw new Error(`Package '${packageName}' declares retired 'teqfw.fw.cli.lifecycle'. Replace 'lifecycle: ["Example_Plugin_Lifecycle$"]' with 'plugin: "Example_Plugin_Lifecycle$"'; implement only 'onStartup()' and 'onShutdown()', and remove 'initialize', 'activate', 'deactivate', and 'dispose'.`);
                 }
                 commandDescriptors.push(...(cli.commands ?? []));
                 if (cli.plugin) pluginIdentifiers.push(cli.plugin);

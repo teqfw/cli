@@ -87,7 +87,7 @@ test('teq launcher fails with migration guidance for retired lifecycle metadata'
         const result = await run(fixture.launcher, ['fixture:finite'], fixture.root);
         assert.equal(result.code, 1);
         assert.ok(result.stderr.includes("retired 'teqfw.fw.cli.lifecycle'"));
-        assert.ok(result.stderr.includes('plugin: "Example_Lifecycle$"'));
+        assert.ok(result.stderr.includes('plugin: "Example_Plugin_Lifecycle$"'));
         assert.ok(result.stderr.includes("'onStartup()' and 'onShutdown()'"));
         assert.ok(result.stderr.includes("'initialize', 'activate', 'deactivate', and 'dispose'"));
     } finally {

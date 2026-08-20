@@ -29,7 +29,7 @@ test('launches with a configurator', async () => {
 
 test('launches a function-factory lifecycle plugin', async () => {
     const fixture = await createCliFixture();
-    await fs.writeFile(path.join(fixture.root, 'src/Cli/Plugin.mjs'), [
+    await fs.writeFile(path.join(fixture.root, 'src/Plugin/Lifecycle.mjs'), [
         '/** @returns {TeqFw_Cli_Api_Plugin} */',
         'export default function Plugin() {',
         '    return {',
@@ -82,7 +82,7 @@ test('rejects retired lifecycle metadata before plugin or command resolution', a
             launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'fixture:finite'], cwd: fixture.root}),
             (error) => error instanceof Error
                 && error.message.includes("Package 'fixture-app' declares retired 'teqfw.fw.cli.lifecycle'")
-                && error.message.includes('plugin: "Example_Lifecycle$"')
+                && error.message.includes('plugin: "Example_Plugin_Lifecycle$"')
                 && error.message.includes("'onStartup()' and 'onShutdown()'")
                 && error.message.includes("'initialize', 'activate', 'deactivate', and 'dispose'"),
         );
