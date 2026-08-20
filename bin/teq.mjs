@@ -44,7 +44,7 @@ async function isMainModule() {
             return false;
         }
     }
-    if (typeof import.meta.main === 'boolean') return import.meta.main;
+    if (import.meta.main === true) return true;
     try {
         const entryPath = await fs.realpath(process.argv[1]);
         const modulePath = await fs.realpath(fileURLToPath(import.meta.url));

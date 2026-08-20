@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Start the npm `teq` symlink when it is launched from a `node:test` worker on
+  Node.js releases where `import.meta.main` is false in that child process.
 - Recommend the `{NS}_Plugin_Lifecycle$` name and `Plugin/Lifecycle.mjs` path
   for new CLI lifecycle components.
 - Recommend function-form DI factories as the canonical implementation for new CLI lifecycle plugins; class-form components remain supported.
