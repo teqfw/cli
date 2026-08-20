@@ -28,7 +28,7 @@ export async function createCliFixture(options = {}) {
  await fs.mkdir(path.join(root, 'node_modules/.bin'), {recursive: true});
  await fs.symlink('../@teqfw/cli/bin/teq.mjs', path.join(root, 'node_modules/.bin/teq'));
  await fs.symlink(path.join(repoRoot, 'src'), path.join(root, 'node_modules/@teqfw/cli/src'), 'dir');
- await link(root, '@teqfw/cfg', path.resolve(repoRoot, '../cfg'));
+ await link(root, '@teqfw/cfg', path.join(repoRoot, 'node_modules/@teqfw/cfg'));
  await link(root, '@teqfw/di', path.join(repoRoot, 'node_modules/@teqfw/di')); await link(root, '@teqfw/log', path.join(repoRoot, 'node_modules/@teqfw/log'));
  return {root, binary: path.join(root, 'node_modules/@teqfw/cli/bin/teq.mjs'), launcher: path.join(root, 'node_modules/.bin/teq'), async cleanup() { await fs.rm(root, {recursive: true, force: true}); }};
 }
