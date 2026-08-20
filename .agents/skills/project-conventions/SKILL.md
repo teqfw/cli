@@ -38,3 +38,4 @@ description: Project-specific conventions. Use for every task in this repository
 ## Validation
 
 - Use `teqfw-esm-validator` only for `src/`.
+- When the user requests verification on GitHub resources, use the repository's GitHub Actions workflow for the target commit or pull request. Wait for the matching run to finish; inspect every relevant job rather than only the workflow summary. Report the run link, checked Node.js versions, executed gates, and any failure logs. Do not create a synthetic commit solely to trigger CI; push or manually dispatch a workflow only when authorized and supported by the workflow.
