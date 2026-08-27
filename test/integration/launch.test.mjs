@@ -27,6 +27,51 @@ test('launches with a configurator', async () => {
     }
 });
 
+test('forwards resolution context to a configurator preprocessor', async () => {
+    const fixture = await createCliFixture();
+    await fs.writeFile(path.join(fixture.root, 'src/Bootstrap/Container.mjs'), `/** @implements {TeqFw_Cli_Api_Container_Configurator} */
+export default class HostContainerConfigurator {
+    /**
+     * @param {TeqFw_Cli_Api_Container_Configurator_Params} params
+     * @returns {TeqFw_Cli_Api_Container_Configurator_Configuration}
+     */
+    configure({applicationRoot, argv}) {
+        globalThis.__fixtureConfigurator = applicationRoot;
+        globalThis.__fixtureConfiguratorArgv = argv;
+        return {
+            preprocessors: [
+                /**
+                 * @param {TeqFw_Di_Dto_DepId} depId
+                 * @param {TeqFw_Di_Container_ResolutionContext} context
+                 * @returns {TeqFw_Di_Dto_DepId}
+                 */
+                function preprocessor(depId, context) {
+                    (globalThis.__fixturePreprocessContexts ??= []).push({
+                        depId: depId.moduleName,
+                        root: context.root.moduleName,
+                        parent: context.parent?.moduleName ?? null,
+                        stack: context.stack.map((item) => item.moduleName),
+                    });
+                    return depId;
+                },
+            ],
+        };
+    }
+}
+`);
+    try {
+        const result = await launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'fixture:finite'], cwd: fixture.root});
+        assert.equal(result, 0);
+        assert.ok(globalThis.__fixturePreprocessContexts.length > 1);
+        assert.ok(globalThis.__fixturePreprocessContexts.every(({depId, stack}) => depId === stack.at(-1)));
+        assert.ok(globalThis.__fixturePreprocessContexts.some(({parent, stack}) => parent === null && stack.length === 1));
+        assert.ok(globalThis.__fixturePreprocessContexts.some(({parent, stack}) => parent !== null && stack.length > 1));
+    } finally {
+        clearCliFixtureGlobals();
+        await fixture.cleanup();
+    }
+});
+
 test('launches a function-factory lifecycle plugin', async () => {
     const fixture = await createCliFixture();
     await fs.writeFile(path.join(fixture.root, 'src/Plugin/Lifecycle.mjs'), [

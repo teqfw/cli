@@ -33,6 +33,6 @@ export async function createCliFixture(options = {}) {
  return {root, binary: path.join(root, 'node_modules/@teqfw/cli/bin/teq.mjs'), launcher: path.join(root, 'node_modules/.bin/teq'), async cleanup() { await fs.rm(root, {recursive: true, force: true}); }};
 }
 export function clearCliFixtureGlobals() {
- const keys = ['__fixtureConfigurator', '__fixtureConfiguratorArgv', '__fixturePluginConfig', '__fixtureCommandConfig', '__fixtureRuntimeConfig', '__fixtureCommandRuntimeConfig', '__fixtureLaunch', '__fixtureCalls'];
+ const keys = ['__fixtureConfigurator', '__fixtureConfiguratorArgv', '__fixturePluginConfig', '__fixtureCommandConfig', '__fixtureRuntimeConfig', '__fixtureCommandRuntimeConfig', '__fixtureLaunch', '__fixtureCalls', '__fixturePreprocessContexts'];
  for (const key of keys) delete globalThis[key];
 }

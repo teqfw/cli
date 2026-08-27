@@ -47,30 +47,83 @@ unchanged when `--host` is absent.
 ## Host Container Configurator
 
 Only the host application may declare `teqfw.fw.cli.container.configurator`.
-The recommended module path is `bootstrap/di-config.mjs`, relative to the host
+The canonical module path is `bootstrap/di-config.mjs`, relative to the host
 root; include this file in the package `files`/publish configuration. Its
-default-exported class
-implements `TeqFw_Cli_Api_Container_Configurator` and provides:
+default export is a `HostContainerConfigurator` class implementing
+`TeqFw_Cli_Api_Container_Configurator`. Name package contributions
+`{Package}ContainerConfigurator`; they may be statically imported by the host,
+but never declare the host-only metadata themselves.
+
+The host manifest declares the one composition boundary:
+
+```json
+{
+  "teqfw": {
+    "fw": {
+      "cli": {
+        "container": {"configurator": "./bootstrap/di-config.mjs"}
+      }
+    }
+  }
+}
+```
+
+The following canonical implementation passes the same launch facts to every
+contribution and merges their extensions in host-selected order:
 
 ```js
-export default class Configurator {
-    configure({applicationRoot, argv}) {
-        return {
+import FeatureContainerConfigurator from '@acme/feature/bootstrap/di-config';
+
+const contributions = [FeatureContainerConfigurator];
+
+/** @implements {TeqFw_Cli_Api_Container_Configurator} */
+export default class HostContainerConfigurator {
+    /**
+     * @param {TeqFw_Cli_Api_Container_Configurator_Params} params
+     * @returns {TeqFw_Cli_Api_Container_Configurator_Configuration}
+     */
+    async configure({applicationRoot, argv}) {
+        const extensions = await Promise.all(contributions.map(
+            (Contribution) => new Contribution().configure({applicationRoot, argv}),
+        ));
+        return extensions.reduce((merged, extension) => ({
+            namespaceRoots: [...(merged.namespaceRoots ?? []), ...(extension.namespaceRoots ?? [])],
+            preprocessors: [...(merged.preprocessors ?? []), ...(extension.preprocessors ?? [])],
+            postprocessors: [...(merged.postprocessors ?? []), ...(extension.postprocessors ?? [])],
+            logging: merged.logging || extension.logging,
+            configuration: {
+                sources: [...(merged.configuration?.sources ?? []), ...(extension.configuration?.sources ?? [])],
+            },
+        }), {
             namespaceRoots: [],
             preprocessors: [],
             postprocessors: [],
             logging: false,
-            configuration: {
-                sources: [{id: 'app-config', load: async () => [{key: 'APP__MODE', value: 'production'}]}],
-            },
-        };
+            configuration: {sources: []},
+        });
     }
 }
 ```
 
 All returned properties are optional. The configurator may add namespace roots,
 preprocessors, postprocessors, diagnostic logging, and additional cfg Source descriptors
-under configuration.sources. Host Sources are application defaults. CLI then appends the
+under configuration.sources. A preprocessor has this JSDoc contract:
+
+```js
+/**
+ * @param {TeqFw_Di_Dto_DepId} depId
+ * @param {TeqFw_Di_Container_ResolutionContext} context
+ * @returns {TeqFw_Di_Dto_DepId}
+ */
+function preprocessor(depId, context) {
+    return context.parent === null ? depId : depId;
+}
+```
+
+`context` is immutable request provenance: the current `depId`, root request,
+immediate `parent` (or `null` for the root), and root-to-current `stack`.
+Contributions only return extensions; the host selects their static imports,
+order, and merge policy. Host Sources are application defaults. CLI then appends the
 application-root `.env` when present and `process.env`, so process.env has the highest
 precedence. Use `--dotenv-file path/to/file.env` or `--dotenv-file=path/to/file.env` to
 select an explicit dotenv file relative to the host root; the option is consumed by the launcher before command parsing. The configurator neither receives nor constructs the Container. CLI loads the final Source list exactly once, initializes the immutable `TeqFw_Cli_Config$` runtime component, and only then resolves Bootstrap or plugins. Runtime facts are separate from cfg and cannot be overridden by user configuration.
