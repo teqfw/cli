@@ -17,15 +17,27 @@ description: Project-specific conventions. Use for every task in this repository
 - Work in the repository's `main` branch. This project rule overrides any GitHub-skill instruction to use a separate branch.
 - At the start of work, check upstream in the root and `ctx/` when applicable; keep each local `main` synchronized by fast-forwarding when safe.
 - Before changes, inspect every affected working tree.
+- When an `npm` or `git` operation is known in advance to require network access, request `sandbox_permissions: "require_escalated"` for the initial command instead of retrying the same operation in the restricted sandbox first.
+- Keep local read-only Git inspection and local npm checks in the sandbox when they do not need network or external system access.
 - Do not commit or push unless the user requests it.
+
+## Project-local skills
+
+- Before reading a project-local skill, inspect its directory entry with `ls -la` and resolve symlinks with `readlink -f` (or an equivalent command). Project skills may be symlinks into `node_modules`; do not conclude that a skill is absent until its target has been checked.
 
 ## Communication
 
 - User: Russian unless requested otherwise; code, comments, docs, commits, identifiers: English.
 - Report changes, verification, and remaining risks.
 
+## Project boundaries
+
+- Before changing product files, read `ctx/AGENTS.md` and `ctx/docs/filesystem.md`.
+- Preserve the dependency order: product → architecture → environment → code.
+
 ## GitHub
 
+- Run every `gh` command with `sandbox_permissions: "require_escalated"`, because GitHub CLI credentials are stored in the OS keyring and are unavailable inside the sandbox.
 - In all multiline text sent to GitHub, including issues and comments, use actual line breaks; never send literal `\n`, which GitHub displays as text.
 
 ## Shared memory
