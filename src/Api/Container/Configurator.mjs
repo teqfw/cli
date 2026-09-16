@@ -8,7 +8,7 @@
 export default class Configurator {
     /**
      * @param {TeqFw_Cli_Api_Container_Configurator_Params} params
-     * @returns {TeqFw_Cli_Api_Container_Configurator_Configuration|Promise<TeqFw_Cli_Api_Container_Configurator_Configuration>}
+     * @returns {TeqFw_Cli_Api_Container_Configurator_Configuration}
      */
     configure(params) {
         throw new Error('TeqFw_Cli_Api_Container_Configurator is a contract and cannot configure a Container itself.');

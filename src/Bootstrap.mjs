@@ -10,9 +10,9 @@ export default class Bootstrap {
      * @param {TeqFw_Cli_Host} deps.host
      * @param {TeqFw_Cli_Registry_Command} deps.commandRegistry
      * @param {TeqFw_Cli_Dto_Command__Factory} deps.commandFactory
-     * @param {TeqFw_Cli_Node_Package_Registry} deps.packageRegistry
-     * @param {TeqFw_Cli_Node_Fs} deps.fs
-     * @param {TeqFw_Cli_Node_Path} deps.path
+     * @param {typeof import('@teqfw/di/node/registry/package').default} deps.packageRegistry
+     * @param {typeof import('node:fs/promises')} deps.fs
+     * @param {typeof import('node:path')} deps.path
      */
     constructor({host, commandRegistry, commandFactory, packageRegistry, fs, path}) {
         /**
@@ -21,7 +21,7 @@ export default class Bootstrap {
          * @returns {Promise<number>}
          */
         this.start = async function (launch, resolve) {
-            /** @type {ReadonlyArray<TeqFw_Di_Node_Registry_Package_Record>} */
+            /** @type {any} */
             const packages = await new packageRegistry({fs, path, appRoot: launch.applicationRoot}).build();
             /** @type {TeqFw_Cli_Manifest_Command[]} */
             const commandDescriptors = [];

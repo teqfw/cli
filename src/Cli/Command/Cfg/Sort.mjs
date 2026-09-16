@@ -9,8 +9,8 @@ export default class Sort {
      * @param {object} deps
      * @param {TeqFw_Cli_Config} deps.config
      * @param {TeqFw_Cli_Env_Sorter} deps.sorter
-     * @param {TeqFw_Cli_Node_Fs} deps.fs
-     * @param {TeqFw_Cli_Node_Path} deps.path
+     * @param {typeof import('node:fs/promises')} deps.fs
+     * @param {typeof import('node:path')} deps.path
      * @param {TeqFw_Cli_Adapter_Io} deps.io
      */
     constructor({config, sorter, fs, path, io}) {

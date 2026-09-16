@@ -12,8 +12,8 @@ export default class CommandRegistry {
      */
     constructor({descriptorFactory}) {
         /**
-         * @param {ReadonlyArray<TeqFw_Cli_Manifest_Command>} descriptors
-         * @returns {ReadonlyArray<TeqFw_Cli_Dto_Command_Descriptor>}
+         * @param {TeqFw_Cli_Manifest_Command_List} descriptors
+         * @returns {TeqFw_Cli_Dto_Command_Descriptor_List}
          */
         this.build = function (descriptors) {
             if (!Array.isArray(descriptors)) throw new TypeError('Command descriptors must be an array.');

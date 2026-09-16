@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-09-16
+
 - Add `cfg:sort` to order valid dotenv files by TeqFW configuration namespace
   and parameter, with check and dry-run modes.
 - Start the npm `teq` symlink when it is launched from a `node:test` worker on
@@ -10,6 +12,9 @@
   for new CLI lifecycle components.
 - Recommend function-form DI factories as the canonical implementation for new CLI lifecycle plugins; class-form components remain supported.
 - Fail fast with migration guidance when any package declares the retired `teqfw.fw.cli.lifecycle` metadata; use the current CLI plugin contract instead.
+- Align the package's ambient type declarations with the current TeqFW ESM
+  validator and resolve Node.js dependencies directly through DI constructor
+  injection.
 
 ## [2.2.0] - 2026-08-13
 

@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {Factory as ArgumentFactory} from '../../src/Dto/Argument.mjs';
-import {Factory as CommandFactory} from '../../src/Dto/Command.mjs';
-import {Factory as DescriptorFactory} from '../../src/Dto/Command/Descriptor.mjs';
-import {Factory as OptionFactory} from '../../src/Dto/Option.mjs';
-import freeze from '../../src/Util/DeepFreeze.mjs';
+import {Factory as ArgumentFactory} from '../../../src/Dto/Argument.mjs';
+import {Factory as CommandFactory} from '../../../src/Dto/Command.mjs';
+import {Factory as DescriptorFactory} from '../../../src/Dto/Command/Descriptor.mjs';
+import {Factory as OptionFactory} from '../../../src/Dto/Option.mjs';
+import freeze from '../../../src/Util/DeepFreeze.mjs';
 
 function createFactories() {
     const argumentFactory = new ArgumentFactory({freeze});

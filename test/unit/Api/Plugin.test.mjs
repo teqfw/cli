@@ -4,7 +4,7 @@ import path from 'node:path';
 import test from 'node:test';
 import {fileURLToPath} from 'node:url';
 
-const root = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
+const root = path.resolve(fileURLToPath(new URL('../../..', import.meta.url)));
 
 test('documents the conventional lifecycle plugin identity in the published skill', async () => {
     const file = path.join(root, 'skills/teqfw-cli/references/lifecycle.md');

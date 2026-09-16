@@ -13,8 +13,8 @@ export default class Signal {
     constructor({processModule}) {
         const process = processModule.default;
         /**
-         * @param {(signal: 'SIGINT'|'SIGTERM') => void} handler
-         * @returns {() => void}
+         * @param {any} handler
+         * @returns {any}
          */
         this.subscribe = function (handler) {
             let active = true;

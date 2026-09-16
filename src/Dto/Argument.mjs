@@ -45,7 +45,7 @@ export class Factory {
      */
     constructor({freeze}) {
         /**
-         * @param {Record<string, unknown>} data
+         * @param {TeqFw_Cli_Value_Record} data
          * @returns {TeqFw_Cli_Dto_Argument}
          */
         this.create = function (data) {

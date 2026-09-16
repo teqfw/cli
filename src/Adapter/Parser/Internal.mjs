@@ -5,13 +5,13 @@
  */
 /**
  * @param {string} message
- * @returns {Error}
+ * @returns {TeqFw_Cli_Error_Instance}
  */
 function usage(message) { return /** @type {Error & {category: 'usage'}} */ (Object.assign(new Error(message), {category: 'usage'})); }
 /**
  * @param {string} kind
  * @param {unknown} value
- * @returns {string|number|boolean}
+ * @returns {TeqFw_Cli_Value_Scalar}
  */
 function convert(kind, value) {
     if (kind === 'string') return String(value);
@@ -23,7 +23,7 @@ function convert(kind, value) {
     throw usage(`Expected a boolean, received '${String(value)}'.`);
 }
 /**
- * @param {ReadonlyArray<TeqFw_Cli_Dto_Command_Descriptor>} commands
+ * @param {TeqFw_Cli_Dto_Command_Descriptor_List} commands
  * @param {TeqFw_Cli_Adapter_Io} io
  * @returns {void}
  */
@@ -33,11 +33,11 @@ export default class Internal {
     constructor() {
         /**
          * @param {object} deps
-         * @param {ReadonlyArray<string>} deps.argv
+         * @param {TeqFw_Cli_String_List} deps.argv
          * @param {string} deps.version
-         * @param {ReadonlyArray<TeqFw_Cli_Dto_Command_Descriptor>} deps.commands
+         * @param {TeqFw_Cli_Dto_Command_Descriptor_List} deps.commands
          * @param {TeqFw_Cli_Adapter_Io} deps.io
-         * @param {string|undefined} deps.defaultCommand
+         * @param {TeqFw_Cli_Optional_String} deps.defaultCommand
          * @returns {object}
          */
         this.select = function ({argv, version, commands, io, defaultCommand}) {

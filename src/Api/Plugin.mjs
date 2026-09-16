@@ -6,12 +6,12 @@
  * @interface
  */
 export default class Plugin {
-    /** @returns {void|Promise<void>} */
+    /** @returns {void} */
     onStartup() {
         throw new Error('TeqFw_Cli_Api_Plugin is a contract and cannot start a plugin itself.');
     }
 
-    /** @returns {void|Promise<void>} */
+    /** @returns {void} */
     onShutdown() {
         throw new Error('TeqFw_Cli_Api_Plugin is a contract and cannot shut down a plugin itself.');
     }

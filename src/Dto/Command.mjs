@@ -20,7 +20,7 @@ export class Factory {
      */
     constructor({argumentFactory, optionFactory, freeze}) {
         /**
-         * @param {Record<string, any>} data
+         * @param {TeqFw_Cli_Value_Record} data
          * @returns {TeqFw_Cli_Dto_Command}
          */
         this.create = function (data) {

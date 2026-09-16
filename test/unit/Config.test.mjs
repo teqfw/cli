@@ -6,13 +6,13 @@ import deepFreeze from '../../src/Util/DeepFreeze.mjs';
 test('runtime config is unavailable until initialized and immutable afterwards', () => {
     const config = new Config({deep: deepFreeze});
     assert.throws(() => config.applicationRoot, /not initialized/);
-    config.init({
+    config.init(/** @type {any} */ ({
         applicationRoot: '/app',
         cwd: '/work',
         argv: ['node', 'teq', 'run'],
         dotenvPath: '/app/.env',
         dotenvExplicit: false,
-    });
+    }));
     assert.deepEqual({...config}, {
         applicationRoot: '/app',
         cwd: '/work',

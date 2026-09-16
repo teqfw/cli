@@ -58,7 +58,7 @@ function scanAssignment(source, index) {
     throw new Error('Invalid dotenv syntax.');
 }
 
-/** @param {string} source @returns {TeqFw_Cli_Env_Sorter_Token[]} */
+/** @param {string} source @returns {TeqFw_Cli_Env_Sorter_Token_List} */
 function tokenize(source) {
     /** @type {TeqFw_Cli_Env_Sorter_Token[]} */
     const result = [];
