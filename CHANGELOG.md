@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Add `cfg:sort` to order valid dotenv files by TeqFW configuration namespace
+  and parameter, with check and dry-run modes.
 - Start the npm `teq` symlink when it is launched from a `node:test` worker on
   Node.js releases where `import.meta.main` is false in that child process.
 - Recommend the `{NS}_Plugin_Lifecycle$` name and `Plugin/Lifecycle.mjs` path

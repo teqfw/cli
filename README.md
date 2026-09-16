@@ -43,6 +43,25 @@ Run `npm run start` or `npm run migrate`. For an explicit local invocation use `
 
 Runtime facts computed by the launcher are available to every resolved component through the immutable `TeqFw_Cli_Config$` DI component. It exposes the absolute `applicationRoot`, original `cwd`, parser `argv` without global dotenv options, the selected `dotenvPath` when a file is used, and `dotenvExplicit`. These are platform facts, not cfg keys; host packages such as template engines should depend on this component instead of defining an application-root setting.
 
+## Order dotenv configuration
+
+`cfg:sort` orders a valid dotenv file by TeqFW configuration namespace and then
+by parameter. It keeps non-TeqFW variables at the top, retains assignment
+syntax and comments, removes blank lines inside a group, and leaves one blank
+line between groups:
+
+```sh
+teq cfg:sort
+teq cfg:sort .env.local
+```
+
+Without an argument it updates the host application's `.env`; an explicit path
+is relative to the directory where `teq` was invoked. Use `--check` in CI to
+exit with status 1 if ordering would change the file, or `--dry-run` to report
+the same pending rewrite successfully. Neither mode changes the file or prints
+configuration values. The command accepts valid dotenv syntax only: normal CLI
+configuration loading happens before the command is selected.
+
 ## Explicit host selection
 
 A TeqFW package that declares `teqfw.fw.di.namespaces` and `teqfw.fw.cli.commands` and depends on `@teqfw/cli` can be launched as an explicit host by name, without a package-owned launcher:

@@ -19,7 +19,7 @@
   "bin": {
     "teq": "./bin/teq.mjs"
   },
-  "types": "./types.d.ts",
+  "types": "types.d.ts",
   "files": [
     "skills/",
     "src/",
@@ -38,6 +38,35 @@
             "prefix": "TeqFw_Cli_",
             "path": "./src",
             "ext": ".mjs"
+          }
+        ]
+      },
+      "cli": {
+        "commands": [
+          {
+            "id": "cfg:sort",
+            "summary": "Order a valid dotenv configuration file.",
+            "arguments": [
+              {
+                "name": "file",
+                "kind": "string",
+                "required": false,
+                "description": "Dotenv file path, relative to the launch cwd."
+              }
+            ],
+            "options": [
+              {
+                "name": "check",
+                "kind": "boolean",
+                "description": "Fail when the file requires ordering."
+              },
+              {
+                "name": "dry-run",
+                "kind": "boolean",
+                "description": "Report a pending rewrite without changing the file."
+              }
+            ],
+            "component": "TeqFw_Cli_Cli_Command_Cfg_Sort$"
           }
         ]
       }

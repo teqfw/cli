@@ -12,6 +12,8 @@
 - TeqFW plugin package: an installed package with a DI namespace declaration; it may declare one CLI plugin component or none.
 - CLI plugin component: a metadata-declared `TeqFw_Cli_Api_Plugin` product that connects a plugin package to the running application through ordinary DI dependencies.
 - Command descriptor: static package metadata that identifies an invocable command and the DI component to create only when that command is selected.
+- Configuration namespace: the uppercase prefix before `__` in a cfg key; it identifies one package-owned group of configuration parameters.
+- Configuration sorting command: the finite `cfg:sort` command that rearranges a valid dotenv file by configuration namespace while preserving parameter syntax and attached comments.
 - Finite command: command that settles after execute.
 - Long-running command: command with done and controlled stop.
 - Handler application: application selected as a finite command and terminated after its work settles.

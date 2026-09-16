@@ -10,4 +10,6 @@
 - src/Dto/Command/Descriptor.mjs: validates static command descriptors from package metadata.
 - src/Bootstrap.mjs: reads static CLI metadata and the host application version, opens a Host run, resolves and starts CLI plugin components through its private capability, and lazily resolves the selected command.
 - src/Adapter/Parser/Internal.mjs: maps built-in `help`/`--help`/`-h` and `version`/`--version` inputs plus selected-command arguments to parser-neutral selections.
+- src/Env/Sorter.mjs: preserves valid dotenv records while partitioning non-cfg assignments and cfg namespace groups, attaching comments to their following entry or group, and producing canonical ordering.
+- src/Cli/Command/Cfg/Sort.mjs: finite `cfg:sort` command that selects the target path, supports check and dry-run modes, and atomically replaces a changed file.
 - src/Host.mjs: private run for selection, command lifetime, signals, reverse CLI-plugin shutdown, and process result coordination.

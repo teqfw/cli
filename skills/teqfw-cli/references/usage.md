@@ -156,3 +156,24 @@ runs after command execution regardless of result.
 
 Read the installed package's `types.d.ts` and tests before relying on an exact
 input or handler shape.
+
+## Order Dotenv Configuration
+
+The installed CLI package contributes `cfg:sort`, a finite maintenance command
+for a valid dotenv file:
+
+```sh
+teq cfg:sort
+teq cfg:sort .env.local --check
+teq cfg:sort .env.local --dry-run
+```
+
+Without an argument, it targets `.env` in the host application root. An
+explicit relative path is resolved from the original launch cwd. It orders
+complete cfg keys by namespace and parameter, keeps non-cfg assignments first,
+and preserves assignment syntax, values, duplicate keys, multi-line quoted
+values, inline comments, and attached comments. It does not repair invalid
+dotenv syntax: cfg loads the selected application configuration before command
+resolution. `--check` does not write and exits with status 1 when ordering is
+needed. `--dry-run` does not write and reports the pending rewrite without
+printing configuration values.

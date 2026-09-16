@@ -1,3 +1,4 @@
+declare global {
 type TeqFw_Cli_Process_Status = 0 | 1 | 2 | 130 | 143;
 type TeqFw_Cli_Command_Lifetime = 'finite' | 'long-running';
 type TeqFw_Cli_Command_Runtime = Readonly<{done: Promise<unknown>; stop(): void | Promise<void>}>;
@@ -12,6 +13,9 @@ type TeqFw_Cli_Dto_Command_Descriptor = import('./src/Dto/Command/Descriptor.mjs
 type TeqFw_Cli_Dto_Command_Descriptor__Factory = import('./src/Dto/Command/Descriptor.mjs').Factory;
 type TeqFw_Cli_Dto_Option = import('./src/Dto/Option.mjs').default;
 type TeqFw_Cli_Dto_Option__Factory = import('./src/Dto/Option.mjs').Factory;
+type TeqFw_Cli_Env_Sorter = import('./src/Env/Sorter.mjs').default;
+type TeqFw_Cli_Env_Sorter_Scan = Readonly<{end: number; key: string}>;
+type TeqFw_Cli_Env_Sorter_Token = Readonly<{kind: 'assignment'|'blank'|'comment'; raw: string; key?: string}>;
 type TeqFw_Cli_Host = import('./src/Host.mjs').default;
 type TeqFw_Cli_Host_Open_Input = Readonly<{argv: ReadonlyArray<string>; version: string; commands: ReadonlyArray<TeqFw_Cli_Dto_Command_Descriptor>; defaultCommand: string | undefined; launch: TeqFw_Cli_Launch_Context}>;
 type TeqFw_Cli_Registry_Command = import('./src/Registry/Command.mjs').default;
@@ -46,3 +50,6 @@ interface TeqFw_Cli_Api_Plugin {
     onStartup(): void | Promise<void>;
     onShutdown(): void | Promise<void>;
 }
+}
+
+export {};
