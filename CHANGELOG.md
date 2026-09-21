@@ -2,7 +2,9 @@
 
 ## [Unreleased]
 
-- Require `@teqfw/di` 2.11.0 and compose its declarative Container policy in
+## [2.4.0] - 2026-09-21
+
+- Require `@teqfw/di` >=2.11.0 and compose its declarative Container policy in
   the starter. The Container now keeps one locked policy and singleton cache
   while Bootstrap resolves deliberate sequential plugin and selected-command
   entries.
