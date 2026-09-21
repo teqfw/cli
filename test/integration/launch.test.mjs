@@ -127,7 +127,7 @@ test('rejects retired lifecycle metadata before plugin or command resolution', a
             launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'fixture:finite'], cwd: fixture.root}),
             (error) => error instanceof Error
                 && error.message.includes("Package 'fixture-app' declares retired 'teqfw.fw.cli.lifecycle'")
-                && error.message.includes('plugin: "Example_Plugin_Lifecycle$"')
+                && error.message.includes('plugin: "Example_Cli_Plugin$"')
                 && error.message.includes("'onStartup()' and 'onShutdown()'")
                 && error.message.includes("'initialize', 'activate', 'deactivate', and 'dispose'"),
         );

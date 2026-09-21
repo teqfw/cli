@@ -104,14 +104,65 @@ Use `@teqfw/cli` when you build a TeqFW application and want a standard, metadat
 - Runtime modules in `src/` are DI-addressed, not a direct JavaScript import API.
 - Detailed contracts and integration rules live in the package's Agent Skill, not in this README.
 
-## Lifecycle component convention
+## CLI integration conventions
 
-For a new CLI lifecycle component, declare the recommended DI token
-`{NS}_Plugin_Lifecycle$` in `teqfw.fw.cli.plugin` and place its source at
-`Plugin/Lifecycle.mjs`, where `{NS}` is the package namespace prefix without the
-trailing underscore. `Plugin` means CLI integration participant; it does not
-mean that the component manages other plugins. The version-matched Agent Skill
-contains the manifest example and implementation contract.
+A package that participates in the CLI lifecycle should place its component at
+`src/Cli/Plugin.mjs` and declare `{PackageNamespace}_Cli_Plugin$` in
+`teqfw.fw.cli.plugin`. Here `PackageNamespace` is the package's DI namespace
+prefix without its trailing underscore: `Acme_` becomes `Acme_Cli_Plugin$`.
+This is a recommendation, not a filesystem-driven rule: the CLI resolves the
+component identifier declared in package metadata.
+
+```js
+// @ts-check
+
+/**
+ * @namespace Acme_Cli_Plugin
+ * @description Provides the package-owned CLI lifecycle integration.
+ * @implements {TeqFw_Cli_Api_Plugin}
+ */
+export default class Plugin {
+    constructor() {
+        this.onStartup = async function () {};
+        this.onShutdown = async function () {};
+    }
+}
+```
+
+Only the host application owns pre-Container composition. Its recommended
+module is `bootstrap/di-config.mjs`, declared through
+`teqfw.fw.cli.container.configurator`; the module does not receive or create a
+Container and may return empty declarative collections when no customization is
+needed:
+
+```js
+// @ts-check
+
+/**
+ * @namespace Acme_Cli_Container_Configurator
+ * @description Provides the host composition extension point.
+ * @implements {TeqFw_Cli_Api_Container_Configurator}
+ */
+export default class Configurator {
+    constructor() {
+        /**
+         * @param {TeqFw_Cli_Api_Container_Configurator_Params} params
+         * @returns {TeqFw_Cli_Api_Container_Configurator_Configuration}
+         */
+        this.configure = function ({applicationRoot, argv}) {
+            return {
+                namespaceRoots: [],
+                preprocessors: [],
+                postprocessors: [],
+                configuration: {sources: []},
+            };
+        };
+    }
+}
+```
+
+The version-matched Agent Skill contains the corresponding manifest examples,
+extension details, and lifecycle contract.
 
 ## Agent-Driven Development
 

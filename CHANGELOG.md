@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Document recommended package-owned CLI plugin and host bootstrap configurator
+  locations, identifiers, and minimal implementations.
+
 ## [2.3.0] - 2026-09-16
 
 - Add `cfg:sort` to order valid dotenv files by TeqFW configuration namespace

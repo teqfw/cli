@@ -1,12 +1,12 @@
 # Host Container Configurator Contract
 
 - Path: `ctx/docs/architecture/container-configurator.md`
-- Changed: `20260827`
+- Changed: `20260921`
 
 `TeqFw_Cli_Api_Container_Configurator` is an optional public bootstrap contract between `@teqfw/cli` and a host application. A host may declare its implementation module path, relative to the application root, in `teqfw.fw.cli.container.configurator`. When declared, bin/teq.mjs dynamically loads and constructs the default export before the first Container resolution, then invokes configure(). The configurator is not a Container-resolved component. When absent, the CLI still runs cfg with the standard application-root `.env` when present and process.env.
 The Composition Root resolves TeqFw_Cli_Config$ once after namespace registration and DI extensions, initializes it from computed launch facts, then performs the mandatory cfg load. The component is immutable after initialization and is available to Bootstrap, plugins, and commands through ordinary DI. Its fields are applicationRoot, cwd, normalized argv, dotenvPath, and dotenvExplicit; raw argv remains in the configurator and launch context.
 
-Keep the configurator in a bootstrap or config source area outside the published DI namespace tree. The canonical host layout is `bootstrap/di-config.mjs`; its default-exported `HostContainerConfigurator` class implements `TeqFw_Cli_Api_Container_Configurator`, and its declared path is a host package contract that must be included by the package files/publish configuration. Only the host declares `teqfw.fw.cli.container.configurator`.
+Keep the configurator in a bootstrap or config source area outside the published DI namespace tree. Its default export implements `TeqFw_Cli_Api_Container_Configurator`, and its manifest-declared path is a host package contract that must be included by the package files/publish configuration. Only the host declares `teqfw.fw.cli.container.configurator`. The published consumer Skill defines the recommended host layout and name without making either a filesystem rule.
 
 A package may publish a compatible `{Package}ContainerConfigurator` class for static import, but it does not declare this metadata. The host owns the complete composition boundary: it chooses contribution imports, calls each `configure({applicationRoot, argv})`, and merges their returned extensions in an explicit deterministic order. Contributions return instructions only; they do not receive or create a Container.
 

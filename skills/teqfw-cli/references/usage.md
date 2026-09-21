@@ -47,12 +47,14 @@ unchanged when `--host` is absent.
 ## Host Container Configurator
 
 Only the host application may declare `teqfw.fw.cli.container.configurator`.
-The canonical module path is `bootstrap/di-config.mjs`, relative to the host
+The recommended module path is `bootstrap/di-config.mjs`, relative to the host
 root; include this file in the package `files`/publish configuration. Its
-default export is a `HostContainerConfigurator` class implementing
-`TeqFw_Cli_Api_Container_Configurator`. Name package contributions
-`{Package}ContainerConfigurator`; they may be statically imported by the host,
-but never declare the host-only metadata themselves.
+default export is a `Configurator` class implementing
+`TeqFw_Cli_Api_Container_Configurator`. The convention is not
+filesystem-driven: the CLI dynamically imports the manifest-declared path.
+Name package contributions `{Package}ContainerConfigurator`; they may be
+statically imported by the host, but never declare the host-only metadata
+themselves.
 
 The host manifest declares the one composition boundary:
 
@@ -68,42 +70,39 @@ The host manifest declares the one composition boundary:
 }
 ```
 
-The following canonical implementation passes the same launch facts to every
-contribution and merges their extensions in host-selected order:
+The minimal configurator is pre-Container code: it neither receives nor
+constructs a Container. It may return empty declarative collections when the
+host has no customization:
 
 ```js
-import FeatureContainerConfigurator from '@acme/feature/bootstrap/di-config';
+// @ts-check
 
-const contributions = [FeatureContainerConfigurator];
-
-/** @implements {TeqFw_Cli_Api_Container_Configurator} */
-export default class HostContainerConfigurator {
-    /**
-     * @param {TeqFw_Cli_Api_Container_Configurator_Params} params
-     * @returns {TeqFw_Cli_Api_Container_Configurator_Configuration}
-     */
-    async configure({applicationRoot, argv}) {
-        const extensions = await Promise.all(contributions.map(
-            (Contribution) => new Contribution().configure({applicationRoot, argv}),
-        ));
-        return extensions.reduce((merged, extension) => ({
-            namespaceRoots: [...(merged.namespaceRoots ?? []), ...(extension.namespaceRoots ?? [])],
-            preprocessors: [...(merged.preprocessors ?? []), ...(extension.preprocessors ?? [])],
-            postprocessors: [...(merged.postprocessors ?? []), ...(extension.postprocessors ?? [])],
-            logging: merged.logging || extension.logging,
-            configuration: {
-                sources: [...(merged.configuration?.sources ?? []), ...(extension.configuration?.sources ?? [])],
-            },
-        }), {
-            namespaceRoots: [],
-            preprocessors: [],
-            postprocessors: [],
-            logging: false,
-            configuration: {sources: []},
-        });
+/**
+ * @namespace Acme_Cli_Container_Configurator
+ * @description Provides the host composition extension point.
+ * @implements {TeqFw_Cli_Api_Container_Configurator}
+ */
+export default class Configurator {
+    constructor() {
+        /**
+         * @param {TeqFw_Cli_Api_Container_Configurator_Params} params
+         * @returns {TeqFw_Cli_Api_Container_Configurator_Configuration}
+         */
+        this.configure = function ({applicationRoot, argv}) {
+            return {
+                namespaceRoots: [],
+                preprocessors: [],
+                postprocessors: [],
+                configuration: {sources: []},
+            };
+        };
     }
 }
 ```
+
+For multiple host-selected contributions, statically import each configured
+class, invoke `configure({applicationRoot, argv})`, and merge the returned
+collections in an explicit deterministic order.
 
 All returned properties are optional. The configurator may add namespace roots,
 preprocessors, postprocessors, diagnostic logging, and additional cfg Source descriptors

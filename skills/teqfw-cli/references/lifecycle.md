@@ -6,12 +6,13 @@ Declare one optional lifecycle component identifier under
 
 ## Naming Convention
 
-For a new lifecycle component, use these names, replacing `{NS}` with the
-package's DI namespace prefix without its trailing underscore:
+For a new package-owned lifecycle component, use these names, replacing
+`{PackageNamespace}` with the package's DI namespace prefix without its
+trailing underscore:
 
-- Dependency Specifier: `{NS}_Plugin_Lifecycle$`
-- source path: `Plugin/Lifecycle.mjs`
-- namespace: `{NS}_Plugin_Lifecycle`
+- Dependency Specifier: `{PackageNamespace}_Cli_Plugin$`
+- source path: `src/Cli/Plugin.mjs`
+- namespace: `{PackageNamespace}_Cli_Plugin`
 
 For example, register the component in its owning package manifest as follows:
 
@@ -20,7 +21,7 @@ For example, register the component in its owning package manifest as follows:
   "teqfw": {
     "fw": {
       "cli": {
-        "plugin": "Example_App_Plugin_Lifecycle$"
+        "plugin": "Example_App_Cli_Plugin$"
       }
     }
   }
@@ -29,7 +30,8 @@ For example, register the component in its owning package manifest as follows:
 
 `Plugin` describes this component's CLI integration role. It does not mean the
 component manages other plugins. The convention is recommended for new code;
-the CLI accepts any valid declared Dependency Specifier.
+the CLI accepts any valid declared Dependency Specifier and resolves it from
+the package metadata rather than from this path.
 
 ## Implementation
 
@@ -37,27 +39,23 @@ the CLI accepts any valid declared Dependency Specifier.
 // @ts-check
 
 /**
- * @returns {TeqFw_Cli_Api_Plugin}
+ * @namespace Example_App_Cli_Plugin
+ * @description Provides the package-owned CLI lifecycle integration.
+ * @implements {TeqFw_Cli_Api_Plugin}
  */
-export default function Plugin() {
-    return {
-        onStartup: async function () {
-        },
-        onShutdown: async function () {
-        },
-    };
+export default class Plugin {
+    constructor() {
+        this.onStartup = async function () {};
+        this.onShutdown = async function () {};
+    }
 }
 ```
 
-Use this function-form DI factory for new lifecycle components. Its return value
-expresses the structural plugin contract directly; declare injected values in
-the module's `__deps__` export as usual. Class-form components remain supported
-for compatibility, but are non-canonical for new code. A factory uses
-`@returns {TeqFw_Cli_Api_Plugin}`; reserve `@implements` for a class.
-
-Do not freeze the returned object. The DI Container applies postprocessors and
-wrappers, then hardens the resolved value. Factory-level freezing is redundant
-for normal DI resolution and can prevent later postprocessing.
+Use this class form for the minimal conventional implementation. Declare
+injected values in the module's `__deps__` export as usual. A function-form DI
+factory returning `TeqFw_Cli_Api_Plugin` remains compatible; do not freeze its
+returned object, because the DI Container applies postprocessors and wrappers
+before hardening the resolved value.
 
 There are no `initialize`, `activate`, `deactivate`, or `dispose` phases.
 Bootstrap resolves each declared component and calls `onStartup()` in
