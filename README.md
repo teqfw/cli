@@ -151,9 +151,11 @@ export default class Configurator {
          */
         this.configure = function ({applicationRoot, argv}) {
             return {
-                namespaceRoots: [],
-                preprocessors: [],
-                postprocessors: [],
+                container: {
+                    namespaces: [],
+                    preprocessors: [],
+                    postprocessors: [],
+                },
                 configuration: {sources: []},
             };
         };

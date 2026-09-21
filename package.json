@@ -130,10 +130,11 @@
   },
   "dependencies": {
     "@teqfw/cfg": ">=2.0.0",
-    "@teqfw/di": ">=2.10.0",
+    "@teqfw/di": ">=2.11.0",
     "@teqfw/log": ">=2.0.0"
   },
   "devDependencies": {
+    "@teqfw/di": "github:teqfw/di#main",
     "@types/node": "^26.1.2",
     "markdownlint-cli2": "^0.23.2",
     "typescript": "^5.9.3",

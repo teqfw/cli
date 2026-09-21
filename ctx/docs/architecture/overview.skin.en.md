@@ -23,7 +23,7 @@ Excludes:
 
 ## Invariants
 
-- Bootstrap, plugin, and command resolution follow namespace registration, DI extensions, runtime config, and cfg loading.
+- Bootstrap, plugin, and command resolution follow declarative policy construction, runtime config, and cfg loading.
 - Only the selected root package is interpreted for host-related declarations.
 - The explicit host declares canonical namespaces and depends on `@teqfw/cli`.
 - Only an optional host configurator configures Container extensions.

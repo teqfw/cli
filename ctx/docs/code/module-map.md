@@ -4,7 +4,7 @@
 - Changed: `20260827`
 
 - bin/teq.mjs: self-contained universal starter and process boundary; requirements are in [teq-starter.md](teq-starter.md).
-- src/Api/Container/Configurator.mjs: namespace-addressed optional host configurator contract; its ambient configuration type accepts preprocessors with `TeqFw_Di_Container_ResolutionContext`, and consumers use it rather than a direct module import.
+- src/Api/Container/Configurator.mjs: namespace-addressed optional host configurator contract; its ambient configuration type exposes JSON-safe Container policy producer identifiers, and consumers use it rather than a direct module import.
 - src/Config.mjs: immutable DI-resolved computed runtime facts initialized by the Composition Root before cfg and runtime resolution.
 - src/Api/Plugin.mjs: namespace-addressed JSDoc `@interface` `TeqFw_Cli_Api_Plugin` with `onStartup` and `onShutdown`; implementations declare `@implements`.
 - src/Dto/Command/Descriptor.mjs: validates static command descriptors from package metadata.

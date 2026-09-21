@@ -6,23 +6,17 @@ import {fileURLToPath} from 'node:url';
 
 const root = path.resolve(fileURLToPath(new URL('../../../..', import.meta.url)));
 
-test('accepts a two-argument configurator preprocessor', () => {
+test('accepts declarative DI policy producer identifiers', () => {
     /** @type {TeqFw_Cli_Api_Container_Configurator_Configuration} */
     const configuration = {
-        preprocessors: [
-            /**
-             * @param {TeqFw_Di_Dto_DepId} depId
-             * @param {TeqFw_Di_Container_ResolutionContext} context
-             * @returns {TeqFw_Di_Dto_DepId}
-             */
-            function preprocessor(depId, context) {
-                assert.equal(context.depId, depId);
-                return depId;
-            },
-        ],
+        container: {
+            preprocessors: ['Fixture_App_Policy_Preprocessor$'],
+            postprocessors: ['Fixture_App_Policy_Postprocessor$'],
+        },
     };
 
-    assert.equal(configuration.preprocessors?.[0]?.length, 2);
+    assert.deepEqual(configuration.container?.preprocessors, ['Fixture_App_Policy_Preprocessor$']);
+    assert.deepEqual(configuration.container?.postprocessors, ['Fixture_App_Policy_Postprocessor$']);
 });
 
 test('documents the conventional host bootstrap configurator in the published skill', async () => {

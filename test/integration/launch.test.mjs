@@ -27,7 +27,7 @@ test('launches with a configurator', async () => {
     }
 });
 
-test('forwards resolution context to a configurator preprocessor', async () => {
+test('materializes a configurator preprocessor from a declarative policy identifier', async () => {
     const fixture = await createCliFixture();
     await fs.writeFile(path.join(fixture.root, 'src/Bootstrap/Container.mjs'), `/** @implements {TeqFw_Cli_Api_Container_Configurator} */
 export default class HostContainerConfigurator {
@@ -38,25 +38,21 @@ export default class HostContainerConfigurator {
     configure({applicationRoot, argv}) {
         globalThis.__fixtureConfigurator = applicationRoot;
         globalThis.__fixtureConfiguratorArgv = argv;
-        return {
-            preprocessors: [
-                /**
-                 * @param {TeqFw_Di_Dto_DepId} depId
-                 * @param {TeqFw_Di_Container_ResolutionContext} context
-                 * @returns {TeqFw_Di_Dto_DepId}
-                 */
-                function preprocessor(depId, context) {
-                    (globalThis.__fixturePreprocessContexts ??= []).push({
-                        depId: depId.moduleName,
-                        root: context.root.moduleName,
-                        parent: context.parent?.moduleName ?? null,
-                        stack: context.stack.map((item) => item.moduleName),
-                    });
-                    return depId;
-                },
-            ],
-        };
+        return {container: {preprocessors: ['Fixture_App_Policy_Preprocessor$']}};
     }
+}
+`);
+    await fs.mkdir(path.join(fixture.root, 'src/Policy'), {recursive: true});
+    await fs.writeFile(path.join(fixture.root, 'src/Policy/Preprocessor.mjs'), `export default function Preprocessor() {
+    return function preprocessor(depId, context) {
+        (globalThis.__fixturePreprocessContexts ??= []).push({
+            depId: depId.address,
+            root: context.root.address,
+            parent: context.parent?.address ?? null,
+            stack: context.stack.map((item) => item.address),
+        });
+        return depId;
+    };
 }
 `);
     try {

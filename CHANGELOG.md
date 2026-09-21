@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+- Require `@teqfw/di` 2.11.0 and compose its declarative Container policy in
+  the starter. The Container now keeps one locked policy and singleton cache
+  while Bootstrap resolves deliberate sequential plugin and selected-command
+  entries.
+- Replace callback-based host Container extensions with JSON-safe policy
+  producer identifiers under `container`.
 - Document recommended package-owned CLI plugin and host bootstrap configurator
   locations, identifiers, and minimal implementations.
 

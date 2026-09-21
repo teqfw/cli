@@ -272,14 +272,21 @@ export async function launch(params) {
     });
     /** @type {ReadonlyArray<TeqFw_Di_Node_Registry_Package_Record>} */
     const packages = await new PackageRegistry({fs, path, appRoot: applicationRoot}).build();
-    const container = new Container();
     let configurator;
+    /** @type {TeqFw_Cli_Api_Container_Policy} */
+    let containerPolicy = {};
     let configurationSources = [];
+    /** @type {TeqFw_Cli_Api_Container_NamespaceRoot[]} */
+    const namespaces = [];
 
     for (const record of packages) {
         const framework = (/** @type {TeqFw_Cli_Manifest_TeqFw} */ (record.packageJson.teqfw ?? {})).fw ?? {};
         for (const item of framework.di?.namespaces ?? []) {
-            container.addNamespaceRoot(item.prefix, path.resolve(record.rootAbs, item.path), item.ext ?? '.mjs');
+            namespaces.push({
+                prefix: item.prefix,
+                target: path.resolve(record.rootAbs, item.path),
+                defaultExt: item.ext ?? '.mjs',
+            });
         }
         if (record.rootAbs === applicationRoot) {
             configurator = framework.cli?.container?.configurator;
@@ -289,12 +296,18 @@ export async function launch(params) {
     if (configurator) {
         const Configurator = (await import(pathToFileURL(path.resolve(applicationRoot, configurator)).href)).default;
         const extensions = await new Configurator().configure({applicationRoot, argv: launch.argv});
-        for (const item of extensions?.namespaceRoots ?? []) container.addNamespaceRoot(item.prefix, item.target, item.defaultExt);
-        for (const processor of extensions?.preprocessors ?? []) container.addPreprocess(processor);
-        for (const processor of extensions?.postprocessors ?? []) container.addPostprocess(processor);
-        if (extensions?.logging) container.enableLogging();
+        containerPolicy = extensions?.container ?? {};
         configurationSources = extensions?.configuration?.sources ?? [];
     }
+
+    const container = new Container({
+        namespaces: [...namespaces, ...(containerPolicy.namespaces ?? [])],
+        preprocessors: containerPolicy.preprocessors ?? [],
+        postprocessors: containerPolicy.postprocessors ?? [],
+        hardener: containerPolicy.hardener ?? null,
+        logging: containerPolicy.logging === true,
+        introspection: containerPolicy.introspection === true,
+    });
 
     const dotenvPath = path.resolve(applicationRoot, globalOptions.dotenvPath ?? '.env');
     const dotenvAvailable = await hasDotenvFile(fs, dotenvPath, globalOptions.dotenvExplicit);

@@ -9,7 +9,7 @@ Record durable architecture choices that govern composition, discovery, and runt
 
 ## Mental Model
 
-Fifteen decisions define one Composition Root, host ownership and explicit host selection, metadata, DI/cfg ordering, command selection/lifetime, private Host/resolver, and plugin startup/shutdown.
+Sixteen decisions define one Composition Root, host ownership and explicit host selection, metadata, DI/cfg ordering, command selection/lifetime, private Host/resolver, and plugin startup/shutdown.
 
 ## Scope
 
@@ -29,6 +29,7 @@ Excludes:
 - Bootstrap, plugin, and command resolution follow namespace registration, DI extensions, runtime config, and cfg loading. Runtime config is the sole pre-cfg resolution.
 - Command resolution is deferred until after all CLI plugin `onStartup` calls succeed.
 - Bootstrap's private resolver capability is never exposed to plugins, commands, or Host.
+- The first Container entry locks declarative policy; later deliberate entries are sequential and share its singleton cache.
 - Shutdown reverses completed startup work exactly once.
 
 ## Agent Document

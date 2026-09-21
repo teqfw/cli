@@ -90,9 +90,11 @@ export default class Configurator {
          */
         this.configure = function ({applicationRoot, argv}) {
             return {
-                namespaceRoots: [],
-                preprocessors: [],
-                postprocessors: [],
+                container: {
+                    namespaces: [],
+                    preprocessors: [],
+                    postprocessors: [],
+                },
                 configuration: {sources: []},
             };
         };
@@ -104,9 +106,13 @@ For multiple host-selected contributions, statically import each configured
 class, invoke `configure({applicationRoot, argv})`, and merge the returned
 collections in an explicit deterministic order.
 
-All returned properties are optional. The configurator may add namespace roots,
-preprocessors, postprocessors, diagnostic logging, and additional cfg Source descriptors
-under configuration.sources. A preprocessor has this JSDoc contract:
+All returned properties are optional. `container` is JSON-safe policy data that
+the starter combines with the package namespace mappings before calling
+`new Container(data)`. It may add `namespaces`, `preprocessors`,
+`postprocessors`, an optional `hardener`, diagnostic `logging`, and
+`introspection`. Its processor values are Dependency Identifiers, not callback
+functions: DI materializes each producer once while locking the policy before
+the first entry. A preprocessor producer returns this synchronous policy:
 
 ```js
 /**
@@ -114,15 +120,18 @@ under configuration.sources. A preprocessor has this JSDoc contract:
  * @param {TeqFw_Di_Container_ResolutionContext} context
  * @returns {TeqFw_Di_Dto_DepId}
  */
-function preprocessor(depId, context) {
-    return context.parent === null ? depId : depId;
+export default function Preprocessor() {
+    return function preprocessor(depId, context) {
+        return context.parent === null ? depId : depId;
+    };
 }
 ```
 
 `context` is immutable request provenance: the current `depId`, root request,
-immediate `parent` (or `null` for the root), and root-to-current `stack`.
-Contributions only return extensions; the host selects their static imports,
-order, and merge policy. Host Sources are application defaults. CLI then appends the
+immediate `parent` (or `null` for the root), and root-to-current `stack`. The
+configurator cannot provide Container mocks or callbacks. Contributions only
+return declarative data; the host selects their static imports, order, and
+merge policy. Host Sources are application defaults. CLI then appends the
 application-root `.env` when present and `process.env`, so process.env has the highest
 precedence. Use `--dotenv-file path/to/file.env` or `--dotenv-file=path/to/file.env` to
 select an explicit dotenv file relative to the host root; the option is consumed by the launcher before command parsing. The configurator neither receives nor constructs the Container. CLI loads the final Source list exactly once, initializes the immutable `TeqFw_Cli_Config$` runtime component, and only then resolves Bootstrap or plugins. Runtime facts are separate from cfg and cannot be overridden by user configuration.

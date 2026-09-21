@@ -2,7 +2,7 @@
 
 /**
  * @namespace TeqFw_Cli_Api_Container_Configurator
- * @description Public contract for optional host-application Container configuration.
+ * @description Public contract for optional host declarative Container policy configuration.
  * @interface
  */
 export default class Configurator {

@@ -18,10 +18,10 @@ The physical-process guard first checks PM2's `pm_exec_path`: when its canonical
 ## Composition Procedure
 
 1. Read the host package manifest and build the production package registry from applicationRoot.
-2. Create Container and register each package's `teqfw.fw.di.namespaces` roots.
+2. Collect each package's `teqfw.fw.di.namespaces` mappings as declarative Container data.
 3. Read only the host declaration for the optional Container configurator.
-4. If declared, dynamically import the host configurator, construct its default export, and apply its namespace roots, preprocessors, postprocessors, logging instruction, and additional cfg Source declarations.
-5. Initialize TeqFw_Cli_Config$ from the launch facts, then resolve cfg and perform its one mandatory load, then resolve Bootstrap and start it with launch facts and a private get-only resolution capability. Preserve raw argv for the configurator and launch context; pass Bootstrap a separate argv with global `--dotenv-file` options removed.
+4. If declared, dynamically import the host configurator, construct its default export, collect its JSON-safe `container` policy data and additional cfg Source declarations, combine its namespace mappings with package mappings, then create Container from that data.
+5. Resolve TeqFw_Cli_Config$ as the first entry, which locks and materializes policy; initialize it from the launch facts. Resolve cfg and perform its one mandatory load, then resolve Bootstrap and start it with launch facts and a private staged-entry capability. Preserve raw argv for the configurator and launch context; pass Bootstrap a separate argv with global `--dotenv-file` options removed.
 
 The host package is the root npm package assembling the graph. Only its manifest may supply host declarations, including the optional configurator and default command. All package manifests may contribute package metadata, namespaces, command descriptors, and one optional CLI plugin component identifier. Package records are composition input only; the starter does not copy or expose a metadata registry. Bootstrap receives one immutable launch context containing raw argv, cwd, and applicationRoot and obtains PackageRegistry through its declared DI dependencies. Runtime products consume the immutable runtime-config contract through ordinary DI. Lifecycle hooks receive no launch parameters; configuration is available through DI before their products are resolved.
 
@@ -32,9 +32,9 @@ The host package is the root npm package assembling the graph. Only its manifest
 - The optional host configurator is the sole dynamic import and is resolved from its declared path relative to applicationRoot.
 - A host configurator is pre-Container code and uses static imports only; it cannot rely on DI-resolved application modules.
 - Do not split pre-Container work into helpers or other modules; all of it remains in this file.
-- Do not create, resolve, or expose Container through the configurator; it only returns declarative instructions.
+- Do not create, resolve, or expose Container through the configurator; it returns only JSON-safe declarative policy data and cfg Source descriptors.
 - Do not read or interpret command, CLI-plugin, lifecycle, or default-command declarations. Bootstrap reads static metadata after Container startup through `PackageRegistry`.
-- Do not pass Container, package records, provider identifiers, or other Composition Root artifacts to Bootstrap. Pass only its private get-only capability separately from launch facts; Bootstrap must not forward it to any runtime product.
+- Do not pass Container, package records, provider identifiers, or other Composition Root artifacts to Bootstrap. Pass only its private staged-entry capability separately from launch facts; Bootstrap must not forward it to any runtime product.
 - Keep process lifetime, command selection, and lifecycle behavior in Bootstrap and Host after composition.
 
 ## Failure Model
