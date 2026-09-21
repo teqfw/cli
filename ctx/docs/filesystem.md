@@ -7,7 +7,7 @@
 - src: namespace-addressed runtime modules. Their logical TeqFW names are resolved by the configured Container from `teqfw.fw.di.namespaces`; they are not a direct JavaScript import API.
 - skills: version-matched Agent Skill distributed with the package for consumer agents.
 - ctx: authoritative ADSM cognitive context.
-- test: unit, integration, acceptance fixtures and tests.
+- test: unit tests mapped one-to-one to `src`, package-contract tests, integration and acceptance fixtures and tests.
 - README.md, CHANGELOG.md, package.json, jsconfig.json, types.d.ts: public package contract.
 
 ## Package Entry Points

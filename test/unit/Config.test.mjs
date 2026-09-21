@@ -1,10 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import Config from '../../src/Config.mjs';
-import deepFreeze from '../../src/Util/DeepFreeze.mjs';
 
 test('runtime config is unavailable until initialized and immutable afterwards', () => {
-    const config = new Config({deep: deepFreeze});
+    const config = new Config({deep: (/** @type {any} */ input) => Object.freeze({...input, argv: Object.freeze([...input.argv])})});
     assert.throws(() => config.applicationRoot, /not initialized/);
     config.init(/** @type {any} */ ({
         applicationRoot: '/app',

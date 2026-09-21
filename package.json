@@ -31,52 +31,6 @@
     "types.d.ts"
   ],
   "teqfw": {
-    "platform": {
-      "unitTests": {
-        "exclusions": [
-          {
-            "path": "src/Adapter/Io.mjs",
-            "reason": "Thin Node stdout and stderr adapter covered through command integration tests."
-          },
-          {
-            "path": "src/Adapter/Parser/Internal.mjs",
-            "reason": "Parser behavior is covered with Host command tests."
-          },
-          {
-            "path": "src/Adapter/Signal.mjs",
-            "reason": "Native signal subscription is covered by Host lifecycle tests."
-          },
-          {
-            "path": "src/Bootstrap.mjs",
-            "reason": "Bootstrap orchestration is covered by integration launch tests."
-          },
-          {
-            "path": "src/Dto/Argument.mjs",
-            "reason": "Argument DTO validation is covered by the command DTO test."
-          },
-          {
-            "path": "src/Dto/Command/Descriptor.mjs",
-            "reason": "Descriptor validation is covered by the command DTO test."
-          },
-          {
-            "path": "src/Dto/Option.mjs",
-            "reason": "Option DTO validation is covered by the command DTO test."
-          },
-          {
-            "path": "src/Error.mjs",
-            "reason": "Error factory is a small pure helper exercised by consumers."
-          },
-          {
-            "path": "src/Registry/Command.mjs",
-            "reason": "Registry behavior is covered by Bootstrap and command-host tests."
-          },
-          {
-            "path": "src/Util/DeepFreeze.mjs",
-            "reason": "Freeze behavior is covered by DTO and Config tests."
-          }
-        ]
-      }
-    },
     "fw": {
       "di": {
         "namespaces": [
@@ -119,8 +73,9 @@
     }
   },
   "scripts": {
-    "test": "npm run test:unit && npm run test:integration && npm run test:acceptance",
+    "test": "npm run test:unit && npm run test:package && npm run test:integration && npm run test:acceptance",
     "test:unit": "find test/unit -name '*.test.mjs' -print0 | xargs -0 node --test",
+    "test:package": "find test/package -name '*.test.mjs' -print0 | xargs -0 node --test",
     "test:integration": "find test/integration -name '*.test.mjs' -print0 | xargs -0 node --test",
     "test:acceptance": "find test/acceptance -name '*.test.mjs' -print0 | xargs -0 node --test",
     "validate:esm": "teqfw-esm-validator src --profile base",
