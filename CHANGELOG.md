@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-09-23
+
+- Stop long-running commands after a shutdown signal even when their `done`
+  promise resolves synchronously from the signal handler.
+
 ## [2.4.0] - 2026-09-21
 
 - Require `@teqfw/di` >=2.11.0 and compose its declarative Container policy in
