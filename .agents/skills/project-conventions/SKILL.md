@@ -18,7 +18,7 @@ description: Project-specific conventions. Use for every task in this repository
 - At the start of work, check upstream in the root and `ctx/` when applicable; keep each local `main` synchronized by fast-forwarding when safe.
 - Before changes, inspect every affected working tree.
 - When an `npm` or `git` operation is known in advance to require network access, request `sandbox_permissions: "require_escalated"` for the initial command instead of retrying the same operation in the restricted sandbox first.
-- Keep local read-only Git inspection and local npm checks in the sandbox when they do not need network or external system access.
+- Run local npm checks in the sandbox when they do not need network or external system access, except tests that spawn child processes. Run subprocess-based tests (including acceptance tests and the full `npm test` suite) outside the sandbox with `sandbox_permissions: "require_escalated"`: the restricted sandbox can suppress child-process stdout/stderr and cause false failures or hangs.
 - Do not commit or push unless the user requests it.
 
 ## Project-local skills
