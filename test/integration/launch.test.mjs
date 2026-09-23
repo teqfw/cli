@@ -148,6 +148,25 @@ test('information starts and closes plugins without creating commands', async ()
     }
 });
 
+test('stops a long-running command when done resolves from the stop signal', async () => {
+    const fixture = await createCliFixture();
+    let settled = false;
+    let failure;
+    const execution = launch({applicationRoot: fixture.root, argv: ['node', 'teq', 'fixture:wait'], cwd: fixture.root});
+    execution.then(() => { settled = true; }, (error) => { settled = true; failure = error; });
+    try {
+        while (!globalThis.__fixtureResourceActive && !settled) await new Promise((resolve) => setImmediate(resolve));
+        if (failure) throw failure;
+        assert.equal(settled, false);
+        process.emit('SIGTERM');
+        assert.equal(await execution, 143);
+        assert.equal(globalThis.__fixtureResourceActive, false);
+    } finally {
+        await fixture.cleanup();
+        clearCliFixtureGlobals();
+    }
+});
+
 test('reports the host application version', async () => {
     const fixture = await createCliFixture();
     const write = process.stdout.write;

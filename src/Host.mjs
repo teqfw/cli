@@ -72,9 +72,14 @@ export default class Host {
                         if (!runtime || typeof runtime.stop !== 'function' || !runtime.done || typeof runtime.done.then !== 'function') {
                             throw new TypeError(`Long-running command '${command.id}' must return {stop(), done: Promise}.`);
                         }
-                        const stopped = new Promise((resolve) => controller.signal.addEventListener('abort', resolve, {once: true}));
+                        let interrupted = controller.signal.aborted;
+                        const stopped = new Promise((resolve) => controller.signal.addEventListener('abort', () => {
+                            interrupted = true;
+                            resolve();
+                        }, {once: true}));
                         const done = Promise.resolve(runtime.done);
-                        if (controller.signal.aborted || await Promise.race([done.then(() => false), stopped.then(() => true)])) await runtime.stop();
+                        await Promise.race([done, stopped]);
+                        if (interrupted) await runtime.stop();
                         await done;
                     }
                 } catch (error) {
