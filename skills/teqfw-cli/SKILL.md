@@ -21,10 +21,12 @@ test conventions as authoritative.
 3. Declare commands and optional lifecycle components in the owning package's
    `teqfw.fw.cli` metadata. Discovery reads metadata only; it does not create a
    command product.
-4. Treat cfg as mandatory CLI startup infrastructure: the CLI loads the ordered Sources exactly once before resolving lifecycle components. The launcher also initializes the immutable `TeqFw_Cli_Config$` runtime component before that resolution; consume its computed `applicationRoot`, `cwd`, normalized `argv`, and dotenv facts through DI. These facts are separate from user configuration and cannot be overridden by cfg. A lifecycle component implements `TeqFw_Cli_Api_Plugin` with onStartup() and onShutdown() only. For new components, use the recommended package-owned location and identifier described in [Lifecycle](references/lifecycle.md). Use ordinary declared DI dependencies; never receive the Container, the Bootstrap resolver, or the Host run. See [Usage](references/usage.md) for standard Sources and precedence.
-5. Model a command as either finite `async execute(context)` or long-running
-   `async start(context)` returning `{done, stop}`. Let only the executable set
-   the process exit code.
+4. Treat cfg as mandatory CLI startup infrastructure: the CLI loads the ordered Sources exactly once before resolving lifecycle components. The launcher also initializes the immutable `TeqFw_Cli_Config$` runtime component before that resolution; consume its computed `applicationRoot`, `cwd`, normalized `argv`, and dotenv facts through DI. These facts are separate from user configuration and cannot be overridden by cfg. A lifecycle component implements `TeqFw_Cli_Api_Plugin` with `onStartup()` and `onShutdown()` only. For new components, use the recommended package-owned location and identifier described in [Lifecycle](references/lifecycle.md). Use ordinary declared DI dependencies; never receive the Container, the Bootstrap resolver, or the Host run. See [Usage](references/usage.md) for standard Sources and precedence.
+5. A command handler receives `{args, options, signal, launch}`. Finite commands use
+   `async execute(context)`; long-running commands use `async start(context)` and
+   return `{done, stop}`. See [Usage](references/usage.md) for the fields and
+   [Lifecycle](references/lifecycle.md) for signal and shutdown behavior. Let
+   only the executable set the process exit code.
 6. Read the selected references before editing, then validate with the host
    project's tests.
 

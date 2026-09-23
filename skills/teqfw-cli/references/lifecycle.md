@@ -65,8 +65,20 @@ back only components that started successfully.
 
 All lifecycle components start before command selection. Help and version do
 not create a command product, but close already started lifecycle components.
-Finite commands settle before close. For a long-running command, SIGINT or
-SIGTERM aborts the shared signal, calls `stop()`, waits for `done`, then closes.
+Finite commands settle before close. SIGINT and SIGTERM abort the command's
+shared `signal`; finite commands must observe it themselves if they need
+cooperative cancellation. When SIGINT or SIGTERM occurs after `start()` has
+returned a long-running handle, the Host calls `stop()` and waits for `done`
+before closing.
+
+Current limitation: the Host awaits `start()` before it installs the waiter
+that invokes `stop()`. If a signal arrives while an asynchronous `start()` is
+still pending, it is visible through `context.signal`, but the later
+long-running wait can miss the abort event and never call `stop()`. Keep startup
+responsive; check the signal around awaited initialization, unwind partial
+startup in `start()` when needed, and return or reject promptly. Do not rely on
+`stop()` being called for a signal received before `start()` returns. This is a
+runtime edge case, not a recommended lifecycle pattern.
 
 Only the executable assigns `process.exitCode`: success and information return
 `0`, usage errors `2`, ordinary failures `1`, and the first stop signal may

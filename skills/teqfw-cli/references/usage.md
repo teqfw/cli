@@ -156,14 +156,40 @@ parsing, and selection data; it is not the command product. Only the host may
 set `teqfw.fw.cli.command.default`, which selects a descriptor by `id` when no
 explicit command was supplied.
 
-A command component constructor returns a plain object with the same identity
-and input metadata, plus `lifetime` and its handler. Use `lifetime: 'finite'`
-with `async execute(context)`, or `lifetime: 'long-running'` with
-`async start(context)` returning `{done, stop}`. An optional `cleanup` function
-runs after command execution regardless of result.
+A command component constructor returns a plain object with `id`, `summary`,
+`arguments`, `options`, and `lifetime`, plus its handler. Keep its identity and
+input metadata aligned with the static manifest descriptor: the descriptor
+drives help and parsing, while the command product is resolved afterwards and
+the CLI does not cross-check the two.
 
-Read the installed package's `types.d.ts` and tests before relying on an exact
-input or handler shape.
+Use `lifetime: 'finite'` with `async execute(context)`, or
+`lifetime: 'long-running'` with `async start(context)` returning
+`{done: Promise, stop(): void | Promise<void>}`. Both handlers receive a context with:
+
+- `args` — parsed positional arguments keyed by the manifest argument names;
+- `options` — parsed options keyed by the manifest option names;
+- `signal` — the shared `AbortSignal`, aborted by SIGINT or SIGTERM;
+- `launch` — `{applicationRoot, cwd, argv}` for this launch. `argv` has launcher
+  `--host`/`--host-root` options removed when they precede the command id, and
+  `--dotenv-file` options removed wherever supplied. Command-owned tokens remain;
+  `cwd` stays the invocation directory even for an explicit host.
+
+Arguments and options may be omitted or empty. Their `kind` is `string`,
+`number`, or `boolean`; descriptors may set `required` or `defaultValue` (not
+both).
+Arguments additionally support a final `variadic` argument. Options may define
+a one-character `short` alias or be `repeatable` (with an array default when a
+default is supplied). Value-taking options accept `--name value` and
+`--name=value`; a short alias is invoked as `-x`. A non-repeatable boolean
+option may be used as a flag or supplied an explicit value (`true`, `false`,
+`1`, or `0`); repeatable options take values. Parsed values, not raw
+command-line tokens, are passed in the context.
+
+An optional `cleanup()` function receives no arguments. The Host calls it after
+the handler settles or throws; a cleanup failure makes the run fail unless a
+signal status takes precedence. The package's ambient `types.d.ts` does not
+currently declare this handler-context shape, so treat the contract above as
+the runtime behavior and validate command integrations in the host project.
 
 ## Order Dotenv Configuration
 
