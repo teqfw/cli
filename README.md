@@ -132,8 +132,11 @@ export default class Plugin {
 Only the host application owns pre-Container composition. Its recommended
 module is `bootstrap/di-config.mjs`, declared through
 `teqfw.fw.cli.container.configurator`; the module does not receive or create a
-Container and may return empty declarative collections when no customization is
-needed:
+Container. Dependency installation, namespace discovery, and CLI plugin
+metadata do not automatically configure package policy producers. The host
+explicitly includes the producers required by its selected composition. This
+illustrative example runs a dependency-owned preprocessor before the host
+preprocessor:
 
 ```js
 // @ts-check
@@ -153,7 +156,10 @@ export default class Configurator {
             return {
                 container: {
                     namespaces: [],
-                    preprocessors: [],
+                    preprocessors: [
+                        'Acme_Dependency_Policy_Preprocessor$',
+                        'Acme_Policy_Preprocessor$',
+                    ],
                     postprocessors: [],
                 },
                 configuration: {sources: []},
@@ -162,6 +168,18 @@ export default class Configurator {
     }
 }
 ```
+
+The producer identifiers above are illustrative: replace them with published
+identifiers verified against the installed dependency and host contracts. Both
+namespaces must be registered. The host chooses deterministic ordering based
+on how the policies compose; dependency-first is the choice in this example,
+not a universal rule. Use empty lists when no processors are required.
+
+Verify the composition by resolving or exercising the contract whose
+substitution depends on the dependency-owned producer, and confirm the selected
+implementation's behavior. Namespace discovery or successful startup alone does
+not prove that the contract substitution works. Keep one host configurator;
+CLI plugins cannot mutate Container policy after creation.
 
 The version-matched Agent Skill contains the corresponding manifest examples,
 extension details, and lifecycle contract.
