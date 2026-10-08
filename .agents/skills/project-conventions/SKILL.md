@@ -9,13 +9,14 @@ description: Project-specific conventions. Use for every task in this repository
 
 ## Repositories
 
-- The root and `ctx/` are one Git repository; include `ctx/` in root Git operations.
+- The product repository `teqfw/cli` and private context repository `flancer32/teqfw-cli-ctx`, mounted at `ctx/`, are independent; do not mix status, commits, or pushes.
 - `ctx/` is the authoritative ADSM cognitive context.
+- Keep `ctx/` ignored by product Git and excluded from npm artifacts.
 
 ## Workflow
 
 - Work in the repository's `main` branch. This project rule overrides any GitHub-skill instruction to use a separate branch.
-- At the start of work, check upstream in the root and `ctx/` when applicable; keep each local `main` synchronized by fast-forwarding when safe.
+- At the start of work, inspect both working trees and upstream state; keep each local `main` synchronized by fast-forwarding when safe. An empty context remote has no branch to merge.
 - Before changes, inspect every affected working tree.
 - When an `npm` or `git` operation is known in advance to require network access, request `sandbox_permissions: "require_escalated"` for the initial command instead of retrying the same operation in the restricted sandbox first.
 - Run local npm checks in the sandbox when they do not need network or external system access, except tests that spawn child processes. Run subprocess-based tests (including acceptance tests and the full `npm test` suite) outside the sandbox with `sandbox_permissions: "require_escalated"`: the restricted sandbox can suppress child-process stdout/stderr and cause false failures or hangs.
