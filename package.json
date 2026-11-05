@@ -73,7 +73,7 @@
     }
   },
   "scripts": {
-    "test": "npm run test:unit && npm run test:package && npm run test:integration && npm run test:acceptance",
+    "test": "npm run check:esm && npm run test:unit && npm run test:package && npm run test:integration && npm run test:acceptance",
     "test:unit": "find test/unit -name '*.test.mjs' -print0 | xargs -0 node --test",
     "test:package": "find test/package -name '*.test.mjs' -print0 | xargs -0 node --test",
     "test:integration": "find test/integration -name '*.test.mjs' -print0 | xargs -0 node --test",
@@ -81,7 +81,8 @@
     "validate:esm": "teqfw-esm-validator src --profile base",
     "validate:ctx": "node bin/teq.mjs --host @flancer32/skill-adsm-ctx adsm-ctx:validate .",
     "typecheck": "tsc -p jsconfig.json",
-    "lint:md": "markdownlint-cli2 \"skills/**/*.md\" \"*.md\""
+    "lint:md": "markdownlint-cli2 \"skills/**/*.md\" \"*.md\"",
+    "check:esm": "teqfw-esm-validator src --profile base"
   },
   "dependencies": {
     "@teqfw/cfg": ">=2.0.0",
@@ -89,6 +90,7 @@
     "@teqfw/log": ">=2.0.0"
   },
   "devDependencies": {
+    "@flancer32/skill-teqfw-esm-validator": "^0.15.2",
     "@teqfw/di": "github:teqfw/di#main",
     "@types/node": "^26.1.2",
     "markdownlint-cli2": "^0.23.2",
