@@ -6,9 +6,21 @@
     "moduleResolution": "nodenext",
     "noEmit": true,
     "skipLibCheck": true,
+    "strict": true,
     "target": "ESNext",
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
-  "include": ["bin", "src", "test", "types.d.ts", "node_modules/@teqfw/*/src", "node_modules/@teqfw/*/types.d.ts"],
-  "exclude": ["dist"]
+  "include": [
+    "bin",
+    "src",
+    "test",
+    "types.d.ts",
+    "node_modules/@flancer32",
+    "node_modules/@teqfw"
+  ],
+  "exclude": [
+    "dist"
+  ]
 }
