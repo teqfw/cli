@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {Factory} from '../../../src/Dto/Option.mjs';
 
+/** @param {any} value @returns {any} */
 function freeze(value) {
     if (value && typeof value === 'object') {
         for (const item of Reflect.ownKeys(value)) freeze(value[item]);

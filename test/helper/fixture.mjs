@@ -3,13 +3,18 @@ import os from 'node:os';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const repoRoot = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
+/** @param {string} file @param {unknown} value */
 async function json(file, value) { await fs.mkdir(path.dirname(file), {recursive: true}); await fs.writeFile(file, JSON.stringify(value, null, 2)); }
+/** @param {string} root @param {string} name @param {string} value */
 async function source(root, name, value) { const file = path.join(root, name); await fs.mkdir(path.dirname(file), {recursive: true}); await fs.writeFile(file, value); }
+/** @param {string} root @param {string} name @param {string} target */
 async function link(root, name, target) { const file = path.join(root, 'node_modules', name); await fs.mkdir(path.dirname(file), {recursive: true}); await fs.symlink(target, file, 'dir'); }
+/** @param {{configurator?: boolean, plugin?: boolean}} options */
 export async function createCliFixture(options = {}) {
  const configurator = options.configurator ?? true;
  const plugin = options.plugin ?? true;
  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'teqfw-cli-'));
+ /** @type {TeqFw_Cli_Manifest_Cli} */
  const cli = {command: {default: 'fixture:finite'}, commands: [
   {id: 'fixture:finite', summary: 'Finish', arguments: [], options: [], component: 'Fixture_App_Cli_Command_Finite$'},
   {id: 'fixture:wait', summary: 'Wait', arguments: [], options: [], component: 'Fixture_App_Cli_Command_Wait$'},
@@ -34,5 +39,5 @@ export async function createCliFixture(options = {}) {
 }
 export function clearCliFixtureGlobals() {
  const keys = ['__fixtureConfigurator', '__fixtureConfiguratorArgv', '__fixturePluginConfig', '__fixtureCommandConfig', '__fixtureRuntimeConfig', '__fixtureCommandRuntimeConfig', '__fixtureLaunch', '__fixtureCalls', '__fixturePreprocessContexts', '__fixtureResourceActive'];
- for (const key of keys) delete globalThis[key];
+ for (const key of keys) Reflect.deleteProperty(globalThis, key);
 }

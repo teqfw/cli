@@ -7,7 +7,7 @@
 
 /**
  * @param {unknown} value
- * @param {object} seen
+ * @param {TeqFw_Cli_Util_DeepFreeze_Seen} seen
  * @returns {any}
  */
 export default function deepFreeze(value, seen = new WeakSet()) {

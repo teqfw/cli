@@ -6,11 +6,12 @@ import test from 'node:test';
 import {launch} from '../../bin/teq.mjs';
 import {clearCliFixtureGlobals, createCliFixture} from '../helper/fixture.mjs';
 
+/** @param {string[]} argv @param {{cwd?: string, hostSearchRoots?: string[]}} options */
 async function run(argv, options = {}) {
-    return launch({argv, cwd: options.cwd, hostSearchRoots: options.hostSearchRoots});
+    return launch({argv, cwd: options.cwd ?? process.cwd(), hostSearchRoots: options.hostSearchRoots});
 }
 
-/** Builds a fake global npm root that contains the fixture host as a top-level installed package. */
+/** Builds a fake global npm root that contains the fixture host as a top-level installed package. @param {string} hostRoot */
 async function makeGlobalRoot(hostRoot) {
     const globalRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'teqfw-cli-global-'));
     const hostDir = path.join(globalRoot, 'node_modules', 'fixture-app');
@@ -23,7 +24,7 @@ async function makeGlobalRoot(hostRoot) {
     };
 }
 
-/** Extends the fixture host with a command that exposes its positional input and runtime facts. */
+/** Extends the fixture host with a command that exposes its positional input and runtime facts. @param {string} root */
 async function addEchoCommand(root) {
     const manifestPath = path.join(root, 'package.json');
     const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
@@ -41,9 +42,9 @@ async function addEchoCommand(root) {
 }
 
 function clearEchoGlobals() {
-    delete globalThis.__fixtureEchoTarget;
-    delete globalThis.__fixtureEchoRoot;
-    delete globalThis.__fixtureEchoCwd;
+    Reflect.deleteProperty(globalThis, '__fixtureEchoTarget');
+    Reflect.deleteProperty(globalThis, '__fixtureEchoRoot');
+    Reflect.deleteProperty(globalThis, '__fixtureEchoCwd');
 }
 
 test('explicit host runs a command through --host-root', async () => {

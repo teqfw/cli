@@ -3,11 +3,11 @@ import test from 'node:test';
 import {Factory as CommandFactory} from '../../../src/Dto/Command.mjs';
 
 function createFactories() {
-    const argumentFactory = {create: (data) => Object.freeze({...data})};
-    const optionFactory = {create: (data) => Object.freeze({...data})};
-    const freeze = (value) => Object.freeze(value);
+    const argumentFactory = {create: (/** @type {TeqFw_Cli_Manifest_Argument} */ data) => Object.freeze({...data})};
+    const optionFactory = {create: (/** @type {TeqFw_Cli_Manifest_Option} */ data) => Object.freeze({...data})};
+    const freeze = (/** @type {any} */ value) => Object.freeze(value);
     return {
-        command: new CommandFactory({argumentFactory, optionFactory, freeze}),
+        command: new CommandFactory(/** @type {any} */ ({argumentFactory, optionFactory, freeze})),
     };
 }
 

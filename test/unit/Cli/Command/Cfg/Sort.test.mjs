@@ -7,7 +7,7 @@ test('command rejects incompatible check and dry-run modes before reading a file
         config: {applicationRoot: '/app', cwd: '/cwd'},
         sorter: {sort: () => ''},
         fs: {readFile: async () => { throw new Error('must not read'); }},
-        path: {join: (...parts) => parts.join('/'), resolve: (...parts) => parts.join('/')},
+        path: {join: (/** @type {string[]} */ ...parts) => parts.join('/'), resolve: (/** @type {string[]} */ ...parts) => parts.join('/')},
         io: {write: () => {}},
     })));
 

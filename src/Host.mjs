@@ -73,6 +73,7 @@ export default class Host {
                             throw new TypeError(`Long-running command '${command.id}' must return {stop(), done: Promise}.`);
                         }
                         let interrupted = controller.signal.aborted;
+                        /** @type {Promise<void>} */
                         const stopped = new Promise((resolve) => controller.signal.addEventListener('abort', () => {
                             interrupted = true;
                             resolve();

@@ -38,7 +38,7 @@ export default class Internal {
          * @param {TeqFw_Cli_Dto_Command_Descriptor_List} deps.commands
          * @param {TeqFw_Cli_Adapter_Io} deps.io
          * @param {TeqFw_Cli_Optional_String} deps.defaultCommand
-         * @returns {object}
+         * @returns {TeqFw_Cli_Adapter_Parser_Internal_Selection}
          */
         this.select = function ({argv, version, commands, io, defaultCommand}) {
             const input = argv.slice(2);

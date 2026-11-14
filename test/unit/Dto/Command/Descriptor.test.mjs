@@ -2,12 +2,12 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {Factory} from '../../../../src/Dto/Command/Descriptor.mjs';
 
-const freeze = (value) => Object.freeze(value);
+const freeze = (/** @type {any} */ value) => Object.freeze(value);
 
 test('descriptor factory rejects ambiguous input names and non-terminal variadic arguments', () => {
     const factory = new Factory(/** @type {any} */ ({
-        argumentFactory: {create: (data) => Object.freeze({...data})},
-        optionFactory: {create: (data) => Object.freeze({...data})},
+        argumentFactory: {create: (/** @type {TeqFw_Cli_Manifest_Argument} */ data) => Object.freeze({...data})},
+        optionFactory: {create: (/** @type {TeqFw_Cli_Manifest_Option} */ data) => Object.freeze({...data})},
         freeze,
     }));
 

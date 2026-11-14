@@ -8,7 +8,7 @@
 export default class Io {
     /**
      * @param {object} deps
-     * @param {object} deps.processModule
+     * @param {TeqFw_Cli_Adapter_Io_ProcessModule} deps.processModule
      */
     constructor({processModule}) {
         const process = processModule.default;

@@ -3,8 +3,8 @@ import test from 'node:test';
 import CommandRegistry from '../../../src/Registry/Command.mjs';
 
 test('command registry validates input, preserves order, and freezes its catalogue', () => {
-    const calls = [];
-    const registry = new CommandRegistry(/** @type {any} */ ({descriptorFactory: {create(data) {
+    /** @type {TeqFw_Cli_Manifest_Command[]} */ const calls = [];
+    const registry = new CommandRegistry(/** @type {any} */ ({descriptorFactory: {create(/** @type {TeqFw_Cli_Manifest_Command} */ data) {
         calls.push(data);
         return Object.freeze({...data});
     }}}));

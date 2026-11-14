@@ -6,15 +6,15 @@ const descriptor = {id: 'x:run', summary: 'x', arguments: [], options: [], compo
 const launch = {argv: ['node', 'teq', 'x:run'], cwd: '.', applicationRoot: '.', version: '1'};
 
 function createHost() {
-    let listener;
+    /** @type {(signal: 'SIGINT'|'SIGTERM') => void} */ let listener = () => {};
     const io = {write() {}, error() {}};
-    const signals = {subscribe(callback) { listener = callback; return () => {}; }};
-    const parser = {select: () => ({kind: 'command', command: descriptor, args: Object.freeze({}), options: Object.freeze({})})};
-    return {host: new Host({parser, signals, io}), signal: (name) => listener(name)};
+    const signals = {subscribe(/** @type {(signal: 'SIGINT'|'SIGTERM') => void} */ callback) { listener = callback; return () => {}; }};
+    const parser = {select: () => ({kind: /** @type {const} */ ('command'), command: descriptor, args: Object.freeze({}), options: Object.freeze({})})};
+    return {host: new Host({parser, signals, io}), signal: (/** @type {'SIGINT'|'SIGTERM'} */ name) => listener(name)};
 }
 
 test('host run executes a finite command and reverses plugin shutdown', async () => {
-    const calls = [];
+    /** @type {string[]} */ const calls = [];
     const {host} = createHost();
     const run = host.open({argv: launch.argv, version: launch.version, commands: [descriptor], defaultCommand: "x:run", launch});
     await run.start({onStartup: async () => { calls.push('start'); }, onShutdown: async () => { calls.push('stop'); }});
@@ -25,7 +25,7 @@ test('host run executes a finite command and reverses plugin shutdown', async ()
 });
 
 test('host run closes the successful startup prefix after a startup failure', async () => {
-    const calls = [];
+    /** @type {string[]} */ const calls = [];
     const {host} = createHost();
     const run = host.open({argv: launch.argv, version: launch.version, commands: [descriptor], defaultCommand: "x:run", launch});
     await run.start({onStartup: async () => { calls.push('first:start'); }, onShutdown: async () => { calls.push('first:stop'); }});
@@ -35,7 +35,7 @@ test('host run closes the successful startup prefix after a startup failure', as
 });
 
 test('host run gives SIGINT priority and closes started plugins', async () => {
-    const calls = [];
+    /** @type {string[]} */ const calls = [];
     const {host, signal} = createHost();
     const run = host.open({argv: launch.argv, version: launch.version, commands: [descriptor], defaultCommand: "x:run", launch});
     await run.start({onStartup: async () => { calls.push('start'); }, onShutdown: async () => { calls.push('stop'); }});

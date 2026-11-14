@@ -3,8 +3,8 @@ import test from 'node:test';
 import Io from '../../../src/Adapter/Io.mjs';
 
 test('I/O adapter writes normalized output to the matching process stream', () => {
-    const output = [];
-    const errors = [];
+    /** @type {string[]} */ const output = [];
+    /** @type {string[]} */ const errors = [];
     const io = new Io({processModule: {default: {
         stdout: {write: (value) => output.push(value)},
         stderr: {write: (value) => errors.push(value)},

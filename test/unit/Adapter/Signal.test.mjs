@@ -3,17 +3,21 @@ import test from 'node:test';
 import Signal from '../../../src/Adapter/Signal.mjs';
 
 test('signal adapter forwards signals and unsubscribes both handlers once', () => {
-    const handlers = new Map();
-    const removed = [];
+    /** @type {Map<string, () => void>} */ const handlers = new Map();
+    /** @type {[string, () => void][]} */ const removed = [];
     const processModule = {default: {
-        on(name, handler) { handlers.set(name, handler); },
-        off(name, handler) { removed.push([name, handler]); handlers.delete(name); },
+        /** @param {string} name @param {() => void} handler */ on(name, handler) { handlers.set(name, handler); },
+        /** @param {string} name @param {() => void} handler */ off(name, handler) { removed.push([name, handler]); handlers.delete(name); },
     }};
-    const received = [];
+    /** @type {string[]} */ const received = [];
     const unsubscribe = new Signal({processModule}).subscribe((signal) => received.push(signal));
 
-    handlers.get('SIGINT')();
-    handlers.get('SIGTERM')();
+    const onInt = handlers.get('SIGINT');
+    const onTerm = handlers.get('SIGTERM');
+    assert.ok(onInt);
+    assert.ok(onTerm);
+    onInt();
+    onTerm();
     unsubscribe();
     unsubscribe();
 

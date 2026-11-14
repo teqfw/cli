@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {Factory} from '../../../src/Dto/Argument.mjs';
 
+/** @template T @param {T} value @returns {T} */
 const freeze = (value) => Object.freeze(value);
 
 test('argument factory validates defaults and returns frozen parser-neutral data', () => {

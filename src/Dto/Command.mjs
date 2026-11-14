@@ -7,8 +7,12 @@ const ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9:_-]*$/;
 export default class Command {
     /** Initializes a command descriptor. */
     constructor() {
-        this.id = ''; this.summary = ''; this.lifetime = 'finite'; this.description = undefined;
-        this.arguments = Object.freeze([]); this.options = Object.freeze([]); this.execute = undefined; this.start = undefined; this.cleanup = undefined;
+        this.id = ''; this.summary = ''; this.lifetime = 'finite';
+        /** @type {string|undefined} */ this.description = undefined;
+        this.arguments = Object.freeze([]); this.options = Object.freeze([]);
+        /** @type {any} */ this.execute = undefined;
+        /** @type {any} */ this.start = undefined;
+        /** @type {any} */ this.cleanup = undefined;
     }
 }
 export class Factory {

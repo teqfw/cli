@@ -8,6 +8,7 @@ import {createCliFixture} from '../helper/fixture.mjs';
 
 const projectRoot = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
 
+/** @param {string} binary @param {string[]} args @param {string} cwd @param {import('node:child_process').SpawnOptionsWithoutStdio} options */
 function run(binary, args, cwd, options = {}) {
     const child = spawn(binary, args, {cwd, ...options});
     let stdout = '';

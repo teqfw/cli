@@ -4,6 +4,7 @@
 /**/output*.md
 /**/output*.zip
 /node_modules/
+/package-lock.json
 /tmp/
 
 # Private cognitive context is an independent repository.

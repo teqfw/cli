@@ -8,8 +8,8 @@
 /**
  * @param {string} category
  * @param {string} message
- * @param {object} data
- * @returns {object}
+ * @param {TeqFw_Cli_Error_Data} data
+ * @returns {TeqFw_Cli_Error_Result}
  */
 export default function createError(category, message, data = {}) {
     const result = /** @type {Error & {category: string, reported: boolean}} */ (

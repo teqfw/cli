@@ -6,17 +6,17 @@
  */
 export default class Config {
     /** @type {string} */
-    applicationRoot;
+    applicationRoot = /** @type {string} */ (/** @type {unknown} */ (undefined));
     /** @type {string} */
-    cwd;
+    cwd = /** @type {string} */ (/** @type {unknown} */ (undefined));
     /** @type {ReadonlyArray<string>} */
-    argv;
+    argv = /** @type {ReadonlyArray<string>} */ (/** @type {unknown} */ (undefined));
     /** @type {string|undefined} */
     dotenvPath;
     /** @type {boolean} */
-    dotenvExplicit;
+    dotenvExplicit = /** @type {boolean} */ (/** @type {unknown} */ (undefined));
     /** @type {(input: TeqFw_Cli_Config) => void} */
-    init;
+    init = /** @type {(input: TeqFw_Cli_Config) => void} */ (/** @type {unknown} */ (undefined));
     /** @param {object} deps
      * @param {TeqFw_Cli_Util_DeepFreeze} deps.deep
      */
@@ -35,7 +35,7 @@ export default class Config {
             dotenvPath: {enumerable: true, get: () => get().dotenvPath},
             dotenvExplicit: {enumerable: true, get: () => get().dotenvExplicit},
             init: {enumerable: false,
-                value: (input) => {
+                value: (/** @type {TeqFw_Cli_Config} */ input) => {
                     if (state) throw new Error('TeqFw_Cli_Config$ is already initialized.');
                     state = deep({...input, argv: [...input.argv]});
                     Object.freeze(this);

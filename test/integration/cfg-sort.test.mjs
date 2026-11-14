@@ -6,6 +6,7 @@ import test from 'node:test';
 import {launch} from '../../bin/teq.mjs';
 import {clearCliFixtureGlobals, createCliFixture} from '../helper/fixture.mjs';
 
+/** @param {(paths: {root: string, file: string}) => Promise<void>} callback */
 async function withFile(callback) {
     const root = await fs.mkdtemp(path.join(os.tmpdir(), 'teqfw-cli-cfg-sort-'));
     const file = path.join(root, 'settings.env');

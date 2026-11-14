@@ -4,6 +4,7 @@ import deepFreeze from '../../../src/Util/DeepFreeze.mjs';
 
 test('deep freeze traverses symbol keys and cyclic graphs without freezing abort signals', () => {
     const marker = Symbol('marker');
+    /** @type {{nested: {answer: number}, [marker]: {value: boolean}, self?: any, signal?: AbortSignal}} */
     const value = {nested: {answer: 42}, [marker]: {value: true}};
     value.self = value;
     const controller = new AbortController();

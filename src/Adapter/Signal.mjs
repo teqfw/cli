@@ -8,13 +8,13 @@
 export default class Signal {
     /**
      * @param {object} deps
-     * @param {object} deps.processModule
+     * @param {TeqFw_Cli_Adapter_Signal_ProcessModule} deps.processModule
      */
     constructor({processModule}) {
         const process = processModule.default;
         /**
-         * @param {any} handler
-         * @returns {any}
+         * @param {TeqFw_Cli_Adapter_Signal_Handler} handler
+         * @returns {TeqFw_Cli_Adapter_Signal_Unsubscribe}
          */
         this.subscribe = function (handler) {
             let active = true;
