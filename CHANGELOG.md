@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+## [2.5.1] - 2026-11-14
+
+- Refine the published JSDoc and ambient types and enable stricter project
+  type checking.
+- Clarify command handler, signal handling, and host Container policy
+  composition guidance in the README and published Agent Skill.
+- Simplify development validation and make the CI workflow manually triggered.
+
 ## [2.5.0] - 2026-09-23
 
 - Stop long-running commands after a shutdown signal even when their `done`
